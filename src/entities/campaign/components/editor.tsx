@@ -67,6 +67,16 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
     accountId: walletUser?.accountId ?? "",
   });
 
+  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl, description, recipient] = form.watch([
+    "ft_id",
+    "target_amount",
+    "min_amount",
+    "max_amount",
+    "cover_image_url",
+    "description",
+    "recipient",
+  ]);
+
   // Set initial recipient when component mounts (only for create mode)
   useEffect(() => {
     if (!isUpdate && recipientType === "yourself" && walletUser?.accountId) {
@@ -77,7 +87,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   // Validate and auto-correct start date if it's in the past
   const handleStartDateChange = (value: string) => {
     if (!value) {
-      form.setValue("start_ms", undefined);
+      form.setValue("start_ms", undefined, { shouldValidate: false });
       return;
     }
 
@@ -88,21 +98,27 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
 
     const minTime = Temporal.Now.instant().add({ minutes: 1 }).epochMilliseconds;
 
+    // Only validate if end_ms has been touched or has a value
+    // This prevents showing validation errors on untouched end_ms field
+    const endMsValue = form.getValues("end_ms");
+    const endMsTouched = form.formState.touchedFields.end_ms;
+    const shouldValidate = endMsTouched === true || endMsValue !== undefined;
+
     if (selectedTime < minTime) {
       // Auto-correct to minimum valid time (silently)
       const correctedTime = Temporal.Now.instant()
         .add({ minutes: 1 })
         .epochMilliseconds;
-      form.setValue("start_ms", correctedTime, { shouldValidate: true });
+      form.setValue("start_ms", correctedTime, { shouldValidate });
     } else {
-      form.setValue("start_ms", selectedTime, { shouldValidate: true });
+      form.setValue("start_ms", selectedTime, { shouldValidate });
     }
   };
 
   // Validate and auto-correct end date if it's before start date
   const handleEndDateChange = (value: string) => {
     if (!value) {
-      form.setValue("end_ms", undefined);
+      form.setValue("end_ms", undefined, { shouldValidate: false });
       return;
     }
 
@@ -116,11 +132,16 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
       ? (startMs as number) + 60000 // At least 1 minute after start
       : Temporal.Now.instant().add({ minutes: 1 }).epochMilliseconds;
 
+    // Only validate if start_ms has been touched or has a value
+    // This prevents showing validation errors on untouched start_ms field
+    const startMsTouched = form.formState.touchedFields.start_ms;
+    const shouldValidate = startMsTouched === true || startMs !== undefined;
+
     if (selectedTime < minTime) {
       // Auto-correct to minimum valid time (silently)
-      form.setValue("end_ms", minTime, { shouldValidate: true });
+      form.setValue("end_ms", minTime, { shouldValidate });
     } else {
-      form.setValue("end_ms", selectedTime, { shouldValidate: true });
+      form.setValue("end_ms", selectedTime, { shouldValidate });
     }
   };
 
@@ -146,27 +167,22 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
       !profile &&
       process.env.NEXT_PUBLIC_ENV !== "test" &&
       walletUser?.accountId &&
-      walletUser?.accountId === form.getValues("recipient");
+      walletUser?.accountId === recipient;
 
-    // Once shown, keep visible even if conditions change (prevents field disappearing)
-    if (shouldShow && !showProjectFields) {
+    // Hide fields if profile exists (user already has NEAR Social account)
+    const shouldHide = !isProfileLoading && profile;
+
+    if (shouldHide && showProjectFields) {
+      setShowProjectFields(false);
+    } else if (shouldShow && !showProjectFields) {
       setShowProjectFields(true);
     }
 
-  }, [isUpdate, isProfileLoading, profile, walletUser?.accountId, form, showProjectFields]);
+  }, [isUpdate, isProfileLoading, profile, walletUser?.accountId, recipient, showProjectFields]);
 
   const { handleFileInputChange, isPending: isBannerUploadPending } = pinataHooks.useFileUpload({
     onSuccess: handleCoverImageUploadResult,
   });
-
-  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl, description] = form.watch([
-    "ft_id",
-    "target_amount",
-    "min_amount",
-    "max_amount",
-    "cover_image_url",
-    "description",
-  ]);
 
   const { data: token } = useFungibleToken({
     tokenId: existingData?.token?.account ?? ftId ?? NATIVE_TOKEN_ID,
@@ -718,7 +734,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
               render={({ field: { value, onChange, ...field } }) => {
                 const startMs = form.watch("start_ms");
                 const endMin = startMs
-                  ? Temporal.Instant.fromEpochMilliseconds(startMs as number)
+                  ? Temporal.Instant.fromEpochMilliseconds((startMs as number) + 60000)
                       .toZonedDateTimeISO(Temporal.Now.timeZoneId())
                       .toPlainDateTime()
                       .toString({ smallestUnit: "minute" })
