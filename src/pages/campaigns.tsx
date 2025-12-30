@@ -118,10 +118,14 @@ export default function CampaignsPage() {
         </h1>
 
         <div className="flex gap-4">
-          {viewer.isSignedIn && (
-            <Button asChild className="mt-4" variant="brand-filled">
-              <Link href="/campaign/create">{"Start Campaign"}</Link>
-            </Button>
+          {!viewer.hasWalletReady ? (
+            <div className="mt-4 h-10 w-36 animate-pulse rounded-md bg-gray-200" />
+          ) : (
+            viewer.isSignedIn && (
+              <Button asChild className="mt-4" variant="brand-filled">
+                <Link href="/campaign/create">{"Start Campaign"}</Link>
+              </Button>
+            )
           )}
           <Button variant="brand-tonal" asChild className="mt-4">
             <Link target="_blank" href="https://docs.potlock.io/user-guides/campaigns">

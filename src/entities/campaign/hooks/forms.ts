@@ -19,6 +19,7 @@ import { useDispatch } from "@/store/hooks";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
+import { parseContractError } from "../utils";
 
 export type CampaignFormParams = Partial<ByCampaignId> & {
   ftId?: TokenId;
@@ -313,20 +314,25 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           .catch((error) => {
             console.error("Failed to update Campaign:", error);
 
+            const parsedError = parseContractError(error);
+
             toast({
-              description: "Failed to update Campaign.",
+              title: parsedError.title,
+              description: parsedError.hint
+                ? `${parsedError.message} ${parsedError.hint}`
+                : parsedError.message,
               variant: "destructive",
             });
           });
       } else {
         campaignsContractClient
           .create_campaign({ args })
-          .then((newCampaign) => {
+          .then(async (newCampaign) => {
+            const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
+
             toast({
               title: `You’ve successfully created a campaign for ${values.name}.`,
               description: (() => {
-                const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
-
                 if (startMs && startMs > Date.now()) {
                   return `Campaign starts on ${formatFullDateTime(startMs)}.`;
                 }
@@ -349,9 +355,16 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
               router.push(`/campaigns`);
             }
           })
-          .catch(() => {
+          .catch((error) => {
+            console.error("Failed to create Campaign:", error);
+
+            const parsedError = parseContractError(error);
+
             toast({
-              title: "Failed to create Campaign.",
+              title: parsedError.title,
+              description: parsedError.hint
+                ? `${parsedError.message} ${parsedError.hint}`
+                : parsedError.message,
               variant: "destructive",
             });
           });
