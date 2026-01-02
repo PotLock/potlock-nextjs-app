@@ -13,7 +13,7 @@ import { pinataHooks } from "@/common/services/pinata";
 import { CampaignId } from "@/common/types";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { RichTextEditor } from "@/common/ui/form/components/richtext";
-import { Button, Form, FormField, Switch, Textarea } from "@/common/ui/layout/components";
+import { Button, Form, FormField, Switch } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import {
@@ -39,13 +39,8 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   const isUpdate = campaignId !== undefined;
 
   // Minimum datetime for start date (current time + 1 minute buffer)
-  const [minStartDateTime, setMinStartDateTime] = useState<string>(() => {
-    const now = Temporal.Now.instant().add({ minutes: 1 });
-    return now
-      .toZonedDateTimeISO(Temporal.Now.timeZoneId())
-      .toPlainDateTime()
-      .toString({ smallestUnit: "minute" });
-  });
+  // Initialize with empty string to avoid SSR/SSG issues with Temporal.Now.timeZoneId()
+  const [minStartDateTime, setMinStartDateTime] = useState<string>("");
 
   // Track when project fields should be shown (prevent disappearing after being shown)
   const [showProjectFields, setShowProjectFields] = useState(false);
@@ -139,8 +134,9 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   };
 
   // Update minimum datetime every minute to prevent past date selection
+  // This runs only on client-side to avoid SSG/SSR issues
   useEffect(() => {
-    const interval = setInterval(() => {
+    const updateMinDateTime = () => {
       const now = Temporal.Now.instant().add({ minutes: 1 });
 
       const newMin = now
@@ -149,7 +145,13 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
         .toString({ smallestUnit: "minute" });
 
       setMinStartDateTime(newMin);
-    }, 60000); // Update every 60 seconds
+    };
+
+    // Set initial value immediately on mount (client-side only)
+    updateMinDateTime();
+
+    // Then update every 60 seconds
+    const interval = setInterval(updateMinDateTime, 60000);
 
     return () => clearInterval(interval);
   }, []);
@@ -674,7 +676,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
               <FormField
                 control={form.control}
                 name="start_ms"
-                render={({ field: { value, onChange, ...field } }) => (
+                render={({ field: { value, onChange: _onChange, ...field } }) => (
                   <TextField
                     {...field}
                     required={true}
@@ -700,7 +702,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                 <FormField
                   control={form.control}
                   name="start_ms"
-                  render={({ field: { value, onChange, ...field } }) => (
+                  render={({ field: { value, onChange: _onChange, ...field } }) => (
                     <TextField
                       {...field}
                       label="Start Date"
@@ -725,7 +727,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             <FormField
               control={form.control}
               name="end_ms"
-              render={({ field: { value, onChange, ...field } }) => {
+              render={({ field: { value, onChange: _onChange, ...field } }) => {
                 const startMs = form.watch("start_ms");
 
                 const endMin = startMs
