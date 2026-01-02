@@ -32,10 +32,10 @@ import { PotConfigurationPreview } from "./preview";
 import { POT_EDITOR_FIELDS } from "../constants";
 import { usePotConfigurationEditorForm } from "../hooks/forms";
 import {
-  getPotDeploymentSchema,
-  getPotSettingsSchema,
   type PotDeploymentSchema,
   type PotSettingsSchema,
+  getPotDeploymentSchema,
+  getPotSettingsSchema,
 } from "../model";
 
 export type PotConfigurationEditorProps = Partial<ByPotId> & {

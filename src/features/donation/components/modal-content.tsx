@@ -136,9 +136,9 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
       case "allocation": {
         if ("accountId" in props || "campaignId" in props) {
           return (
-            <DonationSingleRecipientAllocation 
-              form={form} 
-              matchingPots={matchingPots} 
+            <DonationSingleRecipientAllocation
+              form={form}
+              matchingPots={matchingPots}
               {...props}
               onTokenDataChange={setSelectedTokenData}
             />
@@ -450,49 +450,49 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
               crossChainStep === "processing") &&
             isCrossChainDonation
           ) && (
-          <DialogFooter>
-            {currentStep === "allocation" && (
-              <Button
-                disabled={!FEATURE_REGISTRY.Cart.isEnabled}
-                type="button"
-                variant="brand-outline"
-                color="black"
-              >
-                {"Add to cart"}
-              </Button>
-            )}
+            <DialogFooter>
+              {currentStep === "allocation" && (
+                <Button
+                  disabled={!FEATURE_REGISTRY.Cart.isEnabled}
+                  type="button"
+                  variant="brand-outline"
+                  color="black"
+                >
+                  {"Add to cart"}
+                </Button>
+              )}
 
-            {donationConfig === undefined && isDonationConfigLoading ? (
-              <Skeleton className="w-38.5 h-10" />
-            ) : (
-              <Button
-                type="button"
-                variant="brand-filled"
-                onClick={() => {
-                  if (currentStep === "confirmation") {
-                    onSubmit();
+              {donationConfig === undefined && isDonationConfigLoading ? (
+                <Skeleton className="w-38.5 h-10" />
+              ) : (
+                <Button
+                  type="button"
+                  variant="brand-filled"
+                  onClick={() => {
+                    if (currentStep === "confirmation") {
+                      onSubmit();
                     } else if (
                       currentStep === "allocation" &&
                       isCrossChainDonation &&
                       selectedTokenData &&
                       !isTestEnv
                     ) {
-                    // Trigger cross-chain flow - move to confirmation step and show cross-chain amount entry
+                      // Trigger cross-chain flow - move to confirmation step and show cross-chain amount entry
                       // Only allow in non-test environments
                       setCrossChainStepSafe("amount");
-                    dispatch.donation.nextStep();
-                  } else {
-                    dispatch.donation.nextStep();
-                  }
-                }}
-                disabled={isDisabled}
-                className={cn({ "w-full": currentStep === "confirmation" })}
-              >
-                {currentStep === "confirmation" ? "Confirm donation" : "Proceed to donate"}
-              </Button>
-            )}
-          </DialogFooter>
-        )}
+                      dispatch.donation.nextStep();
+                    } else {
+                      dispatch.donation.nextStep();
+                    }
+                  }}
+                  disabled={isDisabled}
+                  className={cn({ "w-full": currentStep === "confirmation" })}
+                >
+                  {currentStep === "confirmation" ? "Confirm donation" : "Proceed to donate"}
+                </Button>
+              )}
+            </DialogFooter>
+          )}
       </form>
     </Form>
   );
