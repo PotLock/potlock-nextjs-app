@@ -120,7 +120,6 @@ export function parseContractError(error: unknown): ParsedError {
   // Return default with actual error message if available
   return {
     ...defaultError,
-    message:
-      errorMessage.length > 200 ? errorMessage.substring(0, 200) + "..." : errorMessage,
+    message: errorMessage.length > 200 ? errorMessage.substring(0, 200) + "..." : errorMessage,
   };
 }
