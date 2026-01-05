@@ -50,10 +50,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
   const numericCampaignId = parseInt(campaignId, 10);
 
   // Set cache headers - cache for 5 minutes, stale-while-revalidate for 10 minutes
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=300, stale-while-revalidate=600"
-  );
+  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
 
   try {
     const controller = new AbortController();
