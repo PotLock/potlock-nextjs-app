@@ -7,7 +7,7 @@ import { TabOption } from "@/common/ui/layout/types";
 import { cn } from "@/common/ui/layout/utils";
 import { CampaignBanner, CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
 
-const CAMPAIGN_TABS: {label: string; id: string}[] = [
+const CAMPAIGN_TABS: { label: string; id: string }[] = [
   {
     label: "Donation History",
     id: "leaderboard",
@@ -16,7 +16,7 @@ const CAMPAIGN_TABS: {label: string; id: string}[] = [
 ];
 
 type TabsProps = {
-  options: {label: string; id: string}[];
+  options: { label: string; id: string }[];
   selectedTab: string;
   onSelect: (tabId: string) => void;
 };
