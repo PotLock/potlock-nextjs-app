@@ -3,9 +3,6 @@ import { ReactElement } from "react";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
-import { APP_METADATA } from "@/common/constants";
-import { stripHtml } from "@/common/lib/datetime";
-import { fetchWithTimeout } from "@/common/lib/fetch-with-timeout";
 import { CampaignBanner, CampaignDonorsTable } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
@@ -42,69 +39,74 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-// Pre-build each campaign page with its data
+// Default SEO values (inline to avoid import issues in serverless)
+const DEFAULT_SEO = {
+  title: "Potlock | Fund Public Goods",
+  description:
+    "Discover and fund public goods projects on NEAR Protocol. Support open source, community initiatives, and impactful projects.",
+  image: "https://app.potlock.org/assets/images/meta-image.png",
+};
+
+// Simple HTML strip function (inline to avoid import issues)
+const stripHtmlTags = (html: string | undefined | null): string => {
+  if (!html) return "";
+  return html.replace(/<[^>]*>/g, "").trim();
+};
+
+// Generate campaign page data on-demand
 export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
+  const campaignId = params?.campaignId as string;
+
+  // Fallback props for any error case
+  const fallbackProps = {
+    props: {
+      seoTitle: campaignId ? `Campaign ${campaignId}` : DEFAULT_SEO.title,
+      seoDescription: DEFAULT_SEO.description,
+      seoImage: DEFAULT_SEO.image,
+    },
+    revalidate: 60, // Retry sooner on error
+  };
+
+  if (!campaignId) {
+    return { notFound: true };
+  }
+
   try {
-    const campaignId = params?.campaignId as string;
+    // Use native fetch with AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    if (!campaignId) {
-      return {
-        notFound: true,
-      };
-    }
-
-    // Fetch with timeout to prevent server timeouts
-    const res = await fetchWithTimeout(
+    const res = await fetch(
       `https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`,
-      {},
-      8000, // 8 second timeout
+      { signal: controller.signal },
     );
 
+    clearTimeout(timeoutId);
+
+    // If campaign not found, return 404
+    if (res.status === 404) {
+      return { notFound: true };
+    }
+
+    // For other errors, return fallback props (don't throw)
     if (!res.ok) {
-      // If campaign not found, return 404 instead of erroring
-      if (res.status === 404) {
-        return {
-          notFound: true,
-        };
-      }
-
-      throw new Error(`Failed to fetch campaign: ${res.status}`);
+      console.error(`Campaign API returned ${res.status} for campaign ${campaignId}`);
+      return fallbackProps;
     }
 
-    let campaign;
+    const campaign = await res.json();
 
-    try {
-      campaign = await res.json();
-    } catch (jsonError) {
-      console.error("Error parsing campaign JSON:", jsonError);
-      throw new Error("Invalid campaign data format");
-    }
-
-    const seoTitle = campaign?.name ?? `Campaign ${campaignId}`;
-
-    const seoDescription = stripHtml(campaign?.description) ?? "Support this campaign on Potlock.";
-
-    // Use cover_image_url field which is the correct field for campaign images
-    const seoImage = campaign?.cover_image_url ?? APP_METADATA.openGraph.images.url;
-
-    return {
-      props: { seoTitle, seoDescription, seoImage },
-      // Revalidate every 2 minutes (120 seconds) to keep data fresh
-      revalidate: 120,
-    };
-  } catch (error) {
-    console.error("Error generating static props:", error);
-
-    // Return fallback props instead of throwing error to prevent 500
-    // This allows the page to render with default SEO data
     return {
       props: {
-        seoTitle: `Campaign ${params?.campaignId || ""}`,
-        seoDescription: APP_METADATA.description,
-        seoImage: APP_METADATA.openGraph.images.url,
+        seoTitle: campaign?.name || `Campaign`,
+        seoDescription: stripHtmlTags(campaign?.description) || DEFAULT_SEO.description,
+        seoImage: campaign?.cover_image_url || DEFAULT_SEO.image,
       },
-      // Shorter revalidate for error cases to retry sooner
-      revalidate: 60,
+      revalidate: 120, // 2 minutes
     };
+  } catch (error) {
+    // Log but don't throw - return fallback props
+    console.error(`Error fetching campaign ${campaignId}:`, error);
+    return fallbackProps;
   }
 };
