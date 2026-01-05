@@ -26,7 +26,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
         "transition-all duration-500 hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]",
       )}
     >
-      <Link href={`/campaign/${data.on_chain_id}/leaderboard`} passHref prefetch>
+      <Link href={`/campaign/${data.on_chain_id}`} passHref>
         <div className="relative h-[212px] w-full">
           <LazyLoadImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
