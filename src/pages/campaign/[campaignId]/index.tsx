@@ -34,35 +34,47 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
 
 // Pre-generate the most popular campaigns at build time
 export const getStaticPaths: GetStaticPaths = async () => {
-  try {
-    // Fetch campaigns to get IDs for pre-generation with timeout
-    const res = await fetchWithTimeout(
-      "https://dev.potlock.io/api/v1/campaigns?limit=50",
-      {},
-      8000, // 8 second timeout
-    );
+  // COMMENTED OUT: Build-time API fetch causes timeouts in CI/CD environments
+  // The API calls during build can exceed Next.js's 60-second static worker timeout,
+  // causing the build to fail and set fallback: null, which results in 404s for campaigns.
+  // Solution: Skip pre-generation and rely entirely on on-demand generation with ISR.
+  // Pages will be generated on first request and cached for 5 minutes (see revalidate in getStaticProps).
 
-    if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
-    const campaigns = await res.json();
+  // try {
+  //   // Fetch campaigns to get IDs for pre-generation with timeout
+  //   const res = await fetchWithTimeout(
+  //     "https://dev.potlock.io/api/v1/campaigns?limit=50",
+  //     {},
+  //     8000, // 8 second timeout
+  //   );
 
-    // Generate paths for the first 50 campaigns (most recent/active)
-    const paths =
-      campaigns.data?.map((campaign: any) => ({
-        params: { campaignId: campaign.on_chain_id.toString() },
-      })) || [];
+  //   if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
+  //   const campaigns = await res.json();
 
-    return {
-      paths,
-      fallback: "blocking", // Generate new pages on-demand if not pre-built
-    };
-  } catch (error) {
-    console.error("Error generating static paths:", error);
-    // Return empty paths but still allow blocking fallback for on-demand generation
-    return {
-      paths: [],
-      fallback: "blocking",
-    };
-  }
+  //   // Generate paths for the first 50 campaigns (most recent/active)
+  //   const paths =
+  //     campaigns.data?.map((campaign: any) => ({
+  //       params: { campaignId: campaign.on_chain_id.toString() },
+  //     })) || [];
+
+  //   return {
+  //     paths,
+  //     fallback: "blocking", // Generate new pages on-demand if not pre-built
+  //   };
+  // } catch (error) {
+  //   console.error("Error generating static paths:", error);
+  //   // Return empty paths but still allow blocking fallback for on-demand generation
+  //   return {
+  //     paths: [],
+  //     fallback: "blocking",
+  //   };
+  // }
+
+  // Generate pages on-demand when first requested, then cache with ISR
+  return {
+    paths: [],
+    fallback: "blocking", // Generate new pages on-demand if not pre-built
+  };
 };
 
 // Pre-build each campaign page with its data
