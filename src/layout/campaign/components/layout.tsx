@@ -1,37 +1,27 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { PageWithBanner } from "@/common/ui/layout/components";
 import { TabOption } from "@/common/ui/layout/types";
 import { cn } from "@/common/ui/layout/utils";
-import { CampaignBanner } from "@/entities/campaign";
+import { CampaignBanner, CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
 
-const CAMPAIGN_TAB_ROUTES: TabOption[] = [
+const CAMPAIGN_TABS: { label: string; id: string }[] = [
   {
     label: "Donation History",
     id: "leaderboard",
-    href: "/leaderboard",
   },
-  { label: "Settings", id: "settings", href: "/settings" },
+  { label: "Settings", id: "settings" },
 ];
 
-type Props = {
-  options: TabOption[];
+type TabsProps = {
+  options: { label: string; id: string }[];
   selectedTab: string;
-  onSelect?: (tabId: string) => void;
-  asLink?: boolean;
+  onSelect: (tabId: string) => void;
 };
 
-const Tabs = ({ options, selectedTab, onSelect, asLink }: Props) => {
-  const _selectedTab = selectedTab || options[0].id;
-
-  const router = useRouter();
-  const { campaignId: campaignIdParam } = router.query;
-
-  const campaignId = typeof campaignIdParam === "string" ? campaignIdParam : campaignIdParam?.at(0);
-
+const Tabs = ({ options, selectedTab, onSelect }: TabsProps) => {
   return (
     <div className="mb-8 flex w-full flex-row flex-wrap gap-2">
       <div className="w-full px-2 md:px-8">
@@ -42,35 +32,13 @@ const Tabs = ({ options, selectedTab, onSelect, asLink }: Props) => {
           )}
         >
           {options.map((option) => {
-            const selected = option.id == _selectedTab;
-
-            if (asLink) {
-              return (
-                <Link
-                  href={`/campaign/${campaignId}${option.href}`}
-                  prefetch
-                  key={option.id}
-                  className={`font-500 border-b-solid transition-duration-300 whitespace-nowrap border-b-[2px] px-4 py-[10px] text-sm text-[#7b7b7b] transition-all hover:border-b-[#292929] hover:text-[#292929] ${selected ? "border-b-[#292929] text-[#292929]" : "border-b-[transparent]"}`}
-                  onClick={() => {
-                    if (onSelect) {
-                      onSelect(option.id);
-                    }
-                  }}
-                >
-                  {option.label}
-                </Link>
-              );
-            }
+            const selected = option.id === selectedTab;
 
             return (
               <button
                 key={option.id}
                 className={`font-500 border-b-solid transition-duration-300 whitespace-nowrap border-b-[2px] px-4 py-[10px] text-sm text-[#7b7b7b] transition-all hover:border-b-[#292929] hover:text-[#292929] ${selected ? "border-b-[#292929] text-[#292929]" : "border-b-[transparent]"}`}
-                onClick={() => {
-                  if (onSelect) {
-                    onSelect(option.id);
-                  }
-                }}
+                onClick={() => onSelect(option.id)}
               >
                 {option.label}
               </button>
@@ -88,31 +56,63 @@ type ReactLayoutProps = {
 
 export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
   const router = useRouter();
-  const { campaignId } = router.query as { campaignId: string };
-  const tabs = CAMPAIGN_TAB_ROUTES;
+  const { campaignId, tab } = router.query as { campaignId: string; tab?: string };
 
-  const [selectedTab, setSelectedTab] = useState(
-    tabs.find((tab) => router.pathname.includes(tab.href)) || tabs[0],
+  // Derive active tab directly from URL - no state needed
+  const activeTab = useMemo(() => {
+    if (tab && CAMPAIGN_TABS.find((t) => t.id === tab)) {
+      return tab;
+    }
+
+    return CAMPAIGN_TABS[0].id;
+  }, [tab]);
+
+  // Track if user has manually changed tabs (to prevent URL sync issues)
+  const [userSelectedTab, setUserSelectedTab] = useState<string | null>(null);
+
+  // Use userSelectedTab if set, otherwise use URL-derived activeTab
+  const currentTab = userSelectedTab ?? activeTab;
+
+  const handleTabChange = useCallback(
+    (tabId: string) => {
+      if (tabId === currentTab) return;
+
+      setUserSelectedTab(tabId);
+
+      // Update URL without triggering Next.js navigation
+      const newUrl = `/campaign/${campaignId}?tab=${tabId}`;
+
+      window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
+    },
+    [campaignId, currentTab],
   );
 
-  const handleSelectedTab = useCallback(
-    (tabId: string) => setSelectedTab(tabs.find((tabRoute) => tabRoute.id === tabId)!),
-    [tabs],
-  );
+  const numericCampaignId = parseInt(campaignId || "0", 10);
+
+  // Render content based on current tab
+  const renderTabContent = () => {
+    if (currentTab === "settings") {
+      return <CampaignSettings campaignId={numericCampaignId} />;
+    }
+
+    return <CampaignDonorsTable campaignId={numericCampaignId} />;
+  };
+
+  // Don't render until we have a campaignId
+  if (!campaignId) {
+    return null;
+  }
 
   return (
     <PageWithBanner>
       <div className="md:p-8">
-        <CampaignBanner campaignId={parseInt(campaignId)} />
+        <CampaignBanner campaignId={numericCampaignId} />
       </div>
 
-      <Tabs
-        asLink
-        options={tabs}
-        selectedTab={selectedTab.id}
-        onSelect={(tabId: string) => handleSelectedTab(tabId)}
-      />
-      <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{children}</div>
+      <Tabs options={CAMPAIGN_TABS} selectedTab={currentTab} onSelect={handleTabChange} />
+      <div className="flex w-full flex-row flex-wrap gap-2 md:px-8">{renderTabContent()}</div>
     </PageWithBanner>
   );
 };
+
+export { CAMPAIGN_TABS };
