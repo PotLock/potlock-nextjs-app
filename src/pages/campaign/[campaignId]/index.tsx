@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 
-import type { GetServerSideProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
@@ -41,8 +41,17 @@ const stripHtmlTags = (html: string | undefined | null): string => {
   return html.replace(/<[^>]*>/g, "").trim();
 };
 
-// SSR - fetch campaign data on every request
-export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params, res }) => {
+// ISR: No build-time pre-generation to prevent timeouts
+// All pages generated on-demand when first requested, then cached
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [], // No pre-generation at build time
+    fallback: "blocking", // Generate on first visit, then cache with ISR
+  };
+};
+
+// ISR: Fetch campiagn data and cache with 2-minute revalidation
+export const getStaticProps: GetStaticProps<PageProps> = async ({ params }) => {
   const campaignId = params?.campaignId as string;
 
   if (!campaignId || isNaN(Number(campaignId))) {
@@ -51,12 +60,9 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
 
   const numericCampaignId = parseInt(campaignId, 10);
 
-  // Set cache headers - cache for 5 minutes, stale-while-revalidate for 10 minutes
-  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
-
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     const response = await fetch(
       `https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`,
@@ -77,6 +83,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
           seoDescription: DEFAULT_SEO.description,
           seoImage: DEFAULT_SEO.image,
         },
+        revalidate: 60, // Retry sooner on error
       };
     }
 
@@ -89,6 +96,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
         seoDescription: stripHtmlTags(campaign?.description) || DEFAULT_SEO.description,
         seoImage: campaign?.cover_image_url || DEFAULT_SEO.image,
       },
+      revalidate: 120, // Revalidate every 2 minutes
     };
   } catch (error) {
     console.error(`Error fetching campaign ${campaignId}:`, error);
@@ -100,6 +108,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
         seoDescription: DEFAULT_SEO.description,
         seoImage: DEFAULT_SEO.image,
       },
+      revalidate: 60, // Retry sooner on error
     };
   }
 };
