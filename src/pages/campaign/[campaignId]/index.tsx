@@ -2,6 +2,7 @@ import { ReactElement } from "react";
 
 import type { GetServerSideProps } from "next";
 
+import { CampaignBanner, CampaignDonorsTable } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
 
@@ -13,12 +14,10 @@ type PageProps = {
 };
 
 export default function CampaignPage(props: PageProps) {
-  // Content is rendered by CampaignLayout based on tab query param
-  // This component just provides the SEO wrapper
   return (
     <RootLayout title={props.seoTitle} description={props.seoDescription} image={props.seoImage}>
-      {/* Content rendered by CampaignLayout */}
-      <></>
+      <CampaignBanner campaignId={props.campaignId} />
+      <CampaignDonorsTable campaignId={props.campaignId} />
     </RootLayout>
   );
 }
@@ -70,6 +69,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
     }
 
     if (!response.ok) {
+      // Return page with default SEO on API error
       return {
         props: {
           campaignId: numericCampaignId,
@@ -93,6 +93,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
   } catch (error) {
     console.error(`Error fetching campaign ${campaignId}:`, error);
 
+    // Return page with default SEO on error (don't crash)
     return {
       props: {
         campaignId: numericCampaignId,
