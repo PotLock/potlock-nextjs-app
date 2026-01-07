@@ -1,29 +1,24 @@
 import { ReactElement } from "react";
 
 import type { GetStaticPaths, GetStaticProps } from "next";
-import { useRouter } from "next/router";
 
-import { APP_METADATA } from "@/common/constants";
-import { stripHtml } from "@/common/lib/datetime";
-import { fetchWithTimeout } from "@/common/lib/fetch-with-timeout";
-import { CampaignBanner, CampaignDonorsTable } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
 
-type SeoProps = {
+type PageProps = {
+  campaignId: number;
   seoTitle: string;
   seoDescription: string;
   seoImage?: string;
 };
 
-export default function CampaignPage(props: SeoProps) {
-  const router = useRouter();
-  const { campaignId } = router.query as { campaignId: string };
-
+export default function CampaignPage(props: PageProps) {
+  // Content is rendered by CampaignLayout based on tab query param
+  // This component just provides the SEO wrapper
   return (
     <RootLayout title={props.seoTitle} description={props.seoDescription} image={props.seoImage}>
-      <CampaignBanner campaignId={parseInt(campaignId)} />
-      <CampaignDonorsTable campaignId={parseInt(campaignId)} />
+      {/* Content rendered by CampaignLayout */}
+      <></>
     </RootLayout>
   );
 }
@@ -32,97 +27,88 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
 };
 
-// Pre-generate the most popular campaigns at build time
-export const getStaticPaths: GetStaticPaths = async () => {
-  try {
-    // Fetch campaigns to get IDs for pre-generation with timeout
-    const res = await fetchWithTimeout(
-      "https://dev.potlock.io/api/v1/campaigns?limit=50",
-      {},
-      10000, // 10 second timeout
-    );
-
-    if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
-    const campaigns = await res.json();
-
-    // Generate paths for the first 50 campaigns (most recent/active)
-    const paths =
-      campaigns.data?.map((campaign: any) => ({
-        params: { campaignId: campaign.on_chain_id.toString() },
-      })) || [];
-
-    return {
-      paths,
-      fallback: "blocking", // Generate new pages on-demand if not pre-built
-    };
-  } catch (error) {
-    console.error("Error generating static paths:", error);
-    // Return empty paths but still allow blocking fallback for on-demand generation
-    return {
-      paths: [],
-      fallback: "blocking",
-    };
-  }
+// Default SEO values
+const DEFAULT_SEO = {
+  title: "Potlock | Fund Public Goods",
+  description:
+    "Discover and fund public goods projects on NEAR Protocol. Support open source, community initiatives, and impactful projects.",
+  image: "https://app.potlock.org/assets/images/meta-image.png",
 };
 
-// Pre-build each campaign page with its data
-export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
-  try {
-    const campaignId = params?.campaignId as string;
+// Simple HTML strip function
+const stripHtmlTags = (html: string | undefined | null): string => {
+  if (!html) return "";
+  return html.replace(/<[^>]*>/g, "").trim();
+};
 
-    if (!campaignId) {
+// ISR: No build-time pre-generation to prevent timeouts
+// All pages generated on-demand when first requested, then cached
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [], // No pre-generation at build time
+    fallback: "blocking", // Generate on first visit, then cache with ISR
+  };
+};
+
+// ISR: Fetch campiagn data and cache with 2-minute revalidation
+export const getStaticProps: GetStaticProps<PageProps> = async ({ params }) => {
+  const campaignId = params?.campaignId as string;
+
+  if (!campaignId || isNaN(Number(campaignId))) {
+    return { notFound: true };
+  }
+
+  const numericCampaignId = parseInt(campaignId, 10);
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    const response = await fetch(
+      `https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`,
+      { signal: controller.signal },
+    );
+
+    clearTimeout(timeoutId);
+
+    if (response.status === 404) {
+      return { notFound: true };
+    }
+
+    if (!response.ok) {
       return {
-        notFound: true,
+        props: {
+          campaignId: numericCampaignId,
+          seoTitle: `Campaign`,
+          seoDescription: DEFAULT_SEO.description,
+          seoImage: DEFAULT_SEO.image,
+        },
+        revalidate: 60, // Retry sooner on error
       };
     }
 
-    // Fetch with timeout to prevent server timeouts
-    const res = await fetchWithTimeout(
-      `https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`,
-      {},
-      10000, // 10 second timeout
-    );
+    const campaign = await response.json();
 
-    // If API fails for any reason (including 404), throw error to trigger fallback props
-    // This ensures page always renders, even if SEO data is unavailable
-    if (!res.ok) {
-      throw new Error(`Failed to fetch campaign: ${res.status}`);
-    }
-
-    let campaign;
-
-    try {
-      campaign = await res.json();
-    } catch (jsonError) {
-      console.error("Error parsing campaign JSON:", jsonError);
-      throw new Error("Invalid campaign data format");
-    }
-
-    const seoTitle = campaign?.name ?? `Campaign ${campaignId}`;
-
-    const seoDescription = stripHtml(campaign?.description) ?? "Support this campaign on Potlock.";
-
-    // Use cover_image_url field which is the correct field for campaign images
-    const seoImage = campaign?.cover_image_url ?? APP_METADATA.openGraph.images.url;
-
-    return {
-      props: { seoTitle, seoDescription, seoImage },
-      // Revalidate every 5 minutes (300 seconds) to keep data fresh
-      revalidate: 300,
-    };
-  } catch (error) {
-    console.error("Error generating static props:", error);
-
-    // Return fallback props instead of throwing error to prevent 500
-    // This allows the page to render with default SEO data
     return {
       props: {
-        seoTitle: `Campaign ${params?.campaignId || ""}`,
-        seoDescription: APP_METADATA.description,
-        seoImage: APP_METADATA.openGraph.images.url,
+        campaignId: numericCampaignId,
+        seoTitle: campaign?.name || `Campaign`,
+        seoDescription: stripHtmlTags(campaign?.description) || DEFAULT_SEO.description,
+        seoImage: campaign?.cover_image_url || DEFAULT_SEO.image,
       },
-      // Shorter revalidate for error cases to retry sooner
-      revalidate: 60,
+      revalidate: 120, // Revalidate every 2 minutes
+    };
+  } catch (error) {
+    console.error(`Error fetching campaign ${campaignId}:`, error);
+
+    return {
+      props: {
+        campaignId: numericCampaignId,
+        seoTitle: `Campaign`,
+        seoDescription: DEFAULT_SEO.description,
+        seoImage: DEFAULT_SEO.image,
+      },
+      revalidate: 60, // Retry sooner on error
     };
   }
 };
