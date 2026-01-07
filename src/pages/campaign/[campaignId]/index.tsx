@@ -32,14 +32,37 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
 };
 
-// Don't pre-generate any paths at build time - generate on-demand to avoid timeouts
+// Pre-generate the most popular campaigns at build time
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Return empty paths - all pages will be generated on first request
-  // This prevents build timeouts and serverless function timeouts
-  return {
-    paths: [],
-    fallback: "blocking", // Generate pages on-demand when first visited, then cache
-  };
+  try {
+    // Fetch campaigns to get IDs for pre-generation with timeout
+    const res = await fetchWithTimeout(
+      "https://dev.potlock.io/api/v1/campaigns?limit=50",
+      {},
+      8000, // 8 second timeout
+    );
+
+    if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
+    const campaigns = await res.json();
+
+    // Generate paths for the first 50 campaigns (most recent/active)
+    const paths =
+      campaigns.data?.map((campaign: any) => ({
+        params: { campaignId: campaign.on_chain_id.toString() },
+      })) || [];
+
+    return {
+      paths,
+      fallback: "blocking", // Generate new pages on-demand if not pre-built
+    };
+  } catch (error) {
+    console.error("Error generating static paths:", error);
+    // Return empty paths but still allow blocking fallback for on-demand generation
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
 };
 
 // Pre-build each campaign page with its data
@@ -89,8 +112,8 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
 
     return {
       props: { seoTitle, seoDescription, seoImage },
-      // Revalidate every 2 minutes (120 seconds) to keep data fresh
-      revalidate: 120,
+      // Revalidate every 5 minutes (300 seconds) to keep data fresh
+      revalidate: 300,
     };
   } catch (error) {
     console.error("Error generating static props:", error);
