@@ -2,6 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  // Increase static generation timeout to prevent build failures
+  // when API calls take longer than default 60 seconds
+  staticPageGenerationTimeout: 180, // 3 minutes (default is 60 seconds)
+
   async redirects() {
     return [
       {
