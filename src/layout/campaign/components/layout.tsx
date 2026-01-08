@@ -70,6 +70,7 @@ export const CampaignLayout: React.FC<ReactLayoutProps> = ({ children }) => {
     if (tab && CAMPAIGN_TABS.some((t) => t.id === tab)) {
       return tab;
     }
+
     return CAMPAIGN_TABS[0].id;
   }, [tab]);
 
