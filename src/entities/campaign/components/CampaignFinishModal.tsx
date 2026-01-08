@@ -61,7 +61,7 @@ export const CampaignFinishModal = create(() => {
       onClose={close}
       header={header}
       description={description}
-      onViewCampaign={() => push(`/campaign/${data?.id}/leaderboard`)}
+      onViewCampaign={() => push(`/campaign/${data?.id}`)}
     />
   );
 });

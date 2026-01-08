@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useMemo } from "react";
 
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { APP_METADATA } from "@/common/constants";
 import { stripHtml } from "@/common/lib/datetime";
 import { fetchWithTimeout } from "@/common/lib/fetch-with-timeout";
-import { CampaignBanner, CampaignDonorsTable } from "@/entities/campaign";
+import { CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
 
@@ -18,12 +18,24 @@ type SeoProps = {
 
 export default function CampaignPage(props: SeoProps) {
   const router = useRouter();
-  const { campaignId } = router.query as { campaignId: string };
+  const { campaignId, tab } = router.query as { campaignId: string; tab?: string };
+
+  const parsedCampaignId = parseInt(campaignId);
+
+  // Determine which content to show based on tab param
+  const content = useMemo(() => {
+    switch (tab) {
+      case "settings":
+        return <CampaignSettings campaignId={parsedCampaignId} />;
+      case "leaderboard":
+      default:
+        return <CampaignDonorsTable campaignId={parsedCampaignId} />;
+    }
+  }, [tab, parsedCampaignId]);
 
   return (
     <RootLayout title={props.seoTitle} description={props.seoDescription} image={props.seoImage}>
-      <CampaignBanner campaignId={parseInt(campaignId)} />
-      <CampaignDonorsTable campaignId={parseInt(campaignId)} />
+      {content}
     </RootLayout>
   );
 }
@@ -32,102 +44,63 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
 };
 
-// Pre-generate the most popular campaigns at build time
+// Only pre-generate paths at build time - no API calls needed for ISR
 export const getStaticPaths: GetStaticPaths = async () => {
-  try {
-    // Fetch campaigns to get IDs for pre-generation with timeout
-    const res = await fetchWithTimeout(
-      "https://dev.potlock.io/api/v1/campaigns?limit=50",
-      {},
-      8000, // 8 second timeout
-    );
-
-    if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
-    const campaigns = await res.json();
-
-    // Generate paths for the first 50 campaigns (most recent/active)
-    const paths =
-      campaigns.data?.map((campaign: any) => ({
-        params: { campaignId: campaign.on_chain_id.toString() },
-      })) || [];
-
-    return {
-      paths,
-      fallback: "blocking", // Generate new pages on-demand if not pre-built
-    };
-  } catch (error) {
-    console.error("Error generating static paths:", error);
-    // Return empty paths but still allow blocking fallback for on-demand generation
-    return {
-      paths: [],
-      fallback: "blocking",
-    };
-  }
+  // Return empty paths - all campaign pages will be generated on-demand
+  // This avoids slow API calls during build and prevents timeouts
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
 };
 
-// Pre-build each campaign page with its data
+// Fetch campaign SEO data with short timeout to prevent Vercel function timeouts
 export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
+  const campaignId = params?.campaignId as string;
+
+  if (!campaignId) {
+    return { notFound: true };
+  }
+
+  // Default fallback props
+  const fallbackProps: SeoProps = {
+    seoTitle: `Campaign ${campaignId} | Potlock`,
+    seoDescription: APP_METADATA.description,
+    seoImage: APP_METADATA.openGraph.images.url,
+  };
+
   try {
-    const campaignId = params?.campaignId as string;
-
-    if (!campaignId) {
-      return {
-        notFound: true,
-      };
-    }
-
-    // Fetch with timeout to prevent server timeouts
+    // Short timeout (3s) to prevent Vercel serverless function timeouts
+    // If API is slow, we fall back to generic SEO and let client fetch the data
     const res = await fetchWithTimeout(
       `https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`,
       {},
-      8000, // 8 second timeout
+      8000,
     );
 
     if (!res.ok) {
-      // If campaign not found, return 404 instead of erroring
-      if (res.status === 404) {
-        return {
-          notFound: true,
-        };
-      }
-
-      throw new Error(`Failed to fetch campaign: ${res.status}`);
+      // Return fallback for any non-OK response
+      return {
+        props: fallbackProps,
+        revalidate: 60, // Retry sooner on error
+      };
     }
 
-    let campaign;
+    const campaign = await res.json();
 
-    try {
-      campaign = await res.json();
-    } catch (jsonError) {
-      console.error("Error parsing campaign JSON:", jsonError);
-      throw new Error("Invalid campaign data format");
-    }
-
-    const seoTitle = campaign?.name ?? `Campaign ${campaignId}`;
-
-    const seoDescription = stripHtml(campaign?.description) ?? "Support this campaign on Potlock.";
-
-    // Use cover_image_url field which is the correct field for campaign images
-    const seoImage = campaign?.cover_image_url ?? APP_METADATA.openGraph.images.url;
-
-    return {
-      props: { seoTitle, seoDescription, seoImage },
-      // Revalidate every 5 minutes (300 seconds) to keep data fresh
-      revalidate: 300,
-    };
-  } catch (error) {
-    console.error("Error generating static props:", error);
-
-    // Return fallback props instead of throwing error to prevent 500
-    // This allows the page to render with default SEO data
     return {
       props: {
-        seoTitle: `Campaign ${params?.campaignId || ""}`,
-        seoDescription: APP_METADATA.description,
-        seoImage: APP_METADATA.openGraph.images.url,
+        seoTitle: campaign?.name ? `${campaign.name} | Potlock` : fallbackProps.seoTitle,
+        seoDescription: stripHtml(campaign?.description) || fallbackProps.seoDescription,
+        seoImage: campaign?.cover_image_url || fallbackProps.seoImage,
       },
-      // Shorter revalidate for error cases to retry sooner
-      revalidate: 60,
+      revalidate: 300, // Revalidate every 5 minutes
+    };
+  } catch {
+    // Timeout or network error - return fallback props
+    return {
+      props: fallbackProps,
+      revalidate: 60, // Retry sooner on error
     };
   }
 };

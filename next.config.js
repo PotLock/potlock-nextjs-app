@@ -9,6 +9,17 @@ const nextConfig = {
         destination: "/404",
         permanent: false,
       },
+      // Redirect old campaign subroutes to new tab-based routes
+      {
+        source: "/campaign/:campaignId/leaderboard",
+        destination: "/campaign/:campaignId?tab=leaderboard",
+        permanent: true,
+      },
+      {
+        source: "/campaign/:campaignId/settings",
+        destination: "/campaign/:campaignId?tab=settings",
+        permanent: true,
+      },
     ];
   },
 
