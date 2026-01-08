@@ -4,8 +4,6 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
 import { APP_METADATA } from "@/common/constants";
-import { stripHtml } from "@/common/lib/datetime";
-import { fetchWithTimeout } from "@/common/lib/fetch-with-timeout";
 import { CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
@@ -54,7 +52,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-// Fetch campaign SEO data with short timeout to prevent Vercel function timeouts
 export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
   const campaignId = params?.campaignId as string;
 
@@ -62,45 +59,13 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
     return { notFound: true };
   }
 
-  // Default fallback props
-  const fallbackProps: SeoProps = {
-    seoTitle: `Campaign ${campaignId} | Potlock`,
-    seoDescription: APP_METADATA.description,
-    seoImage: APP_METADATA.openGraph.images.url,
+  // No server-side fetch to avoid serverless timeouts; client components load data
+  return {
+    props: {
+      seoTitle: `Campaign ${campaignId} | Potlock`,
+      seoDescription: APP_METADATA.description,
+      seoImage: APP_METADATA.openGraph.images.url,
+    },
+    revalidate: 3600,
   };
-
-  try {
-    // Short timeout (3s) to prevent Vercel serverless function timeouts
-    // If API is slow, we fall back to generic SEO and let client fetch the data
-    const res = await fetchWithTimeout(
-      `https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`,
-      {},
-      8000,
-    );
-
-    if (!res.ok) {
-      // Return fallback for any non-OK response
-      return {
-        props: fallbackProps,
-        revalidate: 60, // Retry sooner on error
-      };
-    }
-
-    const campaign = await res.json();
-
-    return {
-      props: {
-        seoTitle: campaign?.name ? `${campaign.name} | Potlock` : fallbackProps.seoTitle,
-        seoDescription: stripHtml(campaign?.description) || fallbackProps.seoDescription,
-        seoImage: campaign?.cover_image_url || fallbackProps.seoImage,
-      },
-      revalidate: 300, // Revalidate every 5 minutes
-    };
-  } catch {
-    // Timeout or network error - return fallback props
-    return {
-      props: fallbackProps,
-      revalidate: 60, // Retry sooner on error
-    };
-  }
 };
