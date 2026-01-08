@@ -42,15 +42,15 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
 };
 
-// // Only pre-generate paths at build time - no API calls needed for ISR
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   // Return empty paths - all campaign pages will be generated on-demand
-//   // This avoids slow API calls during build and prevents timeouts
-//   return {
-//     paths: [],
-//     fallback: "blocking",
-//   };
-// };
+// Only pre-generate paths at build time - no API calls needed for ISR
+export const getStaticPaths: GetStaticPaths = async () => {
+  // Return empty paths - all campaign pages will be generated on-demand
+  // This avoids slow API calls during build and prevents timeouts
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+};
 
 export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
   const campaignId = params?.campaignId as string;
