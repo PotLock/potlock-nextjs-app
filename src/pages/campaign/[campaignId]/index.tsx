@@ -39,7 +39,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const res = await fetchWithTimeout(
       "https://dev.potlock.io/api/v1/campaigns?limit=50",
       {},
-      10000, // 10 second timeout
+      8000, // 8 second timeout
     );
 
     if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
@@ -80,12 +80,17 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
     const res = await fetchWithTimeout(
       `https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`,
       {},
-      10000, // 10 second timeout
+      8000, // 8 second timeout
     );
 
-    // If API fails for any reason (including 404), throw error to trigger fallback props
-    // This ensures page always renders, even if SEO data is unavailable
     if (!res.ok) {
+      // If campaign not found, return 404 instead of erroring
+      if (res.status === 404) {
+        return {
+          notFound: true,
+        };
+      }
+
       throw new Error(`Failed to fetch campaign: ${res.status}`);
     }
 

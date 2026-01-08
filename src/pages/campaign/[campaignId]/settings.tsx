@@ -4,7 +4,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
 import { APP_METADATA } from "@/common/constants";
-import { stripHtml } from "@/common/lib/datetime";
+import { stripHtml } from "@/common/lib";
 import { fetchWithTimeout } from "@/common/lib/fetch-with-timeout";
 import { CampaignSettings } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
@@ -83,6 +83,13 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
     );
 
     if (!res.ok) {
+      // If campaign not found, return 404 instead of erroring
+      if (res.status === 404) {
+        return {
+          notFound: true,
+        };
+      }
+
       throw new Error(`Failed to fetch campaign: ${res.status}`);
     }
 
