@@ -194,7 +194,7 @@ export const CrossChainProcessing: React.FC<CrossChainProcessingProps> = ({
           }
 
           const donateResponse = await fetch(
-            "https://us-central1-almond-1b205.cloudfunctions.net/potluck/donate",
+            "https://potluck-api-1079859006740.europe-west1.run.app/donate",
             {
               method: "POST",
               headers: {
