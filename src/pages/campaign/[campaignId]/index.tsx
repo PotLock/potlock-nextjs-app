@@ -1,6 +1,5 @@
 import { ReactElement, useMemo } from "react";
 
-import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
 import { APP_METADATA } from "@/common/constants";
@@ -14,25 +13,34 @@ type SeoProps = {
   seoImage?: string;
 };
 
-export default function CampaignPage(props: SeoProps) {
+export default function CampaignPage() {
   const router = useRouter();
   const { campaignId, tab } = router.query as { campaignId: string; tab?: string };
 
-  const parsedCampaignId = parseInt(campaignId);
+  const parsedCampaignId = Number.isNaN(parseInt(campaignId)) ? undefined : parseInt(campaignId);
+
+  const seo: SeoProps = useMemo(
+    () => ({
+      seoTitle: campaignId ? `Campaign ${campaignId} | Potlock` : `Campaign | Potlock`,
+      seoDescription: APP_METADATA.description,
+      seoImage: APP_METADATA.openGraph.images.url,
+    }),
+    [campaignId],
+  );
 
   // Determine which content to show based on tab param
   const content = useMemo(() => {
     switch (tab) {
       case "settings":
-        return <CampaignSettings campaignId={parsedCampaignId} />;
+        return <CampaignSettings campaignId={parsedCampaignId ?? 0} />;
       case "leaderboard":
       default:
-        return <CampaignDonorsTable campaignId={parsedCampaignId} />;
+        return <CampaignDonorsTable campaignId={parsedCampaignId ?? 0} />;
     }
   }, [tab, parsedCampaignId]);
 
   return (
-    <RootLayout title={props.seoTitle} description={props.seoDescription} image={props.seoImage}>
+    <RootLayout title={seo.seoTitle} description={seo.seoDescription} image={seo.seoImage}>
       {content}
     </RootLayout>
   );
@@ -40,32 +48,4 @@ export default function CampaignPage(props: SeoProps) {
 
 CampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
-};
-
-// Only pre-generate paths at build time - no API calls needed for ISR
-export const getStaticPaths: GetStaticPaths = async () => {
-  // Return empty paths - all campaign pages will be generated on-demand
-  // This avoids slow API calls during build and prevents timeouts
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-};
-
-export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
-  const campaignId = params?.campaignId as string;
-
-  if (!campaignId) {
-    return { notFound: true };
-  }
-
-  // No server-side fetch to avoid serverless timeouts; client components load data
-  return {
-    props: {
-      seoTitle: `Campaign ${campaignId} | Potlock`,
-      seoDescription: APP_METADATA.description,
-      seoImage: APP_METADATA.openGraph.images.url,
-    },
-    revalidate: 3600,
-  };
 };
