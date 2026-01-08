@@ -83,6 +83,13 @@ export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
     );
 
     if (!res.ok) {
+      // If campaign not found, return 404 instead of erroring
+      if (res.status === 404) {
+        return {
+          notFound: true,
+        };
+      }
+
       throw new Error(`Failed to fetch campaign: ${res.status}`);
     }
 

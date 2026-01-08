@@ -66,7 +66,6 @@ export * from "./molecules/sort-select";
 export * from "./molecules/spinner-overlay";
 export * from "./molecules/toggle-group";
 export * from "./molecules/virtual-scroll";
-export * from "./PageTransitionLoader";
 
 /**
  * Organisms
