@@ -32,6 +32,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
   const {
     data: campaign,
     isLoading: isCampaignLoading,
+    isValidating: isCampaignValidating,
     error: campaignLoadingError,
   } = indexer.useCampaign({ campaignId });
 
@@ -78,7 +79,18 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     [raisedAmountFloat, token?.usdPrice],
   );
 
-  if (campaignLoadingError) {
+  // Show loading state while retrying (handles race condition when campaign is just created but not yet indexed)
+  if (campaignLoadingError && isCampaignValidating) {
+    return (
+      <div className="flex h-40 flex-col items-center justify-center gap-2">
+        <Spinner className="h-7 w-7" />
+        <p className="text-sm text-gray-500">Loading campaign...</p>
+      </div>
+    );
+  }
+
+  // Only show error after retries are exhausted
+  if (campaignLoadingError && !isCampaignValidating) {
     return <h1>Error Loading Campaign</h1>;
   }
 

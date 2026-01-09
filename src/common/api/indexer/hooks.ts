@@ -368,7 +368,13 @@ export const useCampaigns = ({
 export const useCampaign = ({ campaignId }: { campaignId: number }) => {
   const queryResult = generatedClient.useV1CampaignsRetrieve2(campaignId, {
     ...currentNetworkConfig,
-    swr: { enabled: true },
+    swr: {
+      enabled: true,
+      refreshInterval: 3000,
+      // Retry on error (handles race condition when campaign is just created but not yet indexed)
+      errorRetryCount: 10,
+      errorRetryInterval: 2000,
+    },
   });
 
   return { ...queryResult, data: queryResult.data?.data };
