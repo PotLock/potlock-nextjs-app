@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { isDeepEqual } from "remeda";
 
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
@@ -91,8 +92,15 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
     ],
   );
 
+  // Track previous cross-field errors to prevent infinite loops
+  const prevCrossFieldErrorsRef = useRef<Record<string, { message: string } | undefined>>({});
+
   useEffect(() => {
-    const errors: Record<string, { message: string }> = {};
+    const errors: Record<string, { message: string } | undefined> = {
+      min_amount: undefined,
+      max_amount: undefined,
+      target_amount: undefined,
+    };
 
     // Validate min_amount vs max_amount
     if (parsedMinAmount && parsedMaxAmount && parsedMinAmount > parsedMaxAmount) {
@@ -127,8 +135,15 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
       };
     }
 
+    // Only update if errors have changed to prevent infinite loops
+    if (isDeepEqual(prevCrossFieldErrorsRef.current, errors)) {
+      return;
+    }
+
+    prevCrossFieldErrorsRef.current = errors;
+
     // Clear errors only for fields that are now valid
-    ["min_amount", "max_amount", "target_amount"].forEach((field) => {
+    (["min_amount", "max_amount", "target_amount"] as const).forEach((field) => {
       if (!errors[field]) {
         self.clearErrors(field as keyof Values);
       }
@@ -136,9 +151,11 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
 
     // Set all collected errors
     Object.entries(errors).forEach(([field, error]) => {
-      self.setError(field as keyof Values, error);
+      if (error) {
+        self.setError(field as keyof Values, error);
+      }
     });
-  }, [values, self, parsedMinAmount, parsedMaxAmount, parsedTargetAmount]);
+  }, [parsedMinAmount, parsedMaxAmount, parsedTargetAmount, self]);
 
   const timeToMilliseconds = (time: number) => {
     return new Date(time).getTime();

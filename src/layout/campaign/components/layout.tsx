@@ -38,7 +38,6 @@ const Tabs = ({ options, selectedTab, campaignId }: TabsProps) => {
               <Link
                 key={option.id}
                 href={`/campaign/${campaignId}?tab=${option.id}`}
-                shallow
                 prefetch
                 className={cn(
                   "font-500 border-b-solid transition-duration-300 whitespace-nowrap",
