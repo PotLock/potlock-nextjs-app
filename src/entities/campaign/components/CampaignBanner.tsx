@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 
 import { BadgeCheck, CircleAlert } from "lucide-react";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import { isNonNullish, isNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
@@ -14,6 +13,7 @@ import { toTimestamp } from "@/common/lib/datetime";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
 import { Button, SocialsShare, Spinner } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
@@ -100,7 +100,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
     <div className="flex w-full flex-col justify-between gap-4 md:flex-row md:gap-0">
       <div className="w-full rounded-xl  border border-gray-300 md:w-[70%]">
         <div className="relative">
-          <LazyLoadImage
+          <LazyImage
             className="inset-1 h-[348px] w-full rounded-xl object-cover md:rounded"
             src={campaign?.cover_image_url || "/assets/images/list-gradient-3.png"}
           />

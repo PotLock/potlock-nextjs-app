@@ -106,10 +106,7 @@ export const potConfigToPotConfigInputs = ({
       referral_fee_public_round_basis_points: feeBasisPointsToPercents,
       chef_fee_basis_points: feeBasisPointsToPercents,
 
-      min_matching_pool_donation_amount: conditional(
-        [isNonNullish, yoctoNearToFloat],
-        conditional.defaultCase(() => 0.01),
-      ),
+      min_matching_pool_donation_amount: conditional([isNonNullish, yoctoNearToFloat], () => 0.01),
     }),
 
     owner: owner ?? undefined,
@@ -151,7 +148,7 @@ export const potInputsToPotArgs = ({
 
       min_matching_pool_donation_amount: conditional(
         [isNonNullish, piped(safePositiveNumber.parse, floatToYoctoNear)],
-        conditional.defaultCase(() => undefined),
+        () => undefined,
       ),
     },
   );

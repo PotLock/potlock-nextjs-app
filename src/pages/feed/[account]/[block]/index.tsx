@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social-indexer";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 export default function FeedAccountBlockPostPage() {
@@ -96,7 +96,7 @@ export default function FeedAccountBlockPostPage() {
         {post.content}
       </ReactMarkdown>
       {post.imageIPFSHash && (
-        <LazyLoadImage
+        <LazyImage
           src={`${IPFS_NEAR_SOCIAL_URL}${post.imageIPFSHash}`}
           alt=""
           className="mt-2"

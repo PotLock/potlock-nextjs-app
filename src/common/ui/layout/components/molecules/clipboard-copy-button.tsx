@@ -4,6 +4,9 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import { CopyPasteIcon } from "@/common/ui/layout/svg";
 
+// Type assertion to fix React 18 compatibility issue
+const CopyToClipboardComponent = CopyToClipboard as any;
+
 export type ClipboardCopyButtonProps = {
   customIcon?: ReactElement;
   text: string;
@@ -25,10 +28,10 @@ export const ClipboardCopyButton: React.FC<ClipboardCopyButtonProps> = ({ custom
       />
     </svg>
   ) : (
-    <CopyToClipboard {...{ text, onCopy }}>
+    <CopyToClipboardComponent {...{ text, onCopy }}>
       <div className="h-4.5 w-4.5" title="Copy to clipboard">
         {customIcon ? customIcon : <CopyPasteIcon />}
       </div>
-    </CopyToClipboard>
+    </CopyToClipboardComponent>
   );
 };

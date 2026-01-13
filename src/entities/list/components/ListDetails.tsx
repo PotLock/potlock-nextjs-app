@@ -5,7 +5,6 @@ import { Copy } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import { prop } from "remeda";
 
 import { PLATFORM_NAME } from "@/common/_config";
@@ -20,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { SocialsShare } from "@/common/ui/layout/components/molecules/social-share";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/ui/layout/svg";
 import { useWalletUserSession } from "@/common/wallet";
@@ -279,7 +279,7 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
 
         <div className="mb-4 w-full md:mb-0 md:max-w-[54%]">
           <div className="flex flex-col p-[1rem] md:hidden">{nameContent}</div>
-          <LazyLoadImage
+          <LazyImage
             alt="alt-text"
             src={
               listDetails.cover_image_url
@@ -291,7 +291,7 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
             height={300}
           />
           <div className="m-0 w-full  p-0 md:rounded-[12px]" un-w="full" un-flex="~ col">
-            <LazyLoadImage
+            <LazyImage
               src={listDetails.cover_image_url || "/assets/images/list-gradient-3.png"}
               alt="cover"
               width={500}

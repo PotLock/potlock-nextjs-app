@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Trigger } from "@radix-ui/react-select";
 import Link from "next/link";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { ListRegistration } from "@/common/api/indexer";
 import { walletApi } from "@/common/blockchains/near-protocol/client";
@@ -24,6 +23,7 @@ import {
   SelectItem,
   Textarea,
 } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import DownArrow from "@/common/ui/layout/svg/DownArrow";
 import { ListNoteIcon } from "@/common/ui/layout/svg/list-note";
 import SuccessRedIcon from "@/common/ui/layout/svg/success-red-icon";
@@ -83,12 +83,7 @@ export const ListAccountCard = ({
           background: status.background,
         }}
       >
-        <LazyLoadImage
-          alt="List registration status icon"
-          src={status.icon}
-          width={18}
-          height={18}
-        />
+        <LazyImage alt="List registration status icon" src={status.icon} width={18} height={18} />
 
         <span className="text-[14px]">{registrationStatus}</span>
       </div>
