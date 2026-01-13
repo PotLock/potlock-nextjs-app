@@ -16,8 +16,19 @@ const campaignEditorStateDefaults: CampaignEditorState = {
   modalTextState: { header: "", description: "" },
 };
 
-const handleCampaign = (state: CampaignEditorState, stateUpdate?: Partial<CampaignEditorState>) =>
-  mergeAll([state, stateUpdate ?? {}]);
+const handleCampaign = (
+  state: CampaignEditorState,
+  stateUpdate?: Partial<CampaignEditorState>,
+): CampaignEditorState =>
+  mergeAll([
+    state,
+    {
+      ...stateUpdate,
+      type: stateUpdate?.type ?? state.type,
+      finalOutcome: stateUpdate?.finalOutcome ?? state.finalOutcome,
+      modalTextState: stateUpdate?.modalTextState ?? state.modalTextState,
+    },
+  ]) as CampaignEditorState;
 
 export const useCampaignActionState = () => useGlobalStoreSelector(prop(campaignModelKey));
 

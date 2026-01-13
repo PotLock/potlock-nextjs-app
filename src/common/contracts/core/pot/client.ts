@@ -20,7 +20,7 @@ import {
 } from "./interfaces";
 
 export const contractApi = (potId: string) =>
-  nearProtocolClient.naxiosInstance.contractApi({
+  nearProtocolClient.contractApi({
     contractId: potId,
   });
 

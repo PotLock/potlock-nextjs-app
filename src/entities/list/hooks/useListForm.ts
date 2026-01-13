@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { prop } from "remeda";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { listsContractClient } from "@/common/contracts/core/lists";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
@@ -92,10 +92,9 @@ export const useListForm = () => {
       );
     });
 
-    naxiosInstance
-      .contractApi({
-        contractId: LISTS_CONTRACT_ACCOUNT_ID,
-      })
+    contractApi({
+      contractId: LISTS_CONTRACT_ACCOUNT_ID,
+    })
       .callMultiple(allTransactions)
       .then((_res) => {
         dispatch.listEditor.updateListModalState({

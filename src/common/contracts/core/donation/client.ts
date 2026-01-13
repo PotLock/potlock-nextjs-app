@@ -1,7 +1,5 @@
-import { MemoryCache } from "@wpdas/naxios";
-
 import { DONATION_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS } from "@/common/constants";
 import type { IndivisibleUnits } from "@/common/types";
 
@@ -12,9 +10,8 @@ import {
   DirectDonationConfig,
 } from "./interfaces";
 
-const contractApi = naxiosInstance.contractApi({
+const donationContractApi = contractApi({
   contractId: DONATION_CONTRACT_ACCOUNT_ID,
-  cache: new MemoryCache({ expirationTime: 10 }), // 10 seg
 });
 
 // READ METHODS
@@ -22,30 +19,30 @@ const contractApi = naxiosInstance.contractApi({
 /**
  * Get donate contract config
  */
-export const get_config = () => contractApi.view<{}, DirectDonationConfig>("get_config");
+export const get_config = () => donationContractApi.view<{}, DirectDonationConfig>("get_config");
 
 /**
  * Get direct donations
  */
 export const get_donations = (args: { fromIndex?: number; limit?: number }) =>
-  contractApi.view<typeof args, DirectDonation[]>("get_donations", { args });
+  donationContractApi.view<typeof args, DirectDonation[]>("get_donations", { args });
 
 /**
  * Get donations for a recipient id
  */
 export const get_donations_for_recipient = (args: { recipient_id: string }) =>
-  contractApi.view<typeof args, DirectDonation[]>("get_donations_for_recipient", { args });
+  donationContractApi.view<typeof args, DirectDonation[]>("get_donations_for_recipient", { args });
 
 /**
  * Get donations for donor id
  */
 export const get_donations_for_donor = (args: { donor_id: string }) =>
-  contractApi.view<typeof args, DirectDonation[]>("get_donations_for_donor", {
+  donationContractApi.view<typeof args, DirectDonation[]>("get_donations_for_donor", {
     args,
   });
 
 export const donate = (args: DirectDonationArgs, depositAmountYocto: IndivisibleUnits) =>
-  contractApi.call<typeof args, DirectDonation>("donate", {
+  donationContractApi.call<typeof args, DirectDonation>("donate", {
     args,
     deposit: depositAmountYocto,
     gas: FULL_TGAS,
@@ -53,7 +50,7 @@ export const donate = (args: DirectDonationArgs, depositAmountYocto: Indivisible
   });
 
 export const donateBatch = (txInputs: DirectBatchDonationItem[]) =>
-  contractApi.callMultiple<DirectDonationArgs>(
+  donationContractApi.callMultiple<DirectDonationArgs>(
     txInputs.map(({ amountYoctoNear, ...txInput }) => ({
       method: "donate",
       deposit: amountYoctoNear,
@@ -64,7 +61,7 @@ export const donateBatch = (txInputs: DirectBatchDonationItem[]) =>
   );
 
 export const storage_deposit = (depositAmountYocto: IndivisibleUnits) =>
-  contractApi.call<{}, IndivisibleUnits>("storage_deposit", {
+  donationContractApi.call<{}, IndivisibleUnits>("storage_deposit", {
     deposit: depositAmountYocto,
     args: {},
     gas: "100000000000000",

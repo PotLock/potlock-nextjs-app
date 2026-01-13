@@ -40,7 +40,7 @@ export const campaignFtDonationMulticall = async ({
   const { protocol_fee_recipient_account: protocolFeeRecipientAccountId } =
     await campaignsContractClient.get_config();
 
-  const tokenClient = nearProtocolClient.naxiosInstance.contractApi({ contractId: tokenId });
+  const tokenClient = nearProtocolClient.contractApi({ contractId: tokenId });
 
   const donationContractStorageDeposit = Big(DONATION_BASE_STORAGE_DEPOSIT_FLOAT).plus(
     /* Additional 0.0001 NEAR per message character */
