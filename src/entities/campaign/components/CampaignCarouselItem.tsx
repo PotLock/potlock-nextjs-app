@@ -16,7 +16,7 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
     <CarouselItem key={data.on_chain_id}>
       <Link
         className="flex w-full flex-col items-start justify-between gap-4 md:flex-row"
-        href={`/campaign/${data.on_chain_id}/leaderboard`}
+        href={`/campaign/${data.on_chain_id}`}
         passHref
         prefetch
       >

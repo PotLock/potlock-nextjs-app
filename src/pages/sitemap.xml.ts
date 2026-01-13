@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     const listsArray = (listsResp as any)?.data || (listsResp as any)?.results || [];
 
     const campaignUrls = (Array.isArray(campaignsArray) ? campaignsArray : []).map((c: any) => ({
-      loc: `${siteUrl}/campaign/${c.on_chain_id}/leaderboard`,
+      loc: `${siteUrl}/campaign/${c.on_chain_id}`,
       lastmod: ((c.updated_at as string) || (c.end_at as string) || nowIso).slice(0, 10),
       changefreq: "daily",
       priority: "0.8",
