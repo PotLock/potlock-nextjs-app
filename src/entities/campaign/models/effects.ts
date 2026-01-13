@@ -6,6 +6,9 @@ import { type AppDispatcher } from "@/store";
 import { CampaignEnumType } from "../types";
 
 export const effects = (dispatch: AppDispatcher) => ({
+  resetState: () => {
+    dispatch.campaignEditor.reset();
+  },
   async handleCampaignContractActions(transactionHash: string): Promise<void> {
     const { accountId: owner_account_id } = nearProtocolClient.walletApi;
 

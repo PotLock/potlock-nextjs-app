@@ -1,12 +1,14 @@
-import { Transaction, buildTransaction, calculateDepositByDataSize } from "@wpdas/naxios";
-import Big from "big.js";
+import bigJs from "big.js";
 
 import {
   CAMPAIGNS_CONTRACT_ACCOUNT_ID,
   LISTS_CONTRACT_ACCOUNT_ID,
   SOCIAL_DB_CONTRACT_ACCOUNT_ID,
 } from "@/common/_config";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import {
+  Transaction,
+  contractApi as createContractApi,
+} from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { floatToYoctoNear, parseNearAmount } from "@/common/lib";
 import { AccountId, CampaignId, type IndivisibleUnits } from "@/common/types";
@@ -22,7 +24,7 @@ import {
 } from "./interfaces";
 import { NEARSocialUserProfile } from "../../social-db";
 
-const contractApi = naxiosInstance.contractApi({
+const contractApi = createContractApi({
   contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
 });
 
@@ -42,38 +44,37 @@ export const create_campaign = ({ args }: CreateCampaignParams) => {
       profileImage: ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
     });
 
-    const depositFloat = Big(calculateDepositByDataSize(socialArgs)).add(0.1).toString();
+    const depositFloat = bigJs(JSON.stringify(socialArgs).length * 0.00003)
+      .add(0.1)
+      .toString();
 
-    const socialTransaction = buildTransaction("set", {
-      receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
-      args: {
-        data: {
-          [args.owner as AccountId]: {
-            profile: socialArgs,
+    const transactions: Transaction<Record<string, unknown>>[] = [
+      {
+        receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
+        method: "set",
+        args: {
+          data: {
+            [args.owner as AccountId]: {
+              profile: socialArgs,
+            },
           },
         },
+        deposit: parseNearAmount(depositFloat)!,
       },
-      deposit: parseNearAmount(depositFloat)!,
-    });
-
-    const transactions: Transaction<object>[] = [socialTransaction];
-
-    transactions.push(
-      buildTransaction("register_batch", {
+      {
         receiverId: LISTS_CONTRACT_ACCOUNT_ID,
+        method: "register_batch",
         args: { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },
         deposit: parseNearAmount("0.05")!,
         gas: FULL_TGAS,
-      }),
-    );
-
-    transactions.push(
-      buildTransaction("create_campaign", {
+      },
+      {
+        method: "create_campaign",
         args: rest,
         deposit: floatToYoctoNear(0.021),
         gas: FULL_TGAS,
-      }),
-    );
+      },
+    ];
 
     return contractApi.callMultiple(transactions);
   } else {

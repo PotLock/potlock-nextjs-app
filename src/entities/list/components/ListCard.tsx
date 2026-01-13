@@ -3,10 +3,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FaHeart } from "react-icons/fa";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { LayersIcon } from "@/common/ui/layout/svg";
 import { LikeIcon } from "@/common/ui/layout/svg/like";
 import { useWalletUserSession } from "@/common/wallet";
@@ -83,7 +83,7 @@ export const ListCard = ({
         data-testid="list-card"
       >
         <div className="relative">
-          <LazyLoadImage
+          <LazyImage
             alt="listImage"
             className="h-[221px] w-full object-cover"
             src={dataForList?.cover_image_url ?? background}

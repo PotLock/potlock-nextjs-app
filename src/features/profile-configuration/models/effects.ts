@@ -99,7 +99,7 @@ export const save = async ({
   if (directTransactions.length === 0) {
     return { success: false, error: "No transactions to submit." };
   } else if (!isDao) {
-    return nearProtocolClient.naxiosInstance
+    return nearProtocolClient
       .contractApi()
       .callMultiple(directTransactions, callbackUrl)
       .then(() => ({ success: true, error: null }))
@@ -112,7 +112,7 @@ export const save = async ({
     return sputnikDaoClient
       .get_policy({ accountId })
       .then(({ proposal_bond }) =>
-        nearProtocolClient.naxiosInstance
+        nearProtocolClient
           .contractApi()
           .callMultiple(
             directTransactions.map((tx) => {

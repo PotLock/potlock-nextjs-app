@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { Campaign, V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncateHtml } from "@/common/lib";
 import { toTimestamp } from "@/common/lib/datetime";
 import getTimePassed from "@/common/lib/getTimePassed";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
@@ -28,7 +28,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
     >
       <Link href={`/campaign/${data.on_chain_id}`} passHref prefetch>
         <div className="relative h-[212px] w-full">
-          <LazyLoadImage
+          <LazyImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
             alt="Campaign cover"
             className="h-52 w-full rounded-t-lg object-cover hover:scale-150"

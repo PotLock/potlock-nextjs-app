@@ -1,7 +1,5 @@
-import { MemoryCache } from "@wpdas/naxios";
-
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { contractApi as createContractApi } from "@/common/blockchains/near-protocol/client";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
@@ -15,9 +13,8 @@ import {
   UpdateRegistration,
 } from "./interfaces";
 
-const contractApi = naxiosInstance.contractApi({
+const contractApi = createContractApi({
   contractId: LISTS_CONTRACT_ACCOUNT_ID,
-  cache: new MemoryCache({ expirationTime: 10 }),
 });
 
 export const get_lists = () => contractApi.view<{}, List[]>("get_lists");

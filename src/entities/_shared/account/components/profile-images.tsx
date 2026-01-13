@@ -1,7 +1,8 @@
-import { LazyLoadImage, LazyLoadImageProps } from "react-lazy-load-image-component";
+import type { LazyLoadImageProps } from "react-lazy-load-image-component";
 
 import { ByAccountId, type LiveUpdateParams } from "@/common/types";
 import { Avatar, AvatarImage, Skeleton } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { cn } from "@/common/ui/layout/utils";
 
 import { ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC } from "../constants";
@@ -57,7 +58,7 @@ export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
     <Skeleton className={cn("w-full", className)} style={{ height, maxHeight: height }} />
   ) : (
     <div className={cn("w-full overflow-hidden", className)} style={{ height, maxHeight: height }}>
-      <LazyLoadImage
+      <LazyImage
         alt="Profile cover"
         placeholderSrc={ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
         visibleByDefault={cover.url === ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}

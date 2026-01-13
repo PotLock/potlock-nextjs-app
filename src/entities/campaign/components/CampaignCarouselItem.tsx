@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { Campaign, V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { toTimestamp } from "@/common/lib/datetime";
 import { CarouselItem } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { DonateToCampaign } from "@/features/donation";
@@ -21,7 +21,7 @@ export const CampaignCarouselItem = ({ data }: { data: Campaign }) => {
         prefetch
       >
         <div className="h-293px relative md:h-[285px] md:w-[68%] md:rounded-xl">
-          <LazyLoadImage
+          <LazyImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
             alt="Campaign cover"
             className="inset-1 h-full w-full object-cover md:rounded-xl"

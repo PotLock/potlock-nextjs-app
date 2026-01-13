@@ -37,7 +37,8 @@ export const ListHero = ({
             LISTS
           </h1>
           <p className="m-0 p-0 text-[16px]">
-            Lists allows anyone to create fundraising initiatives for groundbreaking public goods.{" "}
+            Lists allows anyone to create fundraising initiatives for groundbreaking public
+            goods.{" "}
           </p>
         </div>
         {walletApi?.accountId && (
