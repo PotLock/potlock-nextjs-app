@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    esmExternals: "loose",
+  },
   transpilePackages: [
     "@near-wallet-selector/core",
     "@near-wallet-selector/bitget-wallet",
@@ -22,6 +25,7 @@ const nextConfig = {
     "@near-wallet-selector/welldone-wallet",
     "@near-wallet-selector/xdefi",
     "@meteorwallet/sdk",
+    "nanoid",
   ],
 
   async redirects() {
