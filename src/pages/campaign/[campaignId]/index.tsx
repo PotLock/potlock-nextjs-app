@@ -5,13 +5,12 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
 import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
+import { v1CampaignsRetrieve2 } from "@/common/api/indexer/internal/client.generated";
+import type { Campaign } from "@/common/api/indexer/internal/client.generated";
 import { APP_METADATA } from "@/common/constants";
 import { CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
-
-import { v1CampaignsRetrieve2 } from "@/common/api/indexer/internal/client.generated";
-import type { Campaign } from "@/common/api/indexer/internal/client.generated";
 
 type SeoProps = {
   seoTitle: string;
