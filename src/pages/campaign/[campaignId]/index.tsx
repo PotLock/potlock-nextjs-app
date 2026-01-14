@@ -4,16 +4,14 @@ import type { AxiosError } from "axios";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
-import { v1CampaignsRetrieve2 } from "@/common/api/indexer/internal/client.generated";
-import type { Campaign } from "@/common/api/indexer/internal/client.generated";
-import {
-  INDEXER_CLIENT_CONFIG,
-  INDEXER_CLIENT_CONFIG_STAGING,
-} from "@/common/api/indexer/internal/config";
+import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
 import { APP_METADATA } from "@/common/constants";
 import { CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
+
+import { v1CampaignsRetrieve2 } from "@/common/api/indexer/internal/client.generated";
+import type { Campaign } from "@/common/api/indexer/internal/client.generated";
 
 type SeoProps = {
   seoTitle: string;
@@ -80,12 +78,8 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
   };
 
   try {
-    const apiConfig =
-      process.env.NEXT_PUBLIC_ENV === "test"
-        ? INDEXER_CLIENT_CONFIG
-        : INDEXER_CLIENT_CONFIG_STAGING;
-
-    const baseURL = apiConfig.axios.baseURL;
+    const baseURL = INDEXER_API_ENDPOINT_URL;
+    console.log(`Fetching campaign ${parsedCampaignId} for SEO from ${baseURL}`);
 
     const response = await v1CampaignsRetrieve2(parsedCampaignId, {
       baseURL,
@@ -95,6 +89,7 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
     const campaign = response.data;
 
     if (!campaign) {
+      console.error(`Campaign ${parsedCampaignId} not found in indexer`);
       return {
         props: {
           seo: defaultSeo,
@@ -125,6 +120,7 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
 
     // Handle 404 specifically
     if (axiosError.response?.status === 404) {
+      console.error(`Campaign ${campaignId} returned 404 from indexer`);
       return {
         notFound: true,
       };
@@ -132,7 +128,11 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
 
     // Handle timeout or other errors by returning fallback SEO
     // This ensures the page doesn't break
-    console.error(`Error fetching campaign ${campaignId} for SEO:`, axiosError.message);
+    console.error(`Error fetching campaign ${campaignId} for SEO:`, {
+      message: axiosError.message,
+      code: axiosError.code,
+      status: axiosError.response?.status,
+    });
 
     return {
       props: {
