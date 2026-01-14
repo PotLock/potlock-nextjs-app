@@ -1,13 +1,8 @@
 import { ReactElement, useMemo } from "react";
 
+import type { AxiosError } from "axios";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
-import type { AxiosError } from "axios";
-
-import { APP_METADATA } from "@/common/constants";
-import { CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
-import { CampaignLayout } from "@/layout/campaign/components/layout";
-import { RootLayout } from "@/layout/components/root-layout";
 
 import { v1CampaignsRetrieve2 } from "@/common/api/indexer/internal/client.generated";
 import type { Campaign } from "@/common/api/indexer/internal/client.generated";
@@ -15,6 +10,10 @@ import {
   INDEXER_CLIENT_CONFIG,
   INDEXER_CLIENT_CONFIG_STAGING,
 } from "@/common/api/indexer/internal/config";
+import { APP_METADATA } from "@/common/constants";
+import { CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
+import { CampaignLayout } from "@/layout/campaign/components/layout";
+import { RootLayout } from "@/layout/components/root-layout";
 
 type SeoProps = {
   seoTitle: string;
@@ -66,6 +65,7 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
   const { campaignId } = context.params as { campaignId: string };
 
   const parsedCampaignId = parseInt(campaignId);
+
   if (Number.isNaN(parsedCampaignId) || parsedCampaignId <= 0) {
     return {
       notFound: true,
@@ -84,6 +84,7 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
       process.env.NEXT_PUBLIC_ENV === "test"
         ? INDEXER_CLIENT_CONFIG
         : INDEXER_CLIENT_CONFIG_STAGING;
+
     const baseURL = apiConfig.axios.baseURL;
 
     const response = await v1CampaignsRetrieve2(parsedCampaignId, {
@@ -142,4 +143,3 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
     };
   }
 };
-
