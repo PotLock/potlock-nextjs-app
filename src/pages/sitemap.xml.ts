@@ -1,9 +1,8 @@
 import type { GetServerSideProps } from "next";
 
 //! TODO: This should be updated when we move to main
-const DEFAULT_SITE_URL = "https://staging.alpha.potlock.org";
+const DEFAULT_SITE_URL = "https://app.potlock.org";
 const STAGING_BASE_URL = process.env.NEXT_PUBLIC_INDEXER_API_URL || "https://dev.potlock.io/api/v1";
-const API_BASE_MAINNET = "https://api.potlock.io/api/v1";
 
 const fetchJson = async <T>(url: string): Promise<T> => {
   const res = await fetch(url, { headers: { "Content-Type": "application/json" } });
@@ -14,42 +13,33 @@ const fetchJson = async <T>(url: string): Promise<T> => {
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const siteUrl = DEFAULT_SITE_URL.replace(/\/$/, "");
 
-  type CampaignResp = unknown;
-  type ListsResp = unknown;
-
+  type CampaignItem = {
+    on_chain_id: number | string;
+    updated_at?: string | null;
+    end_at?: string | null;
+  };
+  type CampaignResp = { data?: CampaignItem[]; results?: CampaignItem[] };
   let campaignsResp: CampaignResp = {};
-  let listsResp: ListsResp = {};
 
   try {
     try {
-      campaignsResp = await fetchJson<CampaignResp>(`${STAGING_BASE_URL}/campaigns?page_size=100`);
+      campaignsResp = await fetchJson<CampaignResp>(`${STAGING_BASE_URL}/campaigns?page_size=150`);
     } catch {
       campaignsResp = {};
     }
 
-    try {
-      listsResp = await fetchJson<ListsResp>(`${API_BASE_MAINNET}/lists?page_size=100`);
-    } catch {
-      listsResp = {};
-    }
-
     const nowIso = new Date().toISOString();
 
-    const campaignsArray = (campaignsResp as any)?.data || (campaignsResp as any)?.results || [];
-    const listsArray = (listsResp as any)?.data || (listsResp as any)?.results || [];
+    const campaignsArray =
+      (campaignsResp.data && Array.isArray(campaignsResp.data) && campaignsResp.data) ||
+      (campaignsResp.results && Array.isArray(campaignsResp.results) && campaignsResp.results) ||
+      [];
 
-    const campaignUrls = (Array.isArray(campaignsArray) ? campaignsArray : []).map((c: any) => ({
+    const campaignUrls = campaignsArray.map((c) => ({
       loc: `${siteUrl}/campaign/${c.on_chain_id}`,
-      lastmod: ((c.updated_at as string) || (c.end_at as string) || nowIso).slice(0, 10),
+      lastmod: (c.updated_at || c.end_at || nowIso).slice(0, 10),
       changefreq: "daily",
       priority: "0.8",
-    }));
-
-    const listUrls = (Array.isArray(listsArray) ? listsArray : []).map((l: any) => ({
-      loc: `${siteUrl}/list/${l.on_chain_id}`,
-      lastmod: ((l.updated_at as string) || nowIso).slice(0, 10),
-      changefreq: "daily",
-      priority: "0.6",
     }));
 
     const homeUrl = {
@@ -59,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       priority: "1.0",
     };
 
-    const urls = [homeUrl, ...campaignUrls, ...listUrls];
+    const urls = [homeUrl, ...campaignUrls];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
