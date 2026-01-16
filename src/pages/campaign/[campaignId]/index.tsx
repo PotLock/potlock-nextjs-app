@@ -117,11 +117,15 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
   } catch (error) {
     const axiosError = error as AxiosError;
 
-    // Handle 404 specifically
+    // Handle 404 specifically - don't return notFound, let the component try RPC fallback
     if (axiosError.response?.status === 404) {
-      console.error(`Campaign ${campaignId} returned 404 from indexer`);
+      console.error(`Campaign ${campaignId} returned 404 from indexer, will try RPC fallback`);
       return {
-        notFound: true,
+        props: {
+          seo: defaultSeo,
+          campaignId: parsedCampaignId,
+        },
+        revalidate: 60, // Try again sooner since campaign might be newly created
       };
     }
 
