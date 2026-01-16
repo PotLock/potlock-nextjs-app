@@ -4,7 +4,6 @@ import Link from "next/link";
 import { isNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
-import { indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat } from "@/common/lib";
@@ -16,6 +15,7 @@ import { AccountProfilePicture } from "@/entities/_shared/account";
 import { TokenIcon, useFungibleToken } from "@/entities/_shared/token";
 
 import { CampaignEditor } from "./editor";
+import { mapContractCampaignToIndexerFormat } from "../utils/contract-campaign";
 
 const formatTime = (dateValue: string | number) => {
   const date = typeof dateValue === "string" ? new Date(dateValue) : new Date(dateValue);
@@ -59,11 +59,16 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
   const [openEditCampaign, setOpenEditCampaign] = useState<boolean>(false);
   const closeEditor = useCallback(() => setOpenEditCampaign(false), []);
 
-  const {
-    data: campaign,
-    isLoading: isCampaignLoading,
-    error: campaignLoadingError,
-  } = indexer.useCampaign({ campaignId });
+  const { data: contractCampaign, isLoading: isCampaignLoading } =
+    campaignsContractHooks.useCampaign({
+      campaignId,
+      enabled: true,
+    });
+
+  const campaign = useMemo(
+    () => (contractCampaign ? mapContractCampaignToIndexerFormat(contractCampaign) : undefined),
+    [contractCampaign],
+  );
 
   const { data: token } = useFungibleToken({
     tokenId: campaign?.token?.account ?? NATIVE_TOKEN_ID,
@@ -101,7 +106,7 @@ export const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaignId }
     [campaign?.token?.account],
   );
 
-  if (campaign === undefined && campaignLoadingError)
+  if (campaign === undefined && !isCampaignLoading)
     return (
       <div className="flex w-full flex-col items-center justify-center">
         <h1>This Campaign does not exist</h1>
