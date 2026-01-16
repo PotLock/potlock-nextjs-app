@@ -97,9 +97,9 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
             request_type: "call_function",
             account_id: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
             method_name: "get_campaign",
-            args_base64: Buffer.from(
-              JSON.stringify({ campaign_id: parsedCampaignId }),
-            ).toString("base64"),
+            args_base64: Buffer.from(JSON.stringify({ campaign_id: parsedCampaignId })).toString(
+              "base64",
+            ),
             finality: "optimistic",
           },
         }),
@@ -155,6 +155,7 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
     // Handle timeout or other errors by returning fallback SEO
     // This ensures the page doesn't break
     const message = (error as Error)?.message ?? "Unknown error";
+
     if (message.toLowerCase().includes("not found")) {
       return { notFound: true, revalidate: 60 };
     }
