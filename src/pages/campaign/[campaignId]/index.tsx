@@ -1,8 +1,8 @@
 import { ReactElement, useMemo } from "react";
 
+import { providers } from "near-api-js";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
-import { providers } from "near-api-js";
 
 import { CAMPAIGNS_CONTRACT_ACCOUNT_ID, NETWORK } from "@/common/_config";
 import { APP_METADATA } from "@/common/constants";
@@ -78,6 +78,7 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
   try {
     const rpcUrl =
       NETWORK === "mainnet" ? "https://free.rpc.fastnear.com" : "https://test.rpc.fastnear.com";
+
     const rpcProvider = new providers.JsonRpcProvider({ url: rpcUrl });
 
     const fetchCampaign = rpcProvider.query({
@@ -91,6 +92,7 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
     }) as Promise<unknown>;
 
     const timeoutMs = 5000;
+
     const campaignResult = (await Promise.race([
       fetchCampaign,
       new Promise<never>((_, reject) =>

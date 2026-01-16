@@ -6,10 +6,7 @@ import { Temporal } from "temporal-polyfill";
 
 import { PLATFORM_NAME } from "@/common/_config";
 import { V1CampaignsRetrieveStatus } from "@/common/api/indexer";
-import {
-  NATIVE_TOKEN_ID,
-  PLATFORM_TWITTER_ACCOUNT_ID,
-} from "@/common/constants";
+import { NATIVE_TOKEN_ID, PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { indivisibleUnitsToFloat } from "@/common/lib";
 import { toTimestamp } from "@/common/lib/datetime";
