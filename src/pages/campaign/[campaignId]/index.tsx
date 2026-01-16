@@ -1,6 +1,5 @@
 import { ReactElement, useMemo } from "react";
 
-import { providers } from "near-api-js";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
@@ -79,31 +78,58 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
     const rpcUrl =
       NETWORK === "mainnet" ? "https://free.rpc.fastnear.com" : "https://test.rpc.fastnear.com";
 
-    const rpcProvider = new providers.JsonRpcProvider({ url: rpcUrl });
-
-    const fetchCampaign = rpcProvider.query({
-      request_type: "call_function",
-      account_id: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
-      method_name: "get_campaign",
-      args_base64: Buffer.from(JSON.stringify({ campaign_id: parsedCampaignId })).toString(
-        "base64",
-      ),
-      finality: "optimistic",
-    }) as Promise<unknown>;
-
+    const controller = new AbortController();
     const timeoutMs = 5000;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-    const campaignResult = (await Promise.race([
-      fetchCampaign,
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("RPC timeout")), timeoutMs),
-      ),
-    ])) as { result: Uint8Array };
+    let campaign: ContractCampaign | null | undefined;
 
-    const campaign = JSON.parse(Buffer.from(campaignResult.result).toString()) as
-      | ContractCampaign
-      | null
-      | undefined;
+    try {
+      const response = await fetch(rpcUrl, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: `campaign-${parsedCampaignId}`,
+          method: "query",
+          params: {
+            request_type: "call_function",
+            account_id: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+            method_name: "get_campaign",
+            args_base64: Buffer.from(JSON.stringify({ campaign_id: parsedCampaignId })).toString(
+              "base64",
+            ),
+            finality: "optimistic",
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`RPC response not ok: ${response.status}`);
+      }
+
+      const payload = (await response.json()) as {
+        error?: { message?: string };
+        result?: { result?: number[] };
+      };
+
+      if (payload.error?.message) {
+        throw new Error(payload.error.message);
+      }
+
+      const resultBytes = payload.result?.result
+        ? Uint8Array.from(payload.result.result)
+        : undefined;
+
+      if (!resultBytes) {
+        throw new Error("RPC returned empty result");
+      }
+
+      campaign = JSON.parse(Buffer.from(resultBytes).toString()) as ContractCampaign;
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!campaign) {
       return { notFound: true, revalidate: 60 };
@@ -128,9 +154,13 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
   } catch (error) {
     // Handle timeout or other errors by returning fallback SEO
     // This ensures the page doesn't break
-    console.error(`Error fetching campaign ${campaignId} for SEO:`, {
-      message: (error as Error)?.message,
-    });
+    const message = (error as Error)?.message ?? "Unknown error";
+
+    if (message.toLowerCase().includes("not found")) {
+      return { notFound: true, revalidate: 60 };
+    }
+
+    console.error(`Error fetching campaign ${campaignId} for SEO:`, { message });
 
     return {
       props: {
