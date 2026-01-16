@@ -5,14 +5,9 @@ import { isNonNullish, isNullish } from "remeda";
 import { Temporal } from "temporal-polyfill";
 
 import { PLATFORM_NAME } from "@/common/_config";
-import { Campaign, V1CampaignsRetrieveStatus, indexer } from "@/common/api/indexer";
-import {
-  NATIVE_TOKEN_DECIMALS,
-  NATIVE_TOKEN_ID,
-  PLATFORM_TWITTER_ACCOUNT_ID,
-} from "@/common/constants";
+import { V1CampaignsRetrieveStatus } from "@/common/api/indexer";
+import { NATIVE_TOKEN_ID, PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
-import { Campaign as ContractCampaign } from "@/common/contracts/core/campaigns/interfaces";
 import { indivisibleUnitsToFloat } from "@/common/lib";
 import { toTimestamp } from "@/common/lib/datetime";
 import getTimePassed from "@/common/lib/getTimePassed";
@@ -28,105 +23,25 @@ import { DonateToCampaign } from "@/features/donation";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 import { useCampaignForm } from "../hooks/forms";
-
-/**
- * Maps a campaign fetched directly from the contract (RPC) to the indexer format.
- * Used when indexer hasn't caught up yet (e.g., immediately after campaign creation).
- */
-const mapContractCampaignToIndexerFormat = (contractCampaign: ContractCampaign): Campaign => {
-  const msToIsoString = (ms: number | null | undefined): string | null => {
-    if (!ms) return null;
-    return new Date(ms).toISOString();
-  };
-
-  const now = Date.now();
-  let status = "active";
-
-  if (contractCampaign.start_ms > now) {
-    status = "pending";
-  } else if (contractCampaign.end_ms && contractCampaign.end_ms < now) {
-    status = "completed";
-  }
-
-  return {
-    on_chain_id: contractCampaign.id,
-    name: contractCampaign.name,
-    description: contractCampaign.description || null,
-    cover_image_url: contractCampaign.cover_image_url || null,
-    created_at: new Date().toISOString(),
-    start_at: msToIsoString(contractCampaign.start_ms) ?? new Date().toISOString(),
-    end_at: msToIsoString(contractCampaign.end_ms ?? null),
-    owner: {
-      id: contractCampaign.owner,
-      donors_count: 0,
-      total_donations_in_usd: 0,
-      total_donations_out_usd: 0,
-      total_matching_pool_allocations_usd: 0,
-    },
-    recipient: {
-      id: contractCampaign.recipient,
-      donors_count: 0,
-      total_donations_in_usd: 0,
-      total_donations_out_usd: 0,
-      total_matching_pool_allocations_usd: 0,
-    },
-    token: {
-      account: contractCampaign.ft_id ?? NATIVE_TOKEN_ID,
-      decimals: NATIVE_TOKEN_DECIMALS,
-      name: contractCampaign.ft_id ?? "NEAR",
-      symbol: contractCampaign.ft_id?.toUpperCase() ?? "NEAR",
-    },
-    target_amount: contractCampaign.target_amount,
-    min_amount: contractCampaign.min_amount ?? null,
-    max_amount: contractCampaign.max_amount ?? null,
-    escrow_balance: contractCampaign.escrow_balance,
-    net_raised_amount: contractCampaign.total_raised_amount ?? "0",
-    total_raised_amount: contractCampaign.total_raised_amount ?? "0",
-    referral_fee_basis_points: contractCampaign.referral_fee_basis_points ?? 0,
-    creator_fee_basis_points: contractCampaign.creator_fee_basis_points ?? 0,
-    allow_fee_avoidance: contractCampaign.allow_fee_avoidance ?? false,
-    status,
-    target_amount_usd: null,
-    min_amount_usd: null,
-    max_amount_usd: null,
-    escrow_balance_usd: null,
-    net_raised_amount_usd: null,
-    total_raised_amount_usd: null,
-  };
-};
+import { mapContractCampaignToIndexerFormat } from "../utils/contract-campaign";
 
 export type CampaignBannerProps = ByCampaignId & {};
 
 export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) => {
   const viewer = useWalletUserSession();
 
-  // Primary: Try to fetch from indexer (Django backend)
-  const {
-    data: indexerCampaign,
-    isLoading: isIndexerLoading,
-    isValidating: isCampaignValidating,
-    error: indexerError,
-  } = indexer.useCampaign({ campaignId });
-
-  // Fallback: Fetch directly from contract via RPC when indexer fails
-  // This handles the case when a campaign was just created but not yet indexed
-  const shouldFetchFromContract = !!indexerError && !indexerCampaign && !isIndexerLoading;
-
   const { data: contractCampaign, isLoading: isContractLoading } =
     campaignsContractHooks.useCampaign({
       campaignId,
-      enabled: shouldFetchFromContract,
+      enabled: true,
     });
 
-  // Map contract data to indexer format if using fallback
-  const campaign = useMemo(() => {
-    if (indexerCampaign) return indexerCampaign;
-    if (contractCampaign) return mapContractCampaignToIndexerFormat(contractCampaign);
-    return undefined;
-  }, [indexerCampaign, contractCampaign]);
+  const campaign = useMemo(
+    () => (contractCampaign ? mapContractCampaignToIndexerFormat(contractCampaign) : undefined),
+    [contractCampaign],
+  );
 
-  const isCampaignLoading = isIndexerLoading || (shouldFetchFromContract && isContractLoading);
-  const campaignLoadingError = indexerError && !contractCampaign ? indexerError : undefined;
+  const isCampaignLoading = isContractLoading;
 
   const { data: token } = useFungibleToken({ tokenId: campaign?.token.account ?? NATIVE_TOKEN_ID });
 
@@ -170,21 +85,6 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
 
     [raisedAmountFloat, token?.usdPrice],
   );
-
-  // Show loading state while retrying (handles race condition when campaign is just created but not yet indexed)
-  if (campaignLoadingError && isCampaignValidating) {
-    return (
-      <div className="flex h-40 flex-col items-center justify-center gap-2">
-        <Spinner className="h-7 w-7" />
-        <p className="text-sm text-gray-500">Loading campaign...</p>
-      </div>
-    );
-  }
-
-  // Only show error after retries are exhausted
-  if (campaignLoadingError && !isCampaignValidating) {
-    return <h1>Error Loading Campaign</h1>;
-  }
 
   const isStarted = getTimePassed(toTimestamp(campaign?.start_at ?? 0), true)?.includes("-");
 

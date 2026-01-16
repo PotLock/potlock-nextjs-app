@@ -1,13 +1,12 @@
 import { ReactElement, useMemo } from "react";
 
-import type { AxiosError } from "axios";
+import { providers } from "near-api-js";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
-import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
-import { v1CampaignsRetrieve2 } from "@/common/api/indexer/internal/client.generated";
-import type { Campaign } from "@/common/api/indexer/internal/client.generated";
+import { CAMPAIGNS_CONTRACT_ACCOUNT_ID, NETWORK } from "@/common/_config";
 import { APP_METADATA } from "@/common/constants";
+import type { Campaign as ContractCampaign } from "@/common/contracts/core/campaigns/interfaces";
 import { CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
@@ -77,25 +76,37 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
   };
 
   try {
-    const baseURL = INDEXER_API_ENDPOINT_URL;
-    console.log(`Fetching campaign ${parsedCampaignId} for SEO from ${baseURL}`);
+    const rpcUrl =
+      NETWORK === "mainnet" ? "https://free.rpc.fastnear.com" : "https://test.rpc.fastnear.com";
 
-    const response = await v1CampaignsRetrieve2(parsedCampaignId, {
-      baseURL,
-      timeout: 5000, // 5 seconds timeout
-    });
+    const rpcProvider = new providers.JsonRpcProvider({ url: rpcUrl });
 
-    const campaign = response.data;
+    const fetchCampaign = rpcProvider.query({
+      request_type: "call_function",
+      account_id: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+      method_name: "get_campaign",
+      args_base64: Buffer.from(JSON.stringify({ campaign_id: parsedCampaignId })).toString(
+        "base64",
+      ),
+      finality: "optimistic",
+    }) as Promise<unknown>;
+
+    const timeoutMs = 5000;
+
+    const campaignResult = (await Promise.race([
+      fetchCampaign,
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("RPC timeout")), timeoutMs),
+      ),
+    ])) as { result: Uint8Array };
+
+    const campaign = JSON.parse(Buffer.from(campaignResult.result).toString()) as
+      | ContractCampaign
+      | null
+      | undefined;
 
     if (!campaign) {
-      console.error(`Campaign ${parsedCampaignId} not found in indexer`);
-      return {
-        props: {
-          seo: defaultSeo,
-          campaignId: parsedCampaignId,
-        },
-        revalidate: 60,
-      };
+      return { notFound: true, revalidate: 60 };
     }
 
     const seo: SeoProps = {
@@ -115,26 +126,10 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
       revalidate: 300, // 5 minutes
     };
   } catch (error) {
-    const axiosError = error as AxiosError;
-
-    // Handle 404 specifically - don't return notFound, let the component try RPC fallback
-    if (axiosError.response?.status === 404) {
-      console.error(`Campaign ${campaignId} returned 404 from indexer, will try RPC fallback`);
-      return {
-        props: {
-          seo: defaultSeo,
-          campaignId: parsedCampaignId,
-        },
-        revalidate: 60, // Try again sooner since campaign might be newly created
-      };
-    }
-
     // Handle timeout or other errors by returning fallback SEO
     // This ensures the page doesn't break
     console.error(`Error fetching campaign ${campaignId} for SEO:`, {
-      message: axiosError.message,
-      code: axiosError.code,
-      status: axiosError.response?.status,
+      message: (error as Error)?.message,
     });
 
     return {

@@ -23,9 +23,12 @@ const nextConfig = {
     "@near-wallet-selector/sender",
     "@near-wallet-selector/unity-wallet",
     "@near-wallet-selector/welldone-wallet",
+    "@near-wallet-selector/wallet-connect",
     "@near-wallet-selector/xdefi",
     "@meteorwallet/sdk",
     "nanoid",
+    "@walletconnect/modal",
+    "@walletconnect/modal-ui",
   ],
 
   async redirects() {
