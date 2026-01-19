@@ -1,6 +1,6 @@
 import { ReactElement, useMemo } from "react";
 
-import type { GetServerSideProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
 import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
@@ -51,12 +51,34 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
 };
 
-export const getServerSideProps: GetServerSideProps<CampaignPageProps> = async (context) => {
-  const { campaignId } = context.params as { campaignId?: string };
-  const { res } = context;
+export const getStaticPaths: GetStaticPaths = async () => {
+  try {
+    const response = await fetch(`https://dev.potlock.io/api/v1/campaigns?page_size=200`, {
+      headers: { "content-type": "application/json" },
+    });
 
-  // Cache SSR response at the edge to avoid repeated slow requests
-  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=900");
+    if (!response.ok) {
+      return { paths: [], fallback: "blocking" };
+    }
+
+    const payload = (await response.json()) as {
+      results?: { on_chain_id: number | string }[];
+      data?: { on_chain_id: number | string }[];
+    };
+
+    const campaigns = payload.results ?? payload.data ?? [];
+
+    return {
+      paths: campaigns.map((c) => ({ params: { campaignId: String(c.on_chain_id) } })),
+      fallback: "blocking",
+    };
+  } catch {
+    return { paths: [], fallback: "blocking" };
+  }
+};
+
+export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context) => {
+  const { campaignId } = context.params as { campaignId?: string };
   const parsedCampaignId = campaignId ? parseInt(campaignId) : undefined;
 
   const fallbackSeo: SeoProps = {
@@ -98,9 +120,9 @@ export const getServerSideProps: GetServerSideProps<CampaignPageProps> = async (
       image: campaign?.cover_image_url ?? fallbackSeo.image,
     };
 
-    return { props: { seo } };
+    return { props: { seo }, revalidate: 300 };
   } catch {
-    return { props: { seo: fallbackSeo } };
+    return { props: { seo: fallbackSeo }, revalidate: 60 };
   } finally {
     clearTimeout(timeoutId);
   }
