@@ -51,10 +51,31 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
 };
 
-export const getStaticPaths: GetStaticPaths = async () => ({
-  paths: [],
-  fallback: "blocking",
-});
+export const getStaticPaths: GetStaticPaths = async () => {
+  try {
+    const response = await fetch(`https://dev.potlock.io/api/v1/campaigns?page_size=200`, {
+      headers: { "content-type": "application/json" },
+    });
+
+    if (!response.ok) {
+      return { paths: [], fallback: "blocking" };
+    }
+
+    const payload = (await response.json()) as {
+      results?: { on_chain_id: number | string }[];
+      data?: { on_chain_id: number | string }[];
+    };
+
+    const campaigns = payload.results ?? payload.data ?? [];
+
+    return {
+      paths: campaigns.map((c) => ({ params: { campaignId: String(c.on_chain_id) } })),
+      fallback: "blocking",
+    };
+  } catch {
+    return { paths: [], fallback: "blocking" };
+  }
+};
 
 export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context) => {
   const { campaignId } = context.params as { campaignId?: string };
