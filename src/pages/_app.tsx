@@ -61,9 +61,7 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
               )}
             >
               <AppBar />
-              <CampaignRouteLoading>
-                {getLayout(<Component {...pageProps} />)}
-              </CampaignRouteLoading>
+              <CampaignRouteLoading>{getLayout(<Component {...pageProps} />)}</CampaignRouteLoading>
             </div>
           </TooltipProvider>
         </NiceModalProvider>

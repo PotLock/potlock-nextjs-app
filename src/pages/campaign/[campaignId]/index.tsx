@@ -41,11 +41,7 @@ export default function CampaignPage({ seo }: CampaignPageProps) {
   }, [tab, parsedCampaignId]);
 
   return (
-    <RootLayout
-      title={seo.title}
-      description={seo.description}
-      image={seo.image}
-    >
+    <RootLayout title={seo.title} description={seo.description} image={seo.image}>
       {content}
     </RootLayout>
   );
