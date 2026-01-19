@@ -1,6 +1,6 @@
 import { ReactElement, useMemo } from "react";
 
-import type { GetServerSideProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
 import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
@@ -51,12 +51,13 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
 };
 
-export const getServerSideProps: GetServerSideProps<CampaignPageProps> = async (context) => {
-  const { campaignId } = context.params as { campaignId?: string };
-  const { res } = context;
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
-  // Cache SSR response at the edge to avoid repeated slow requests
-  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=900");
+export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context) => {
+  const { campaignId } = context.params as { campaignId?: string };
   const parsedCampaignId = campaignId ? parseInt(campaignId) : undefined;
 
   const fallbackSeo: SeoProps = {
@@ -98,9 +99,9 @@ export const getServerSideProps: GetServerSideProps<CampaignPageProps> = async (
       image: campaign?.cover_image_url ?? fallbackSeo.image,
     };
 
-    return { props: { seo } };
+    return { props: { seo }, revalidate: 300 };
   } catch {
-    return { props: { seo: fallbackSeo } };
+    return { props: { seo: fallbackSeo }, revalidate: 60 };
   } finally {
     clearTimeout(timeoutId);
   }
