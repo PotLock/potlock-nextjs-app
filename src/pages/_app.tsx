@@ -22,6 +22,7 @@ import { Toaster } from "@/common/ui/layout/components/molecules/toaster";
 import { cn } from "@/common/ui/layout/utils";
 import { WalletUserSessionProvider } from "@/common/wallet";
 import { AppBar } from "@/layout/components/app-bar";
+import { CampaignRouteLoading } from "@/layout/components/campaign-route-loading";
 import { store } from "@/store";
 
 const lora = Lora({
@@ -60,7 +61,9 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
               )}
             >
               <AppBar />
-              {getLayout(<Component {...pageProps} />)}
+              <CampaignRouteLoading>
+                {getLayout(<Component {...pageProps} />)}
+              </CampaignRouteLoading>
             </div>
           </TooltipProvider>
         </NiceModalProvider>
