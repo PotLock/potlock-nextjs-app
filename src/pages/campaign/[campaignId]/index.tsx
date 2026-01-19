@@ -53,6 +53,10 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
 
 export const getServerSideProps: GetServerSideProps<CampaignPageProps> = async (context) => {
   const { campaignId } = context.params as { campaignId?: string };
+  const { res } = context;
+
+  // Cache SSR response at the edge to avoid repeated slow requests
+  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=900");
   const parsedCampaignId = campaignId ? parseInt(campaignId) : undefined;
 
   const fallbackSeo: SeoProps = {
