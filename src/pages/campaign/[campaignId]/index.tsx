@@ -53,7 +53,7 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    const response = await fetch(`${INDEXER_API_ENDPOINT_URL}/campaigns?page_size=200`, {
+    const response = await fetch(`https://dev.potlock.io/api/v1/campaigns?page_size=200`, {
       headers: { "content-type": "application/json" },
     });
 
