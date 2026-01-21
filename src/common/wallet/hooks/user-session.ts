@@ -93,8 +93,8 @@ export const useWalletUserSession = (): WalletUserSession => {
   }, [indexedListRegistrationsError, refetchIndexedListRegistrations, refetchRegistrationData]);
 
   const logout = useCallback(() => {
-    nearProtocolClient.walletApi.wallet
-      ?.signOut()
+    nearProtocolClient.walletApi
+      .signOut()
       .then(() => {
         wallet.reset();
         daoAuth.reset();

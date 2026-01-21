@@ -204,7 +204,7 @@ export const directFtDonationMulticall = async ({
             ]),
           ),
     )
-    .then((finalExecutionOutcomes = undefined) => {
+    .then((finalExecutionOutcomes) => {
       const receipt: DirectDonation | undefined = finalExecutionOutcomes
         ?.at(-1)
         ?.receipts_outcome.filter(
