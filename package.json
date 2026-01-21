@@ -65,12 +65,14 @@
     "@wpdas/naxios": "^2.5.0",
     "axios": "^1.7.2",
     "big.js": "^6.2.1",
+    "browserslist": "^4.24.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
     "immer": "^9.0.21",
+    "lightningcss": "^1.30.1",
     "lucide-react": "^0.378.0",
     "markdown-truncate": "^1.1.1",
     "near-api-js": "6.5.1",
@@ -105,6 +107,9 @@
     "wagmi": "^2.12.16",
     "zod": "^3.23.8",
     "zustand": "^5.0.1"
+  },
+  "resolutions": {
+    "@noble/curves": "^1.8.0"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^2.11.0",
