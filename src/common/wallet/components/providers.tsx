@@ -9,8 +9,7 @@ import { isAccountId } from "@/common/lib";
 import { useWalletUserMetadataStore } from "../model/user";
 import { useWalletUserAdapter } from "../user-adapter";
 
-const isWalletSelectorApiAvailable = () =>
-  nearProtocolClient.walletApi.walletSelector !== undefined;
+const isWalletConnectorAvailable = () => nearProtocolClient.walletApi.connector !== undefined;
 
 type WalletProviderProps = {
   children: React.ReactNode;
@@ -38,11 +37,9 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const { referrerAccountId, setReferrerAccountId } = useWalletUserMetadataStore();
 
   const syncWalletState = useCallback(() => {
-    if (isWalletSelectorApiAvailable()) {
+    if (isWalletConnectorAvailable()) {
       const isWalletSignedIn =
-        typeof DEBUG_ACCOUNT_ID === "string"
-          ? true
-          : (nearProtocolClient.walletApi.walletSelector?.isSignedIn() ?? false);
+        typeof DEBUG_ACCOUNT_ID === "string" ? true : nearProtocolClient.walletApi.isSignedIn;
 
       const walletAccountId =
         typeof DEBUG_ACCOUNT_ID === "string"
@@ -76,24 +73,18 @@ const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     if (isReady) {
       syncWalletState();
 
-      const walletSelector = nearProtocolClient.walletApi.walletSelector;
+      const connector = nearProtocolClient.walletApi.connector;
 
-      if (!walletSelector) {
+      if (!connector) {
         return () => undefined;
       }
 
-      walletSelector.on("signedIn", handleChange);
-      walletSelector.on("signedOut", handleChange);
-      walletSelector.on("accountsChanged", handleChange);
-      walletSelector.on("networkChanged", handleChange);
-      walletSelector.on("uriChanged", handleChange);
+      connector.on("wallet:signIn", handleChange);
+      connector.on("wallet:signOut", handleChange);
 
       return () => {
-        walletSelector.off("signedIn", handleChange);
-        walletSelector.off("signedOut", handleChange);
-        walletSelector.off("accountsChanged", handleChange);
-        walletSelector.off("networkChanged", handleChange);
-        walletSelector.off("uriChanged", handleChange);
+        connector.off("wallet:signIn", handleChange);
+        connector.off("wallet:signOut", handleChange);
       };
     }
 

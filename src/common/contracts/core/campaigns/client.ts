@@ -78,6 +78,7 @@ export const create_campaign = ({ args }: CreateCampaignParams) => {
 
     return contractApi.callMultiple(transactions);
   } else {
+    console.log("create campaign");
     return contractApi.call<CreateCampaignParams["args"], Campaign>("create_campaign", {
       args,
       deposit: floatToYoctoNear(0.021),

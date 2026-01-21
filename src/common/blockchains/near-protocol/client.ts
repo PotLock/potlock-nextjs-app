@@ -1,83 +1,17 @@
-import { Action, FunctionCall } from "@near-js/transactions";
+import { NearConnector } from "@hot-labs/near-connect";
+import type { NearWalletBase } from "@hot-labs/near-connect";
+import type { Account } from "@hot-labs/near-connect/build/types";
+import { actionCreators } from "@near-js/transactions";
 import type {
   FinalExecutionOutcome,
   QueryResponseKind,
 } from "@near-js/types/lib/provider/response";
-import { setupBitgetWallet } from "@near-wallet-selector/bitget-wallet";
-import { setupBitteWallet } from "@near-wallet-selector/bitte-wallet";
-import { setupCoin98Wallet } from "@near-wallet-selector/coin98-wallet";
-import { Account, Wallet, setupWalletSelector } from "@near-wallet-selector/core";
-import type {
-  NetworkId,
-  WalletModuleFactory,
-  WalletSelector,
-  WalletSelectorEvents,
-} from "@near-wallet-selector/core";
-import { setupHereWallet } from "@near-wallet-selector/here-wallet";
-import { setupHotWallet } from "@near-wallet-selector/hot-wallet";
-import { setupIntearWallet } from "@near-wallet-selector/intear-wallet";
-import { setupLedger } from "@near-wallet-selector/ledger";
-import { setupMathWallet } from "@near-wallet-selector/math-wallet";
-import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
-import { setupMintbaseWallet } from "@near-wallet-selector/mintbase-wallet";
-import { setupModal } from "@near-wallet-selector/modal-ui";
-import { setupNarwallets } from "@near-wallet-selector/narwallets";
-import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet";
-import { setupNearFi } from "@near-wallet-selector/nearfi";
-import { setupNeth } from "@near-wallet-selector/neth";
-import { setupNightly } from "@near-wallet-selector/nightly";
-import { setupRamperWallet } from "@near-wallet-selector/ramper-wallet";
-import { setupSender } from "@near-wallet-selector/sender";
-import { setupUnityWallet } from "@near-wallet-selector/unity-wallet";
-import { setupWelldoneWallet } from "@near-wallet-selector/welldone-wallet";
-import { setupXDEFI } from "@near-wallet-selector/xdefi";
 import { providers } from "near-api-js";
 
 import { NETWORK, SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { FULL_TGAS } from "@/common/constants";
 
 export const RPC_NODE_URL = `https://${NETWORK === "mainnet" ? "free.rpc.fastnear.com" : "test.rpc.fastnear.com"}`;
-
-const walletSelectorModules = [
-  setupIntearWallet(),
-  setupHereWallet(),
-  setupMeteorWallet(),
-  setupHotWallet(),
-  setupLedger(),
-  setupSender(),
-  // setupEthereumWallets({
-  //   wagmiConfig: wagmiConfig as EthereumWalletsParams["wagmiConfig"],
-  //   web3Modal: web3Modal as EthereumWalletsParams["web3Modal"],
-  //   alwaysOnboardDuringSignIn: true,
-  // }),
-  setupNearMobileWallet(),
-  setupNightly(),
-  setupUnityWallet({
-    projectId: "af5fcece6005cfe70a5d5132ab354e65",
-    metadata: {
-      name: "Potlock App",
-      description: "Bringing public goods funding to the table, built on NEAR",
-      url: "https://github.com/near/wallet-selector",
-      icons: ["https://avatars.githubusercontent.com/u/37784886"],
-    },
-  }),
-  setupBitgetWallet(),
-  setupCoin98Wallet(),
-  setupMathWallet(),
-  setupMintbaseWallet(),
-  setupBitteWallet(),
-  setupNearFi(),
-  setupWelldoneWallet(),
-  setupXDEFI(),
-  // INFO: This is breaking the app because it needs to access 'fs' module which is not present on the client side
-  // setupNearSnap(),
-  setupNarwallets(),
-  setupRamperWallet(),
-  setupNeth({
-    gas: FULL_TGAS,
-    bundle: false,
-  }),
-];
 
 const nearRpc = new providers.JsonRpcProvider({ url: RPC_NODE_URL });
 
@@ -96,38 +30,30 @@ export type Transaction<A extends object = Record<string, unknown>> = {
   deposit?: string;
 };
 
-const walletEvents: Array<keyof WalletSelectorEvents> = [
-  "signedIn",
-  "signedOut",
-  "accountsChanged",
-  "networkChanged",
-  "uriChanged",
-];
-
 const createWalletApi = () => {
   const state = {
-    walletSelector: undefined as WalletSelector | undefined,
-    wallet: undefined as Wallet | undefined,
+    connector: undefined as NearConnector | undefined,
+    wallet: undefined as NearWalletBase | undefined,
     accounts: [] as Account[],
   };
 
   let initPromise: Promise<void> | undefined;
 
   const syncAccounts = async () => {
-    if (!state.walletSelector) {
+    if (!state.connector) {
       state.wallet = undefined;
       state.accounts = [];
       return;
     }
 
     try {
-      state.wallet = await state.walletSelector.wallet();
+      const connected = await state.connector.getConnectedWallet();
+      state.wallet = connected.wallet;
+      state.accounts = connected.accounts;
     } catch (error) {
-      console.error("Unable to hydrate wallet from selector", error);
       state.wallet = undefined;
+      state.accounts = [];
     }
-
-    state.accounts = state.walletSelector.store.getState().accounts;
   };
 
   const initNear = () => {
@@ -136,15 +62,24 @@ const createWalletApi = () => {
     }
 
     initPromise = (async () => {
-      state.walletSelector = await setupWalletSelector({
-        network: NETWORK as NetworkId,
-        modules: walletSelectorModules as unknown as WalletModuleFactory[],
+      state.connector = new NearConnector({
+        network: NETWORK as "mainnet" | "testnet",
+        signIn: {
+          contractId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
+        },
       });
 
-      walletEvents.forEach((event) => {
-        state.walletSelector!.on(event, syncAccounts);
+      state.connector.on("wallet:signIn", ({ wallet, accounts }) => {
+        state.wallet = wallet;
+        state.accounts = accounts;
       });
 
+      state.connector.on("wallet:signOut", () => {
+        state.wallet = undefined;
+        state.accounts = [];
+      });
+
+      await state.connector.whenManifestLoaded;
       await syncAccounts();
     })();
 
@@ -154,41 +89,56 @@ const createWalletApi = () => {
   const ensureWallet = async () => {
     await initNear();
 
-    if (!state.walletSelector) {
-      throw new Error("Wallet selector is not initialized.");
+    if (!state.connector) {
+      throw new Error("Wallet connector is not initialized.");
     }
 
     await syncAccounts();
 
     if (!state.wallet) {
-      state.wallet = await state.walletSelector.wallet();
+      state.wallet = await state.connector.wallet();
     }
 
     return state.wallet!;
   };
 
   const signInModal = async () => {
-    if (!state.walletSelector) {
-      await initNear();
+    await initNear();
+
+    if (!state.connector) {
+      throw new Error("Wallet connector is not initialized.");
     }
 
-    if (!state.walletSelector) {
-      throw new Error("Wallet selector is not initialized.");
+    const walletId = await state.connector.selectWallet();
+    await state.connector.connect(walletId);
+    await syncAccounts();
+  };
+
+  const signOut = async () => {
+    await initNear();
+
+    if (!state.connector) {
+      return;
     }
 
-    const modal = setupModal(state.walletSelector as unknown as WalletSelector, {
-      contractId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
-      description: "Potlock App",
-    });
+    try {
+      const connected = await state.connector.getConnectedWallet().catch(() => undefined);
 
-    modal.show();
+      if (connected?.wallet) {
+        await state.connector.disconnect(connected.wallet);
+      } else {
+        await state.connector.disconnect();
+      }
+    } finally {
+      state.wallet = undefined;
+      state.accounts = [];
+    }
   };
 
   return {
-    get walletSelector() {
-      return state.walletSelector;
+    get connector() {
+      return state.connector;
     },
-
     get wallet() {
       return state.wallet;
     },
@@ -196,10 +146,14 @@ const createWalletApi = () => {
     get accountId() {
       return state.accounts.at(0)?.accountId;
     },
+    get isSignedIn() {
+      return state.accounts.length > 0;
+    },
 
     initNear,
     signInModal,
     ensureWallet,
+    signOut,
   };
 };
 
@@ -207,18 +161,13 @@ export const walletApi = createWalletApi();
 
 export { nearRpc };
 
-const serializeArgs = (args: unknown) =>
-  args instanceof Uint8Array ? args : Buffer.from(JSON.stringify(args));
-
 const buildAction = (method: string, props?: CallProps<object>) =>
-  new Action({
-    functionCall: new FunctionCall({
-      methodName: method,
-      args: serializeArgs(props?.args ?? {}),
-      gas: BigInt(props?.gas ?? FULL_TGAS),
-      deposit: BigInt(props?.deposit ?? "0"),
-    }),
-  });
+  actionCreators.functionCall(
+    method,
+    props?.args ?? {},
+    BigInt(props?.gas ?? FULL_TGAS),
+    BigInt(props?.deposit ?? "0"),
+  );
 
 export const contractApi = ({ contractId }: { contractId?: string } = {}) => {
   const targetContractId = contractId ?? SOCIAL_DB_CONTRACT_ACCOUNT_ID;
@@ -246,17 +195,45 @@ export const contractApi = ({ contractId }: { contractId?: string } = {}) => {
       throw new Error("Wallet is not signed in.");
     }
 
-    const outcome = await wallet.signAndSendTransaction({
+    const transaction = {
       signerId,
       receiverId: contractId ?? targetContractId,
-      callbackUrl: props?.callbackUrl,
       actions: [buildAction(method, props as CallProps<object>)],
-    });
+    };
+
+    let outcome: FinalExecutionOutcome | unknown;
+
+    try {
+      if (!("signAndSendTransaction" in wallet)) {
+        throw new Error("Wallet does not support signAndSendTransaction");
+      }
+
+      outcome = await wallet.signAndSendTransaction({
+        signerId,
+        receiverId: transaction.receiverId,
+        actions: transaction.actions,
+      });
+    } catch (error) {
+      // Fallback for wallets that only support signAndSendTransactions
+      if ("signAndSendTransactions" in wallet) {
+        outcome = await wallet.signAndSendTransactions({
+          transactions: [
+            {
+              receiverId: transaction.receiverId,
+              actions: transaction.actions,
+            },
+          ],
+        });
+      } else {
+        throw error;
+      }
+    }
 
     const result = providers.getTransactionLastResult(outcome as FinalExecutionOutcome);
 
+    // Some wallets don't return a last result; return the outcome instead.
     if (result === undefined) {
-      throw new Error("Unable to determine transaction result.");
+      return outcome as unknown as R;
     }
 
     return result as R;
@@ -264,7 +241,7 @@ export const contractApi = ({ contractId }: { contractId?: string } = {}) => {
 
   const callMultiple = async <A extends object>(
     transactionsList: Transaction<A>[],
-    callbackUrl?: string,
+    _callbackUrl?: string,
   ) => {
     const wallet = await walletApi.ensureWallet();
     const signerId = walletApi.accountId;
@@ -274,15 +251,11 @@ export const contractApi = ({ contractId }: { contractId?: string } = {}) => {
     }
 
     const transactions = transactionsList.map((transaction) => ({
-      signerId,
       receiverId: transaction.receiverId ?? targetContractId,
       actions: [buildAction(transaction.method, transaction as CallProps<object>)],
     }));
 
-    return wallet.signAndSendTransactions({
-      transactions,
-      callbackUrl,
-    });
+    return wallet.signAndSendTransactions({ transactions });
   };
 
   return {

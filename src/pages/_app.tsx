@@ -1,4 +1,3 @@
-import "@near-wallet-selector/modal-ui/styles.css";
 import "@unocss/reset/normalize.css";
 import "@unocss/reset/sanitize/assets.css";
 import "@unocss/reset/sanitize/sanitize.css";

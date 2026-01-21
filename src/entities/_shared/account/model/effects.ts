@@ -1,4 +1,4 @@
-import { AccountView } from "near-api-js/lib/providers/provider";
+import type { AccountView } from "near-api-js/lib/providers/provider";
 
 import { NETWORK } from "@/common/_config";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
