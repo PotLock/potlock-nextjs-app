@@ -1,5 +1,3 @@
-import { Provider } from "near-api-js/lib/providers";
-
 import { SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { FULL_TGAS, ONE_HUNDREDTH_NEAR, TWO_HUNDREDTHS_NEAR } from "@/common/constants";
@@ -14,6 +12,7 @@ import {
   type GetStampsForAccountIdInput,
   type GetUsersForStampInput,
   type HumanScoreResponse,
+  type Provider,
   ProviderExternal,
   RegisterProviderInput,
   type StampExternal,

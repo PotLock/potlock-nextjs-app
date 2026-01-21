@@ -44,7 +44,7 @@ export const groupListDonationMulticall = ({
         [] as DirectBatchDonationItem[],
       ),
     )
-    .then((finalExecutionOutcomes = undefined) => {
+    .then((finalExecutionOutcomes) => {
       const receipts: DirectDonation[] =
         finalExecutionOutcomes?.reduce(
           (acc, { status }) => {
