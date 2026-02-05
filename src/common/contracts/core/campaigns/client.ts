@@ -161,6 +161,7 @@ export const donate = async (
         },
       ],
     });
+
     outcome = Array.isArray(results) ? results[0] : results;
   } else {
     throw new Error("Wallet does not support transaction signing");

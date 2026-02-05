@@ -161,6 +161,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                 .campaignDonation(campaignId, result.txHash, result.donation.donor_id)
                 .catch(() => {});
             }
+
             dispatch.donation.success(result.donation);
           })
           .catch((error) => {
@@ -186,6 +187,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                 .campaignDonation(campaignId, result.txHash, result.donation.donor_id)
                 .catch(() => {});
             }
+
             dispatch.donation.success(result.donation);
           })
           .catch((error) => {

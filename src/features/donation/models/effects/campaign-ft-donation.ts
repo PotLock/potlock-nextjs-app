@@ -253,6 +253,7 @@ export const campaignFtDonationMulticall = async ({
     )
     .then((finalExecutionOutcomes) => {
       const lastOutcome = finalExecutionOutcomes?.at(-1);
+
       const txHash =
         (lastOutcome as any)?.transaction?.hash ||
         (lastOutcome as any)?.transaction_outcome?.id ||
