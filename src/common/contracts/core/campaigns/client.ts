@@ -78,7 +78,6 @@ export const create_campaign = ({ args }: CreateCampaignParams) => {
 
     return contractApi.callMultiple(transactions);
   } else {
-    console.log("create campaign");
     return contractApi.call<CreateCampaignParams["args"], Campaign>("create_campaign", {
       args,
       deposit: floatToYoctoNear(0.021),
@@ -117,13 +116,62 @@ export const delete_campaign = ({ args }: DeleteCampaignParams) =>
     gas: FULL_TGAS,
   });
 
-export const donate = (args: CampaignDonationArgs, depositAmountYocto: IndivisibleUnits) =>
-  contractApi.call<CampaignDonationArgs, CampaignDonation>("donate", {
+export type DonateResult = {
+  donation: CampaignDonation;
+  txHash: string | null;
+};
+
+export const donate = async (
+  args: CampaignDonationArgs,
+  depositAmountYocto: IndivisibleUnits,
+): Promise<DonateResult> => {
+  const { walletApi } = await import("@/common/blockchains/near-protocol/client");
+  const wallet = await walletApi.ensureWallet();
+  const signerId = walletApi.accountId;
+
+  if (!signerId) {
+    throw new Error("Wallet is not signed in.");
+  }
+
+  const { actionCreators } = await import("@near-js/transactions");
+  const { providers } = await import("near-api-js");
+
+  const action = actionCreators.functionCall(
+    "donate",
     args,
-    deposit: depositAmountYocto,
-    gas: FULL_TGAS,
-    callbackUrl: window.location.href,
-  });
+    BigInt(FULL_TGAS),
+    BigInt(depositAmountYocto),
+  );
+
+  let outcome: any;
+  const walletAny = wallet as any;
+
+  if ("signAndSendTransaction" in walletAny) {
+    outcome = await walletAny.signAndSendTransaction({
+      signerId,
+      receiverId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+      actions: [action],
+    });
+  } else if ("signAndSendTransactions" in walletAny) {
+    const results = await walletAny.signAndSendTransactions({
+      transactions: [
+        {
+          receiverId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+          actions: [action],
+        },
+      ],
+    });
+
+    outcome = Array.isArray(results) ? results[0] : results;
+  } else {
+    throw new Error("Wallet does not support transaction signing");
+  }
+
+  const txHash = outcome?.transaction?.hash || outcome?.transaction_outcome?.id || null;
+  const donation = providers.getTransactionLastResult(outcome) as CampaignDonation;
+
+  return { donation, txHash };
+};
 
 export const get_campaigns = () => contractApi.view<{}, Campaign[]>("get_campaigns");
 
