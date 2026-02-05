@@ -1,5 +1,6 @@
 import axios from "axios";
 
+import { syncApi } from "@/common/api/indexer";
 import { RPC_NODE_URL, walletApi } from "@/common/blockchains/near-protocol/client";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { type CampaignDonation, campaignsContractClient } from "@/common/contracts/core/campaigns";
@@ -154,7 +155,14 @@ export const effects = (dispatch: AppDispatcher) => ({
           message,
           tokenId,
         })
-          .then(dispatch.donation.success)
+          .then(async (result) => {
+            if (result.txHash && result.donation) {
+              await syncApi
+                .campaignDonation(campaignId, result.txHash, result.donation.donor_id)
+                .catch(() => {});
+            }
+            dispatch.donation.success(result.donation);
+          })
           .catch((error) => {
             onError(error);
             dispatch.donation.failure(error);
@@ -172,7 +180,14 @@ export const effects = (dispatch: AppDispatcher) => ({
 
             floatToYoctoNear(amount),
           )
-          .then(dispatch.donation.success)
+          .then(async (result) => {
+            if (result.txHash && result.donation) {
+              await syncApi
+                .campaignDonation(campaignId, result.txHash, result.donation.donor_id)
+                .catch(() => {});
+            }
+            dispatch.donation.success(result.donation);
+          })
           .catch((error) => {
             onError(error);
             dispatch.donation.failure(error);

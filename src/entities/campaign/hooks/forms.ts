@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { isDeepEqual } from "remeda";
 
+import { syncApi } from "@/common/api/indexer/sync";
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
 import type { Campaign } from "@/common/contracts/core/campaigns/interfaces";
@@ -310,7 +311,10 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           .update_campaign({
             args: { ...args, campaign_id: campaignId },
           })
-          .then(() => {
+          .then(async () => {
+            // Sync campaign to database
+            await syncApi.campaign(campaignId).catch(console.warn);
+
             self.reset(values, { keepErrors: false });
 
             toast({
@@ -346,6 +350,16 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           .create_campaign({ args })
           .then(async (newCampaign) => {
             const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
+
+            // Sync new campaign to database
+            if (
+              newCampaign &&
+              typeof newCampaign === "object" &&
+              "id" in newCampaign &&
+              newCampaign.id
+            ) {
+              await syncApi.campaign((newCampaign as Campaign).id).catch(console.warn);
+            }
 
             toast({
               title: `You’ve successfully created a campaign for ${values.name}.`,

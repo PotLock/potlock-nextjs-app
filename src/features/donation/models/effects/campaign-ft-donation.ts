@@ -16,6 +16,11 @@ import type { AccountId, CampaignId } from "@/common/types";
 import { DONATION_BASE_STORAGE_DEPOSIT_FLOAT } from "../../constants";
 import type { DonationSubmitParams } from "../schemas";
 
+export type CampaignFtDonationResult = {
+  donation: CampaignDonation;
+  txHash: string | null;
+};
+
 type CampaignFtDonationMulticallInputs = Pick<
   DonationSubmitParams,
   "amount" | "referrerAccountId" | "bypassProtocolFee" | "message" | "tokenId"
@@ -36,7 +41,7 @@ export const campaignFtDonationMulticall = async ({
   bypassCreatorFee,
   message,
   tokenId,
-}: CampaignFtDonationMulticallInputs): Promise<CampaignDonation> => {
+}: CampaignFtDonationMulticallInputs): Promise<CampaignFtDonationResult> => {
   const { protocol_fee_recipient_account: protocolFeeRecipientAccountId } =
     await campaignsContractClient.get_config();
 
@@ -247,6 +252,12 @@ export const campaignFtDonationMulticall = async ({
           ),
     )
     .then((finalExecutionOutcomes) => {
+      const lastOutcome = finalExecutionOutcomes?.at(-1);
+      const txHash =
+        (lastOutcome as any)?.transaction?.hash ||
+        (lastOutcome as any)?.transaction_outcome?.id ||
+        null;
+
       const receipt: CampaignDonation | undefined = finalExecutionOutcomes
         ?.at(-1)
         ?.receipts_outcome.filter(
@@ -278,7 +289,7 @@ export const campaignFtDonationMulticall = async ({
         .at(0);
 
       if (receipt !== undefined) {
-        return receipt;
+        return { donation: receipt, txHash };
       } else throw new Error("Unable to determine transaction execution status.");
     });
 };
