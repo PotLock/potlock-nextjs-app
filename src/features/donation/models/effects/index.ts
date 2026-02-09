@@ -235,9 +235,11 @@ export const effects = (dispatch: AppDispatcher) => ({
 
       for (const receipt of receiptsOutcome) {
         const successValue = receipt?.outcome?.status?.SuccessValue;
+
         if (successValue) {
           try {
             const parsed = JSON.parse(atob(successValue));
+
             // Check if it's a direct donation (has recipient_id, no campaign_id)
             if (parsed && "recipient_id" in parsed && !("campaign_id" in parsed)) {
               donations.push(parsed as DirectDonation);

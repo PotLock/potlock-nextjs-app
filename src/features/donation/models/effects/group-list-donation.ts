@@ -1,8 +1,8 @@
 import { syncApi } from "@/common/api/indexer";
 import { walletApi } from "@/common/blockchains/near-protocol/client";
 import {
-  type DirectBatchDonationItem,
   type DirectBatchDonateResult,
+  type DirectBatchDonationItem,
   type DirectDonation,
   donationContractClient,
 } from "@/common/contracts/core/donation";
@@ -47,6 +47,7 @@ export const groupListDonationMulticall = async ({
   // Sync donations to indexer
   if (result.txHash && result.donations.length > 0) {
     const senderId = walletApi.accountId;
+
     if (senderId) {
       await syncApi.directDonation(result.txHash, senderId).catch(() => {});
     }
