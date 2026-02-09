@@ -1,6 +1,8 @@
-import type { InformativeSuccessfulExecutionOutcome } from "@/common/blockchains/near-protocol";
+import { syncApi } from "@/common/api/indexer";
+import { walletApi } from "@/common/blockchains/near-protocol/client";
 import {
   type DirectBatchDonationItem,
+  type DirectBatchDonateResult,
   type DirectDonation,
   donationContractClient,
 } from "@/common/contracts/core/donation";
@@ -14,7 +16,7 @@ type GroupListDonationMulticallInputs = Pick<
   "groupAllocationStrategy" | "groupAllocationPlan" | "referrerAccountId" | "bypassProtocolFee"
 > & {};
 
-export const groupListDonationMulticall = ({
+export const groupListDonationMulticall = async ({
   groupAllocationStrategy,
   groupAllocationPlan = [],
   referrerAccountId,
@@ -23,47 +25,36 @@ export const groupListDonationMulticall = ({
   const isDistributionManual =
     groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manual;
 
-  return donationContractClient
-    .donateBatch(
-      groupAllocationPlan.reduce(
-        (txs, { account_id, amount: donationAmount = 0 }) =>
-          isDistributionManual && donationAmount === 0
-            ? txs
-            : txs.concat([
-                {
-                  args: {
-                    recipient_id: account_id,
-                    referrer_id: referrerAccountId,
-                    bypass_protocol_fee: bypassProtocolFee,
-                  },
+  const txInputs = groupAllocationPlan.reduce(
+    (txs, { account_id, amount: donationAmount = 0 }) =>
+      isDistributionManual && donationAmount === 0
+        ? txs
+        : txs.concat([
+            {
+              args: {
+                recipient_id: account_id,
+                referrer_id: referrerAccountId,
+                bypass_protocol_fee: bypassProtocolFee,
+              },
+              amountYoctoNear: floatToYoctoNear(donationAmount),
+            },
+          ]),
+    [] as DirectBatchDonationItem[],
+  );
 
-                  amountYoctoNear: floatToYoctoNear(donationAmount),
-                },
-              ]),
+  const result: DirectBatchDonateResult = await donationContractClient.donateBatch(txInputs);
 
-        [] as DirectBatchDonationItem[],
-      ),
-    )
-    .then((finalExecutionOutcomes) => {
-      const receipts: DirectDonation[] =
-        finalExecutionOutcomes?.reduce(
-          (acc, { status }) => {
-            const decodedReceipt = atob(
-              (status as InformativeSuccessfulExecutionOutcome["status"]).SuccessValue,
-            );
+  // Sync donations to indexer
+  if (result.txHash && result.donations.length > 0) {
+    const senderId = walletApi.accountId;
+    if (senderId) {
+      await syncApi.directDonation(result.txHash, senderId).catch(() => {});
+    }
+  }
 
-            try {
-              return [...acc, JSON.parse(decodedReceipt) as DirectDonation];
-            } catch {
-              return acc;
-            }
-          },
-
-          [] as DirectDonation[],
-        ) ?? [];
-
-      if (receipts.length > 0) {
-        return receipts;
-      } else throw new Error("Unable to determine transaction execution status.");
-    });
+  if (result.donations.length > 0) {
+    return result.donations;
+  } else {
+    throw new Error("Unable to determine transaction execution status.");
+  }
 };
