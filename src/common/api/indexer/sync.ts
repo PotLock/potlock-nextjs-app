@@ -1,8 +1,9 @@
 import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
 
-// Use same logic as hooks.ts - staging/production should hit dev.potlock.io
-// because that's where the sync endpoints are deployed
-const SYNC_API_BASE_URL =
+// Campaigns only exist on dev backend, everything else is on prod
+const SYNC_API_BASE_URL = INDEXER_API_ENDPOINT_URL;
+
+const CAMPAIGNS_SYNC_API_BASE_URL =
   process.env.NEXT_PUBLIC_ENV === "test" ? INDEXER_API_ENDPOINT_URL : "https://dev.potlock.io";
 
 export const syncApi = {
@@ -12,9 +13,12 @@ export const syncApi = {
    */
   async campaign(campaignId: number | string): Promise<{ success: boolean; message?: string }> {
     try {
-      const response = await fetch(`${SYNC_API_BASE_URL}/api/v1/campaigns/${campaignId}/sync`, {
-        method: "POST",
-      });
+      const response = await fetch(
+        `${CAMPAIGNS_SYNC_API_BASE_URL}/api/v1/campaigns/${campaignId}/sync`,
+        {
+          method: "POST",
+        },
+      );
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
@@ -43,7 +47,7 @@ export const syncApi = {
   ): Promise<{ success: boolean; message?: string }> {
     try {
       const response = await fetch(
-        `${SYNC_API_BASE_URL}/api/v1/campaigns/${campaignId}/donations/sync`,
+        `${CAMPAIGNS_SYNC_API_BASE_URL}/api/v1/campaigns/${campaignId}/donations/sync`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
