@@ -1,6 +1,5 @@
 import type { AxiosResponse } from "axios";
 
-import { envConfig } from "@/common/_config/production.env-config";
 import { NOOP_STRING } from "@/common/constants";
 import { isAccountId, isEthereumAddress } from "@/common/lib";
 import {

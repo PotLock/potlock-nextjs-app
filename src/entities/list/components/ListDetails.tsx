@@ -8,7 +8,7 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { prop } from "remeda";
 
 import { PLATFORM_NAME } from "@/common/_config";
-import { List } from "@/common/api/indexer";
+import { List, syncApi } from "@/common/api/indexer";
 import { PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
@@ -77,9 +77,11 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
   } = useListForm();
 
   const applyToListModal = (note: string) => {
+    const onChainListId = parseInt(listDetails?.on_chain_id as any);
+
     listsContractClient
       .register_batch({
-        list_id: parseInt(listDetails?.on_chain_id as any) as any,
+        list_id: onChainListId as any,
         notes: note,
         registrations: [
           {
@@ -95,7 +97,12 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
           },
         ],
       })
-      .then((data) => {
+      .then(async (data) => {
+        // Sync registration to indexer
+        if (viewer.accountId) {
+          await syncApi.listRegistration(onChainListId, viewer.accountId).catch(() => {});
+        }
+
         setIsApplicationSuccessful(true);
       })
       .catch((error) => console.error("Error applying to list:", error));
