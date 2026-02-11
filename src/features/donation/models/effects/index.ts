@@ -132,7 +132,11 @@ export const effects = (dispatch: AppDispatcher) => ({
 
               floatToYoctoNear(amount),
             )
-            .then(dispatch.donation.success)
+            .then(async (result) => {
+              // Sync pot donations to indexer
+              await syncApi.potDonations(singleRecipientMatchingPotId).catch(() => {});
+              dispatch.donation.success(result);
+            })
             .catch((error) => {
               onError(error);
               dispatch.donation.failure(error);
@@ -206,7 +210,11 @@ export const effects = (dispatch: AppDispatcher) => ({
       }
     } else if (isGroupPotDonation && groupAllocationPlan !== undefined) {
       return void groupPotDonationMulticall({ ...inputs, potContractAccountId: params.potId })
-        .then(dispatch.donation.success)
+        .then(async (result) => {
+          // Sync pot donations to indexer
+          await syncApi.potDonations(params.potId).catch(() => {});
+          dispatch.donation.success(result);
+        })
         .catch((error) => {
           onError(error);
           dispatch.donation.failure(error);

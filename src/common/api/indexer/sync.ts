@@ -206,4 +206,124 @@ export const syncApi = {
       return { success: false, message: String(error) };
     }
   },
+
+  /**
+   * Sync a pot config after deployment or update
+   * @param potId - The pot account ID (e.g. "mypot.v1.potfactory.potlock.near")
+   */
+  async pot(potId: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(`${SYNC_API_BASE_URL}/api/v1/pots/${potId}/sync`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync pot:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync pot:", error);
+      return { success: false, message: String(error) };
+    }
+  },
+
+  /**
+   * Sync all donations for a pot
+   * @param potId - The pot account ID
+   */
+  async potDonations(potId: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(`${SYNC_API_BASE_URL}/api/v1/pots/${potId}/donations/sync`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync pot donations:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync pot donations:", error);
+      return { success: false, message: String(error) };
+    }
+  },
+
+  /**
+   * Sync all applications for a pot
+   * @param potId - The pot account ID
+   */
+  async potApplications(potId: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(`${SYNC_API_BASE_URL}/api/v1/pots/${potId}/applications/sync`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync pot applications:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync pot applications:", error);
+      return { success: false, message: String(error) };
+    }
+  },
+
+  /**
+   * Sync all payouts for a pot
+   * @param potId - The pot account ID
+   */
+  async potPayouts(potId: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(`${SYNC_API_BASE_URL}/api/v1/pots/${potId}/payouts/sync`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync pot payouts:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync pot payouts:", error);
+      return { success: false, message: String(error) };
+    }
+  },
+
+  /**
+   * Sync payout challenges for a pot
+   * @param potId - The pot account ID
+   */
+  async potChallenges(potId: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(`${SYNC_API_BASE_URL}/api/v1/pots/${potId}/challenges/sync`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync pot challenges:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync pot challenges:", error);
+      return { success: false, message: String(error) };
+    }
+  },
 };
