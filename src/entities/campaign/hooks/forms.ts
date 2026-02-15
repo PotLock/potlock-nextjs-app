@@ -78,12 +78,13 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
 
   const isDisabled = useMemo(
     () =>
-      !self.formState.isDirty ||
+      (!isNewCampaign && !self.formState.isDirty) ||
       !self.formState.isValid ||
       self.formState.isSubmitting ||
       (values.ft_id !== NATIVE_TOKEN_ID && !isTokenDataLoading && token === undefined),
 
     [
+      isNewCampaign,
       isTokenDataLoading,
       self.formState.isDirty,
       self.formState.isSubmitting,
