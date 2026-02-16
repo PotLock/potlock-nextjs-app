@@ -1,4 +1,5 @@
 import axios from "axios";
+import { mutate } from "swr";
 
 import { syncApi } from "@/common/api/indexer";
 import { RPC_NODE_URL, walletApi } from "@/common/blockchains/near-protocol/client";
@@ -34,6 +35,11 @@ const getTransactionStatus = ({
     method: "tx",
     params: { wait_until, ...params },
   });
+
+const revalidateCampaignData = (campaignId: number) => {
+  mutate((key) => Array.isArray(key) && key[0] === "useCampaign" && key[1] === campaignId);
+  mutate((key) => Array.isArray(key) && key[0] === "useCampaignDonations" && key[1] === campaignId);
+};
 
 export type DonationSubmitCallbacks = {
   onError: (error: Error) => void;
@@ -175,6 +181,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                 .catch(() => {});
             }
 
+            revalidateCampaignData(campaignId);
             dispatch.donation.success(result.donation);
           })
           .catch((error) => {
@@ -201,6 +208,7 @@ export const effects = (dispatch: AppDispatcher) => ({
                 .catch(() => {});
             }
 
+            revalidateCampaignData(campaignId);
             dispatch.donation.success(result.donation);
           })
           .catch((error) => {
