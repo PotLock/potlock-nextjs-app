@@ -873,18 +873,24 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
 
           <div className="my-10 flex flex-row-reverse justify-between">
             <div className="flex flex-col items-end gap-2">
-              {fieldErrorMessages.length > 0 && !form.formState.isSubmitting && (
+              {!form.formState.isSubmitting && isDisabled && (
                 <div className="flex flex-col items-end gap-1">
-                  {fieldErrorMessages.map((msg, i) => (
-                    <p key={i} className="text-sm text-orange-600">
-                      {msg}
+                  {fieldErrorMessages.length > 0 ? (
+                    fieldErrorMessages.map((msg, i) => (
+                      <p key={i} className="text-sm text-orange-600">
+                        {msg}
+                      </p>
+                    ))
+                  ) : (
+                    <p className="text-sm text-orange-600">
+                      Please fill in all required fields
                     </p>
-                  ))}
+                  )}
                 </div>
               )}
               <Button
                 variant="brand-filled"
-                disabled={isUpdate ? isDisabled : form.formState.isSubmitting}
+                disabled={isDisabled}
                 type="submit"
               >
                 {isUpdate ? "Update" : "Create"} Campaign
