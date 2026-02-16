@@ -47,7 +47,7 @@ export const FeaturedCampaigns = ({
           <h1 className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             Featured Campaigns
           </h1>
-          <p className="text-[18px]">{current + 1}/3</p>
+          <p className="text-[18px]">{current + 1}/4</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex gap-4">
@@ -77,7 +77,7 @@ export const FeaturedCampaigns = ({
         <CarouselContent>
           {data?.length &&
             data
-              ?.filter((data) => [106, 101, 91].includes(data?.on_chain_id))
+              ?.filter((data) => [131, 106, 101, 91].includes(data?.on_chain_id))
               ?.map((data) => <CampaignCarouselItem key={data.on_chain_id} data={data} />)}
         </CarouselContent>
       </Carousel>
