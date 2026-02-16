@@ -5,7 +5,7 @@ import { calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
-import { Pot } from "@/common/api/indexer";
+import { Pot, syncApi } from "@/common/api/indexer";
 import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
@@ -146,7 +146,9 @@ export const usePotApplicationReviewForm = ({
           ...args,
           potId: potDetail.account,
         })
-        .then(() => {
+        .then(async () => {
+          // Sync pot applications to indexer after review
+          await syncApi.potApplications(potDetail.account).catch(() => {});
           onSuccess();
         })
         .catch((error) => {
