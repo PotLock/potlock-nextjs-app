@@ -882,17 +882,11 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                       </p>
                     ))
                   ) : (
-                    <p className="text-sm text-orange-600">
-                      Please fill in all required fields
-                    </p>
+                    <p className="text-sm text-orange-600">Please fill in all required fields</p>
                   )}
                 </div>
               )}
-              <Button
-                variant="brand-filled"
-                disabled={isDisabled}
-                type="submit"
-              >
+              <Button variant="brand-filled" disabled={isDisabled} type="submit">
                 {isUpdate ? "Update" : "Create"} Campaign
               </Button>
             </div>
