@@ -488,10 +488,24 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
           </div>
         </div>
       </div>
-      {isDisabled && (
-        <div className="text-sm text-red-500">
-          Please enter a valid amount in {selectedTokenData?.symbol || "USDC"} greater than an
-          equivalent of 0.1 NEAR.
+      {isDisabled && price > 0 && nearPrice > 0 && (
+        <div className="flex items-center gap-2 text-sm text-red-500">
+          <span>
+            Please enter a valid amount in {selectedTokenData?.symbol || "USDC"} greater than an
+            equivalent of 0.1 NEAR (min: {((0.1 * nearPrice) / price).toFixed(4)}{" "}
+            {selectedTokenData?.symbol || "USDC"}).
+          </span>
+          <button
+            type="button"
+            title="Set to minimum amount"
+            className="inline-flex shrink-0 items-center justify-center rounded-md border border-red-300 bg-red-50 px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 hover:text-red-700"
+            onClick={() => {
+              const minAmount = ((0.1 * nearPrice) / price) * 1.01; // add 1% buffer to safely clear the threshold
+              form.setValue("amount", parseFloat(minAmount.toFixed(4)));
+            }}
+          >
+            ✏️ Update
+          </button>
         </div>
       )}
       {/* Action Button */}
