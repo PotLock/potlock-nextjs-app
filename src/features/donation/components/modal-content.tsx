@@ -86,7 +86,7 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   const { isLoading: isDonationConfigLoading, data: donationConfig } =
     donationContractHooks.useConfig();
 
-  const { form, matchingPots, isDisabled, onSubmit, totalAmountFloat, isGroupDonation } =
+  const { form, matchingPots, isDisabled, onSubmit, totalAmountFloat, isGroupDonation, crossChainMinAmount, crossChainTokenSymbol } =
     useDonationForm(props);
 
   const isCampaignDonation = "campaignId" in props;
@@ -141,6 +141,8 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
               matchingPots={matchingPots}
               {...props}
               onTokenDataChange={setSelectedTokenData}
+              crossChainMinAmount={crossChainMinAmount}
+              crossChainTokenSymbol={crossChainTokenSymbol}
             />
           );
         } else if ("potId" in props || "listId" in props) {
