@@ -46,7 +46,15 @@ export type DonationSingleRecipientAllocationProps = Partial<ByAccountId> &
 
 export const DonationSingleRecipientAllocation: React.FC<
   DonationSingleRecipientAllocationProps
-> = ({ form, accountId, matchingPots, campaignId, onTokenDataChange, crossChainMinAmount, crossChainTokenSymbol }) => {
+> = ({
+  form,
+  accountId,
+  matchingPots,
+  campaignId,
+  onTokenDataChange,
+  crossChainMinAmount,
+  crossChainTokenSymbol,
+}) => {
   const walletUser = useWalletUserSession();
 
   const [selectedTokenData, setSelectedTokenData] = useState<{
@@ -336,26 +344,33 @@ export const DonationSingleRecipientAllocation: React.FC<
         )}
 
         {/* Cross-chain minimum amount warning with quick-fix button */}
-        {isCrossChainToken && crossChainMinAmount !== undefined && crossChainMinAmount > 0 && amount !== undefined && parseFloat(amount.toString()) > 0 && parseFloat(amount.toString()) < crossChainMinAmount && (
-          <div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-            <span>
-              Minimum amount is{" "}
-              <strong>{crossChainMinAmount.toFixed(4)} {crossChainTokenSymbol || "tokens"}</strong>{" "}
-              (equivalent to 0.1 NEAR).
-            </span>
-            <button
-              type="button"
-              title="Set to minimum amount"
-              className="inline-flex shrink-0 items-center justify-center rounded-md border border-red-300 bg-white px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 hover:text-red-700"
-              onClick={() => {
-                const minAmount = crossChainMinAmount * 1.01; // add 1% buffer
-                form.setValue("amount", parseFloat(minAmount.toFixed(4)));
-              }}
-            >
-              ✏️ Update
-            </button>
-          </div>
-        )}
+        {isCrossChainToken &&
+          crossChainMinAmount !== undefined &&
+          crossChainMinAmount > 0 &&
+          amount !== undefined &&
+          parseFloat(amount.toString()) > 0 &&
+          parseFloat(amount.toString()) < crossChainMinAmount && (
+            <div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+              <span>
+                Minimum amount is{" "}
+                <strong>
+                  {crossChainMinAmount.toFixed(4)} {crossChainTokenSymbol || "tokens"}
+                </strong>{" "}
+                (equivalent to 0.1 NEAR).
+              </span>
+              <button
+                type="button"
+                title="Set to minimum amount"
+                className="inline-flex shrink-0 items-center justify-center rounded-md border border-red-300 bg-white px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 hover:text-red-700"
+                onClick={() => {
+                  const minAmount = crossChainMinAmount * 1.01; // add 1% buffer
+                  form.setValue("amount", parseFloat(minAmount.toFixed(4)));
+                }}
+              >
+                ✏️ Update
+              </button>
+            </div>
+          )}
       </DialogDescription>
     </>
   );

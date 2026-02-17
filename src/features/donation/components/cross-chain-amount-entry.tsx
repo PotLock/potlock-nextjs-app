@@ -492,8 +492,8 @@ export const CrossChainAmountEntry: React.FC<CrossChainAmountEntryProps> = ({
         <div className="flex items-center gap-2 text-sm text-red-500">
           <span>
             Please enter a valid amount in {selectedTokenData?.symbol || "USDC"} greater than an
-            equivalent of 0.1 NEAR
-            {" "}(min: {((0.1 * nearPrice) / price).toFixed(4)} {selectedTokenData?.symbol || "USDC"}).
+            equivalent of 0.1 NEAR (min: {((0.1 * nearPrice) / price).toFixed(4)}{" "}
+            {selectedTokenData?.symbol || "USDC"}).
           </span>
           <button
             type="button"

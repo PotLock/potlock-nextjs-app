@@ -86,8 +86,16 @@ export const DonationModalContent: React.FC<DonationModalContentProps> = ({
   const { isLoading: isDonationConfigLoading, data: donationConfig } =
     donationContractHooks.useConfig();
 
-  const { form, matchingPots, isDisabled, onSubmit, totalAmountFloat, isGroupDonation, crossChainMinAmount, crossChainTokenSymbol } =
-    useDonationForm(props);
+  const {
+    form,
+    matchingPots,
+    isDisabled,
+    onSubmit,
+    totalAmountFloat,
+    isGroupDonation,
+    crossChainMinAmount,
+    crossChainTokenSymbol,
+  } = useDonationForm(props);
 
   const isCampaignDonation = "campaignId" in props;
   const isPotDonation = "potId" in props;

@@ -18,7 +18,6 @@ import { extractMatchingPots } from "@/entities/pot";
 import { useDispatch } from "@/store/hooks";
 
 import { useCrossChainTokens } from "./cross-chain-tokens";
-
 import {
   DONATION_DEFAULT_MIN_AMOUNT_FLOAT,
   DONATION_INSUFFICIENT_BALANCE_ERROR,
@@ -162,6 +161,7 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
     const parts = values.tokenId.split(":");
     const blockchain = parts[0];
     const assetId = parts.slice(1).join(":");
+
     const selectedToken = crossChainTokenList.find(
       (t) => t.assetId === assetId && t.blockchain.toLowerCase() === blockchain.toLowerCase(),
     );
@@ -178,6 +178,7 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
     if (crossChainTokenPrice > 0 && crossChainNearPrice > 0) {
       return (0.1 * crossChainNearPrice) / crossChainTokenPrice;
     }
+
     return 0;
   }, [crossChainNearPrice, crossChainTokenPrice]);
 
