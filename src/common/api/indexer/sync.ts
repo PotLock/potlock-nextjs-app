@@ -70,6 +70,111 @@ export const syncApi = {
   },
 
   /**
+   * Sync a campaign deletion after the owner deletes it on-chain
+   * @param campaignId - The on-chain campaign ID
+   * @param txHash - Transaction hash from the delete transaction
+   * @param senderId - Account ID of the campaign owner who deleted it
+   */
+  async campaignDelete(
+    campaignId: number | string,
+    txHash: string,
+    senderId: string,
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(
+        `${CAMPAIGNS_SYNC_API_BASE_URL}/api/v1/campaigns/${campaignId}/delete/sync`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tx_hash: txHash, sender_id: senderId }),
+        },
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync campaign deletion:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync campaign deletion:", error);
+      return { success: false, message: String(error) };
+    }
+  },
+
+  /**
+   * Sync campaign donation refunds after process_refunds_batch is executed
+   * @param campaignId - The on-chain campaign ID
+   * @param txHash - Transaction hash from the refund transaction
+   * @param senderId - Account ID of the sender who triggered refunds
+   */
+  async campaignRefund(
+    campaignId: number | string,
+    txHash: string,
+    senderId: string,
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(
+        `${CAMPAIGNS_SYNC_API_BASE_URL}/api/v1/campaigns/${campaignId}/refunds/sync`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tx_hash: txHash, sender_id: senderId }),
+        },
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync campaign refunds:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync campaign refunds:", error);
+      return { success: false, message: String(error) };
+    }
+  },
+
+  /**
+   * Sync campaign donation unescrow after process_escrowed_donations_batch is executed
+   * @param campaignId - The on-chain campaign ID
+   * @param txHash - Transaction hash from the unescrow transaction
+   * @param senderId - Account ID of the sender who triggered unescrow
+   */
+  async campaignUnescrow(
+    campaignId: number | string,
+    txHash: string,
+    senderId: string,
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(
+        `${CAMPAIGNS_SYNC_API_BASE_URL}/api/v1/campaigns/${campaignId}/unescrow/sync`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tx_hash: txHash, sender_id: senderId }),
+        },
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync campaign unescrow:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync campaign unescrow:", error);
+      return { success: false, message: String(error) };
+    }
+  },
+
+  /**
    * Sync an account profile and recalculate donation stats
    * @param accountId - The NEAR account ID
    */

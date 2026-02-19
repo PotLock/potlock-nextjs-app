@@ -86,17 +86,71 @@ export const create_campaign = ({ args }: CreateCampaignParams) => {
   }
 };
 
-export const process_escrowed_donations_batch = ({ args }: { args: { campaign_id: CampaignId } }) =>
-  contractApi.call("process_escrowed_donations_batch", {
-    args,
-    gas: FULL_TGAS,
-  });
+export type TxHashResult = {
+  txHash: string | null;
+};
 
-export const process_refunds_batch = ({ args }: { args: { campaign_id: CampaignId } }) =>
-  contractApi.call("process_refunds_batch", {
+const callWithTxHash = async (
+  method: string,
+  args: Record<string, unknown>,
+  deposit?: string,
+): Promise<TxHashResult> => {
+  const { walletApi } = await import("@/common/blockchains/near-protocol/client");
+  const wallet = await walletApi.ensureWallet();
+  const signerId = walletApi.accountId;
+
+  if (!signerId) {
+    throw new Error("Wallet is not signed in.");
+  }
+
+  const { actionCreators } = await import("@near-js/transactions");
+
+  const action = actionCreators.functionCall(
+    method,
     args,
-    gas: FULL_TGAS,
-  });
+    BigInt(FULL_TGAS),
+    BigInt(deposit ?? "0"),
+  );
+
+  let outcome: any;
+  const walletAny = wallet as any;
+
+  if ("signAndSendTransaction" in walletAny) {
+    outcome = await walletAny.signAndSendTransaction({
+      signerId,
+      receiverId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+      actions: [action],
+    });
+  } else if ("signAndSendTransactions" in walletAny) {
+    const results = await walletAny.signAndSendTransactions({
+      transactions: [
+        {
+          receiverId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+          actions: [action],
+        },
+      ],
+    });
+
+    outcome = Array.isArray(results) ? results[0] : results;
+  } else {
+    throw new Error("Wallet does not support transaction signing");
+  }
+
+  const txHash = outcome?.transaction?.hash || outcome?.transaction_outcome?.id || null;
+  return { txHash };
+};
+
+export const process_escrowed_donations_batch = ({
+  args,
+}: {
+  args: { campaign_id: CampaignId };
+}): Promise<TxHashResult> => callWithTxHash("process_escrowed_donations_batch", args);
+
+export const process_refunds_batch = ({
+  args,
+}: {
+  args: { campaign_id: CampaignId };
+}): Promise<TxHashResult> => callWithTxHash("process_refunds_batch", args);
 
 export type UpdateCampaignParams = { args: CampaignInputs & { campaign_id: CampaignId } };
 
@@ -109,12 +163,8 @@ export const update_campaign = ({ args }: UpdateCampaignParams) =>
 
 export type DeleteCampaignParams = { args: { campaign_id: CampaignId } };
 
-export const delete_campaign = ({ args }: DeleteCampaignParams) =>
-  contractApi.call<DeleteCampaignParams["args"], void>("delete_campaign", {
-    args,
-    deposit: floatToYoctoNear(0.021),
-    gas: FULL_TGAS,
-  });
+export const delete_campaign = ({ args }: DeleteCampaignParams): Promise<TxHashResult> =>
+  callWithTxHash("delete_campaign", args, floatToYoctoNear(0.021));
 
 export type DonateResult = {
   donation: CampaignDonation;
