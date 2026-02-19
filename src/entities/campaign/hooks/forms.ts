@@ -78,12 +78,13 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
 
   const isDisabled = useMemo(
     () =>
-      !self.formState.isDirty ||
+      (!isNewCampaign && !self.formState.isDirty) ||
       !self.formState.isValid ||
       self.formState.isSubmitting ||
       (values.ft_id !== NATIVE_TOKEN_ID && !isTokenDataLoading && token === undefined),
 
     [
+      isNewCampaign,
       isTokenDataLoading,
       self.formState.isDirty,
       self.formState.isSubmitting,
@@ -181,7 +182,14 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
   const handleDeleteCampaign = async () => {
     if (!isNewCampaign) {
       try {
-        await campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
+        const { txHash } = await campaignsContractClient.delete_campaign({
+          args: { campaign_id: campaignId },
+        });
+
+        // Sync deletion to indexer database
+        if (txHash && viewer.accountId) {
+          await syncApi.campaignDelete(campaignId, txHash, viewer.accountId).catch(console.warn);
+        }
 
         dispatch.campaignEditor.updateCampaignModalState({
           header: "Campaign Deleted Successfully",
@@ -207,7 +215,14 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
         .process_escrowed_donations_batch({
           args: { campaign_id: campaignId },
         })
-        .then(() => {
+        .then(async ({ txHash }) => {
+          // Sync unescrow to indexer database
+          if (txHash && viewer.accountId) {
+            await syncApi
+              .campaignUnescrow(campaignId, txHash, viewer.accountId)
+              .catch(console.warn);
+          }
+
           return toast({
             title: "Successfully processed escrowed donations",
           });
@@ -229,7 +244,12 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
         .process_refunds_batch({
           args: { campaign_id: campaignId },
         })
-        .then(() => {
+        .then(async ({ txHash }) => {
+          // Sync refunds to indexer database
+          if (txHash && viewer.accountId) {
+            await syncApi.campaignRefund(campaignId, txHash, viewer.accountId).catch(console.warn);
+          }
+
           return toast({
             title: "Successfully processed donation refunds",
           });

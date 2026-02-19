@@ -99,7 +99,7 @@ export const timestamp = preprocess(
 );
 
 export const futureTimestamp = timestamp.refine(
-  (value) => value > Temporal.Now.instant().epochMilliseconds,
+  (value) => value >= Temporal.Now.instant().epochMilliseconds - 60_000,
   { message: "Cannot be in the past" },
 );
 
