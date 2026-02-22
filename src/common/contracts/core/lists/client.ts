@@ -1,6 +1,6 @@
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { contractApi as createContractApi } from "@/common/blockchains/near-protocol/client";
-import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import { FULL_TGAS, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
 
@@ -16,6 +16,60 @@ import {
 const contractApi = createContractApi({
   contractId: LISTS_CONTRACT_ACCOUNT_ID,
 });
+
+export type TxHashResult = {
+  txHash: string | null;
+};
+
+const callWithTxHash = async (
+  method: string,
+  args: Record<string, unknown>,
+  deposit?: string,
+): Promise<TxHashResult> => {
+  const { walletApi } = await import("@/common/blockchains/near-protocol/client");
+  const wallet = await walletApi.ensureWallet();
+  const signerId = walletApi.accountId;
+
+  if (!signerId) {
+    throw new Error("Wallet is not signed in.");
+  }
+
+  const { actionCreators } = await import("@near-js/transactions");
+
+  const action = actionCreators.functionCall(
+    method,
+    args,
+    BigInt(FULL_TGAS),
+    BigInt(deposit ?? "0"),
+  );
+
+  let outcome: any;
+  const walletAny = wallet as any;
+
+  if ("signAndSendTransaction" in walletAny) {
+    outcome = await walletAny.signAndSendTransaction({
+      signerId,
+      receiverId: LISTS_CONTRACT_ACCOUNT_ID,
+      actions: [action],
+    });
+  } else if ("signAndSendTransactions" in walletAny) {
+    const results = await walletAny.signAndSendTransactions({
+      transactions: [
+        {
+          receiverId: LISTS_CONTRACT_ACCOUNT_ID,
+          actions: [action],
+        },
+      ],
+    });
+
+    outcome = Array.isArray(results) ? results[0] : results;
+  } else {
+    throw new Error("Wallet does not support transaction signing");
+  }
+
+  const txHash = outcome?.transaction?.hash || outcome?.transaction_outcome?.id || null;
+  return { txHash };
+};
 
 export const get_lists = () => contractApi.view<{}, List[]>("get_lists");
 
@@ -107,19 +161,11 @@ export const update_registered_project = (args: UpdateRegistration) =>
     args,
   });
 
-export const delete_list = (args: { list_id: number }) =>
-  contractApi.call<typeof args, List>("delete_list", {
-    args,
-    deposit: floatToYoctoNear(0.01),
-    gas: "300000000000000",
-  });
+export const delete_list = (args: { list_id: number }): Promise<TxHashResult> =>
+  callWithTxHash("delete_list", args, floatToYoctoNear(0.01));
 
-export const upvote = (args: { list_id: number }) =>
-  contractApi.call<typeof args, List>("upvote", {
-    args,
-    deposit: floatToYoctoNear(0.01),
-    gas: "300000000000000",
-  });
+export const upvote = (args: { list_id: number }): Promise<TxHashResult> =>
+  callWithTxHash("upvote", args, floatToYoctoNear(0.01));
 
 export const add_admins_to_list = (args: { list_id: number; admins: Array<string> }) =>
   contractApi.call<typeof args, List>("owner_add_admins", {
@@ -142,12 +188,8 @@ export const transfer_list_ownership = (args: { list_id: number; new_owner_id: s
     gas: "300000000000000",
   });
 
-export const remove_upvote = (args: { list_id: number }) =>
-  contractApi.call<typeof args, List>("remove_upvote", {
-    args,
-    deposit: floatToYoctoNear(0.01),
-    gas: "300000000000000",
-  });
+export const remove_upvote = (args: { list_id: number }): Promise<TxHashResult> =>
+  callWithTxHash("remove_upvote", args, floatToYoctoNear(0.01));
 
 export const get_list_for_owner = (args: { owner_id: string }) =>
   contractApi.view<typeof args, List>("get_lists_for_owner", { args });
