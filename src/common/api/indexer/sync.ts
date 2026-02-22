@@ -175,6 +175,105 @@ export const syncApi = {
   },
 
   /**
+   * Sync a list deletion after the owner deletes it on-chain
+   * @param listId - The on-chain list ID
+   * @param txHash - Transaction hash from the delete transaction
+   * @param senderId - Account ID of the list owner who deleted it
+   */
+  async listDelete(
+    listId: number | string,
+    txHash: string,
+    senderId: string,
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(`${SYNC_API_BASE_URL}/api/v1/lists/${listId}/delete/sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tx_hash: txHash, sender_id: senderId }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync list deletion:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync list deletion:", error);
+      return { success: false, message: String(error) };
+    }
+  },
+
+  /**
+   * Sync a list upvote after the user upvotes on-chain
+   * @param listId - The on-chain list ID
+   * @param txHash - Transaction hash from the upvote transaction
+   * @param senderId - Account ID of the user who upvoted
+   */
+  async listUpvote(
+    listId: number | string,
+    txHash: string,
+    senderId: string,
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(`${SYNC_API_BASE_URL}/api/v1/lists/${listId}/upvote/sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tx_hash: txHash, sender_id: senderId }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync list upvote:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync list upvote:", error);
+      return { success: false, message: String(error) };
+    }
+  },
+
+  /**
+   * Sync a list remove-upvote after the user removes their upvote on-chain
+   * @param listId - The on-chain list ID
+   * @param txHash - Transaction hash from the remove-upvote transaction
+   * @param senderId - Account ID of the user who removed their upvote
+   */
+  async listRemoveUpvote(
+    listId: number | string,
+    txHash: string,
+    senderId: string,
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(
+        `${SYNC_API_BASE_URL}/api/v1/lists/${listId}/remove-upvote/sync`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tx_hash: txHash, sender_id: senderId }),
+        },
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.warn("Failed to sync list remove-upvote:", error);
+        return { success: false, message: error?.error || "Sync failed" };
+      }
+
+      const result = await response.json();
+      return { success: true, message: result.message };
+    } catch (error) {
+      console.warn("Failed to sync list remove-upvote:", error);
+      return { success: false, message: String(error) };
+    }
+  },
+
+  /**
    * Sync an account profile and recalculate donation stats
    * @param accountId - The NEAR account ID
    */

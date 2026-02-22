@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { FaHeart } from "react-icons/fa";
 
+import { syncApi } from "@/common/api/indexer";
 import { listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import { LazyImage } from "@/common/ui/layout/components/LazyImage";
@@ -42,14 +43,32 @@ export const ListCard = ({
     e.stopPropagation();
 
     if (isUpvoted) {
-      listsContractClient.remove_upvote({ list_id: dataForList?.on_chain_id });
+      listsContractClient
+        .remove_upvote({ list_id: dataForList?.on_chain_id })
+        .then(async ({ txHash }) => {
+          if (txHash && viewer.accountId) {
+            await syncApi
+              .listRemoveUpvote(dataForList?.on_chain_id, txHash, viewer.accountId)
+              .catch(() => {});
+          }
+        })
+        .catch((error) => console.error("Error removing upvote:", error));
 
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name ?? "", 15),
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
-      listsContractClient.upvote({ list_id: dataForList?.on_chain_id });
+      listsContractClient
+        .upvote({ list_id: dataForList?.on_chain_id })
+        .then(async ({ txHash }) => {
+          if (txHash && viewer.accountId) {
+            await syncApi
+              .listUpvote(dataForList?.on_chain_id, txHash, viewer.accountId)
+              .catch(() => {});
+          }
+        })
+        .catch((error) => console.error("Error upvoting:", error));
 
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name ?? "", 15),
