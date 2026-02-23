@@ -10,6 +10,7 @@ import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { listsContractClient } from "@/common/contracts/core/lists";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountGroupItem, validateAccountId } from "@/entities/_shared/account";
 import { useDispatch } from "@/store/hooks";
 
@@ -18,6 +19,7 @@ import { ListFormModalType } from "../types";
 export const useListForm = () => {
   const { push, query } = useRouter();
   const dispatch = useDispatch();
+  const viewer = useWalletUserSession();
   const [transferAccountField, setTransferAccountField] = useState<string>("");
   const [transferAccountError, setTransferAccountError] = useState<string | undefined>("");
 
@@ -37,7 +39,12 @@ export const useListForm = () => {
 
     listsContractClient
       .delete_list({ list_id: id })
-      .then(() => {
+      .then(async ({ txHash }) => {
+        // Sync deletion to indexer
+        if (txHash && viewer.accountId) {
+          await syncApi.listDelete(id, txHash, viewer.accountId).catch(() => {});
+        }
+
         push("/lists");
       })
       .catch((error) => {

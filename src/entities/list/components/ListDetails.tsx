@@ -132,10 +132,17 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
     admins.includes(viewer.accountId ?? "") || listDetails.owner?.id === viewer.accountId;
 
   const handleUpvote = () => {
+    const onChainId = Number(listDetails.on_chain_id);
+
     if (isUpvoted) {
       listsContractClient
-        .remove_upvote({ list_id: Number(listDetails.on_chain_id) })
-        .catch((error) => console.error("Error upvoting:", error));
+        .remove_upvote({ list_id: onChainId })
+        .then(async ({ txHash }) => {
+          if (txHash && viewer.accountId) {
+            await syncApi.listRemoveUpvote(onChainId, txHash, viewer.accountId).catch(() => {});
+          }
+        })
+        .catch((error) => console.error("Error removing upvote:", error));
 
       dispatch.listEditor.handleListToast({
         name: truncate(listDetails?.name ?? "", 15),
@@ -143,7 +150,12 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
       });
     } else {
       listsContractClient
-        .upvote({ list_id: Number(listDetails.on_chain_id) })
+        .upvote({ list_id: onChainId })
+        .then(async ({ txHash }) => {
+          if (txHash && viewer.accountId) {
+            await syncApi.listUpvote(onChainId, txHash, viewer.accountId).catch(() => {});
+          }
+        })
         .catch((error) => console.error("Error upvoting:", error));
 
       dispatch.listEditor.handleListToast({
