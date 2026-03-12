@@ -34,6 +34,12 @@ export const FeaturedCampaigns = ({
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap());
     });
+
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [api]);
 
   if (!data?.length) {
