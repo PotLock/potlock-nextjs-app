@@ -29,14 +29,13 @@ export const FEATURED_PROJECT_ACCOUNT_IDS =
   NETWORK === "mainnet"
     ? [
         "potlock.near",
-        "yearofchef.near",
         "nearcatalog.near",
         "meteor-wallet.near",
         "indexers.intear.near",
         "nearblocks.near",
         "fastnear.tg",
       ]
-    : ["amichaeltest.testnet", "root.akaia.testnet", "yearofchef.testnet"];
+    : ["amichaeltest.testnet", "root.akaia.testnet"];
 
 export const PAST_FUNDING_ROUNDS_POT_IDS = [
   "ai.v1.potfactory.potlock.near",

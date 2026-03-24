@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { isDeepEqual } from "remeda";
+import { Temporal } from "temporal-polyfill";
 
 import { syncApi } from "@/common/api/indexer/sync";
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
@@ -43,7 +44,13 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
   const self = useForm<Values>({
     resolver: zodResolver(schema),
     mode: "all",
-    defaultValues: { ft_id: ftId ?? NATIVE_TOKEN_ID, target_amount: 0.01 },
+    defaultValues: {
+      ft_id: ftId ?? NATIVE_TOKEN_ID,
+      target_amount: 0.01,
+      ...(isNewCampaign
+        ? { start_ms: Temporal.Now.instant().add({ minutes: 5 }).epochMilliseconds }
+        : {}),
+    },
     resetOptions: { keepDirtyValues: false },
   });
 
@@ -268,6 +275,21 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
   // TODO: Use token metadata to convert amounts
   const onSubmit: SubmitHandler<Values> = useCallback(
     (values) => {
+      // Validate end_ms is in the future before building args
+      if (values.end_ms) {
+        const endMs = timeToMilliseconds(values.end_ms);
+
+        if (endMs <= Date.now()) {
+          toast({
+            title: "End date must be in the future",
+            description: "Please update the end date and try again.",
+            variant: "destructive",
+          });
+
+          return;
+        }
+      }
+
       const args = {
         description: values.description || "",
         name: values.name || "",
@@ -315,10 +337,28 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
         ...(values?.creator_fee_basis_points && {
           creator_fee_basis_points: feePercentsToBasisPoints(values.creator_fee_basis_points),
         }),
-        ...(values.start_ms &&
-          timeToMilliseconds(values.start_ms) > Date.now() && {
-            start_ms: timeToMilliseconds(values.start_ms),
-          }),
+        ...(() => {
+          if (values.start_ms) {
+            const startMs = timeToMilliseconds(values.start_ms);
+
+            // For new campaigns, always send start_ms; use now + 5 min if value is in the past
+            if (isNewCampaign) {
+              return {
+                start_ms:
+                  startMs > Date.now()
+                    ? startMs
+                    : Temporal.Now.instant().add({ minutes: 5 }).epochMilliseconds,
+              };
+            }
+
+            // For updates, only send if in the future
+            if (startMs > Date.now()) {
+              return { start_ms: startMs };
+            }
+          }
+
+          return {};
+        })(),
         ...(values.end_ms && {
           end_ms: timeToMilliseconds(values.end_ms),
         }),

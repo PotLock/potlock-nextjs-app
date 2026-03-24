@@ -100,7 +100,7 @@ export const timestamp = preprocess(
 
 export const futureTimestamp = timestamp.refine(
   (value) => value >= Temporal.Now.instant().epochMilliseconds - 60_000,
-  { message: "Cannot be in the past" },
+  { message: "Must be a future date and time" },
 );
 
 export const daysFloatToMilliseconds = (daysFloat: number) => daysFloat * DAY_IN_MILLISECONDS;
