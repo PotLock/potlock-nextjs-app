@@ -382,12 +382,30 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
 
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit((values) => {
-            onSubmit({
-              ...values,
-              allow_fee_avoidance: avoidFee,
-            });
-          })}
+          onSubmit={(e) => {
+            // Refresh start_ms if it has drifted into the past while filling the form
+            if (!isUpdate) {
+              const currentStartMs = form.getValues("start_ms");
+              const now = Temporal.Now.instant().epochMilliseconds;
+
+              if (typeof currentStartMs === "number" && currentStartMs < now) {
+                form.setValue(
+                  "start_ms",
+                  Temporal.Now.instant().add({ minutes: 1 }).epochMilliseconds,
+                  {
+                    shouldValidate: false,
+                  },
+                );
+              }
+            }
+
+            form.handleSubmit((values) => {
+              onSubmit({
+                ...values,
+                allow_fee_avoidance: avoidFee,
+              });
+            })(e);
+          }}
         >
           <div className="mb-8 mt-8">
             {showProjectFields && (
@@ -882,7 +900,10 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                       </p>
                     ))
                   ) : (
-                    <p className="text-sm text-orange-600">Please fill in all required fields</p>
+                    <p className="text-sm text-orange-600">
+                      Please fill in all required fields (name, description, start date, recipient,
+                      target amount)
+                    </p>
                   )}
                 </div>
               )}
