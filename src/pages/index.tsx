@@ -29,6 +29,7 @@ export const FEATURED_PROJECT_ACCOUNT_IDS =
   NETWORK === "mainnet"
     ? [
         "potlock.near",
+        "replycash.near",
         "nearcatalog.near",
         "meteor-wallet.near",
         "indexers.intear.near",
