@@ -1,3 +1,4 @@
+import { useOrgVerification } from "@/common/api/indexer/hooks";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resistance";
@@ -27,6 +28,8 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
     accountId,
   });
 
+  const { data: orgVerification } = useOrgVerification({ accountId });
+
   return (
     <section className="relative">
       <AccountProfileCover height={318} className="relative rounded-xl" {...{ accountId }} />
@@ -48,7 +51,7 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
             "items-center gap-2 md:gap-6",
           )}
         >
-          {pgRegistryRegistration || isHuman ? (
+          {pgRegistryRegistration || isHuman || orgVerification?.status === "Approved" ? (
             <>
               {pgRegistryRegistration && (
                 <div
@@ -81,6 +84,24 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
 
                   <div style={{ color: listRegistrationStatusIcons.Approved.color }}>
                     {"Verified"}
+                  </div>
+                </div>
+              )}
+
+              {orgVerification?.status === "Approved" && (
+                <div
+                  className={cn(
+                    "bg-background flex items-center gap-1 overflow-hidden rounded-[20px]",
+                    "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
+                  )}
+                >
+                  {listRegistrationStatusIcons.Approved.icon}
+
+                  <div
+                    className="hidden md:block"
+                    style={{ color: listRegistrationStatusIcons.Approved.color }}
+                  >
+                    {"501(c)(3)"}
                   </div>
                 </div>
               )}
