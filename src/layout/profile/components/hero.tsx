@@ -1,7 +1,9 @@
+import { useOrgVerification } from "@/common/api/indexer/hooks";
 import { PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { sybilResistanceContractHooks } from "@/common/contracts/core/sybil-resistance";
 import type { ByAccountId } from "@/common/types";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import {
   AccountFollowStats,
@@ -27,6 +29,8 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
     accountId,
   });
 
+  const { data: orgVerification } = useOrgVerification({ accountId });
+
   return (
     <section className="relative">
       <AccountProfileCover height={318} className="relative rounded-xl" {...{ accountId }} />
@@ -48,7 +52,7 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
             "items-center gap-2 md:gap-6",
           )}
         >
-          {pgRegistryRegistration || isHuman ? (
+          {pgRegistryRegistration || isHuman || orgVerification?.status === "Approved" ? (
             <>
               {pgRegistryRegistration && (
                 <div
@@ -83,6 +87,33 @@ export const ProfileLayoutHero: React.FC<ProfileLayoutHeroProps> = ({ accountId 
                     {"Verified"}
                   </div>
                 </div>
+              )}
+
+              {orgVerification?.status === "Approved" && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div
+                      className={cn(
+                        "bg-background flex cursor-help items-center gap-1 overflow-hidden rounded-[20px]",
+                        "p-[3px] text-[11px] uppercase tracking-[0.88px] opacity-100",
+                      )}
+                    >
+                      {listRegistrationStatusIcons.Pending.icon}
+
+                      <div
+                        className="hidden md:block"
+                        style={{ color: listRegistrationStatusIcons.Pending.color }}
+                      >
+                        {"501(c)(3)"}
+                      </div>
+                    </div>
+                  </TooltipTrigger>
+
+                  <TooltipContent side="bottom" className="max-w-[280px] text-center">
+                    This 501(c)(3) status is auto-populated from IRS records. The submitter has not
+                    been verified as an authorized representative of this organization.
+                  </TooltipContent>
+                </Tooltip>
               )}
             </>
           ) : (

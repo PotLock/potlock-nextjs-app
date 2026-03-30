@@ -1,5 +1,7 @@
 import type { AxiosResponse } from "axios";
+import useSWR from "swr";
 
+import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
 import { NOOP_STRING } from "@/common/constants";
 import { isAccountId, isEthereumAddress } from "@/common/lib";
 import {
@@ -11,6 +13,7 @@ import {
 
 import * as generatedClient from "./internal/client.generated";
 import { INDEXER_CLIENT_CONFIG, INDEXER_CLIENT_CONFIG_STAGING } from "./internal/config";
+import type { OrgVerification } from "./tax-verification";
 import { ByPotId } from "./types";
 
 const currentNetworkConfig =
@@ -377,4 +380,26 @@ export const useCampaign = ({ campaignId }: { campaignId: number }) => {
   });
 
   return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * Fetch 501(c)(3) verification status for an organization account.
+ */
+const orgVerificationFetcher = (url: string) =>
+  fetch(url).then((r) => {
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error("Failed to fetch org verification");
+    return r.json() as Promise<OrgVerification>;
+  });
+
+export const useOrgVerification = ({
+  accountId,
+  enabled = true,
+}: ByAccountId & ConditionalActivation) => {
+  return useSWR(
+    enabled && accountId
+      ? `${INDEXER_API_ENDPOINT_URL}/api/v1/tax-verification/org-verification/${accountId}`
+      : null,
+    orgVerificationFetcher,
+  );
 };
