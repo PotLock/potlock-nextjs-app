@@ -10,7 +10,7 @@ import { Row } from "./editor-elements";
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }> = {
   Pending: { bg: "bg-[#FFF0E1]", text: "text-[#EA6A25]", label: "Verifying..." },
-  Approved: { bg: "bg-[#E1F5ED]", text: "text-[#0B7A74]", label: "Verified 501(c)(3)" },
+  Approved: { bg: "bg-[#FFF0E1]", text: "text-[#EA6A25]", label: "Unverified 501(c)(3)" },
   Rejected: { bg: "bg-[#FFE1E1]", text: "text-[#ED464F]", label: "Not Verified" },
 };
 
@@ -69,7 +69,7 @@ export const OrgVerificationSection: React.FC<OrgVerificationSectionProps> = ({ 
 
   const statusStyle = verification ? STATUS_STYLES[verification.status] : null;
 
-  // Verified view — show IRS data
+  // Approved view — show IRS data (unverified mode)
   if (verification?.status === "Approved") {
     return (
       <div className="mt-6 flex flex-col gap-4">
@@ -84,6 +84,12 @@ export const OrgVerificationSection: React.FC<OrgVerificationSectionProps> = ({ 
             {statusStyle.label}
           </div>
         )}
+
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+          This data is auto-populated from IRS records. It confirms this EIN belongs to a registered
+          501(c)(3) organization, but does not verify that the submitter is an authorized
+          representative.
+        </div>
 
         <Row>
           <FieldDisplay label="EIN" value={verification.ein} />
