@@ -131,6 +131,10 @@ export const PLATFORM_LISTED_TOKEN_IDS: TokenId[] = [];
 // List ID of PotLock Public Goods Registry
 export const PUBLIC_GOODS_REGISTRY_LIST_ID = 1;
 
+// List ID of 501(c)(3) Verified Organizations Registry (on lists.potlock.near)
+// TODO: Update this once the list is created on-chain
+export const VERIFIED_501C3_LIST_ID = 2;
+
 // Separates contract_id and method_name in ProviderId
 export const PROVIDER_ID_DELIMITER = ":";
 

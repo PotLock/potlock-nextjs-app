@@ -2,6 +2,8 @@ import { useCallback, useState } from "react";
 
 import { useOrgVerification } from "@/common/api/indexer/hooks";
 import { taxVerificationApi } from "@/common/api/indexer/tax-verification";
+import { VERIFIED_501C3_LIST_ID } from "@/common/constants";
+import { listsContractHooks } from "@/common/contracts/core/lists";
 import { TextField } from "@/common/ui/form/components";
 import { Button, FormLabel } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
@@ -32,6 +34,15 @@ export const OrgVerificationSection: React.FC<OrgVerificationSectionProps> = ({ 
     accountId: accountId ?? "",
     enabled: !!accountId,
   });
+
+  const { data: verified501c3Registration } = listsContractHooks.useRegistration({
+    listId: VERIFIED_501C3_LIST_ID,
+    accountId: accountId ?? "",
+    enabled: !!accountId,
+  });
+
+  const isOnVerifiedList =
+    !!verified501c3Registration && verified501c3Registration.status === "Approved";
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -69,7 +80,50 @@ export const OrgVerificationSection: React.FC<OrgVerificationSectionProps> = ({ 
 
   const statusStyle = verification ? STATUS_STYLES[verification.status] : null;
 
-  // Approved view — show IRS data (unverified mode)
+  // Fully verified — on the 501(c)(3) registry list
+  if (verification?.status === "Approved" && isOnVerifiedList) {
+    return (
+      <div className="mt-6 flex flex-col gap-4">
+        <div
+          className={cn(
+            "inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider",
+            "bg-[#E1F5F4]",
+            "text-[#0B7A74]",
+          )}
+        >
+          Verified 501(c)(3)
+        </div>
+
+        <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-800">
+          This organization has been verified as a registered 501(c)(3) nonprofit.
+        </div>
+
+        <Row>
+          <FieldDisplay label="EIN" value={verification.ein} />
+          <FieldDisplay label="Organization Name (IRS)" value={verification.legal_name} />
+        </Row>
+
+        <Row>
+          <FieldDisplay label="Address" value={verification.address} />
+          <FieldDisplay
+            label="City / State / Zip"
+            value={
+              [verification.city, verification.state, verification.zip_code]
+                .filter(Boolean)
+                .join(", ") || null
+            }
+          />
+        </Row>
+
+        <Row>
+          <FieldDisplay label="NTEE Code" value={verification.ntee_code} />
+          <FieldDisplay label="IRS Ruling Date" value={verification.ruling_date} />
+        </Row>
+      </div>
+    );
+  }
+
+  // Approved but not on list — unverified mode
   if (verification?.status === "Approved") {
     return (
       <div className="mt-6 flex flex-col gap-4">
@@ -120,16 +174,6 @@ export const OrgVerificationSection: React.FC<OrgVerificationSectionProps> = ({ 
   if (verification?.status === "Rejected") {
     return (
       <div className="mt-6 flex flex-col gap-4">
-        <div
-          className={cn(
-            "inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider",
-            STATUS_STYLES.Rejected.bg,
-            STATUS_STYLES.Rejected.text,
-          )}
-        >
-          {STATUS_STYLES.Rejected.label}
-        </div>
-
         {verification.rejection_reason && (
           <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
             {verification.rejection_reason}
