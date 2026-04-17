@@ -161,10 +161,7 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
             <AccountFollowButton accountId={accountId} className="w-40" />
           </div>
 
-          <FastDonateToProjectButton
-            recipientAccountId={accountId}
-            recipientName={profile?.name}
-          />
+          <FastDonateToProjectButton recipientAccountId={accountId} recipientName={profile?.name} />
         </div>
       </div>
     </div>
