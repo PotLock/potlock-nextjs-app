@@ -26,15 +26,9 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const {
-      amount,
-      asset,
-      campaignId,
-      referrerAccountId,
-      donorMessage,
-      successUrl,
-      cancelUrl,
-    } = body ?? {};
+
+    const { amount, asset, campaignId, referrerAccountId, donorMessage, successUrl, cancelUrl } =
+      body ?? {};
 
     if (!amount || campaignId === undefined || campaignId === null) {
       return NextResponse.json(
@@ -72,6 +66,7 @@ export async function POST(req: Request) {
 
     const text = await response.text();
     let data: any;
+
     try {
       data = text ? JSON.parse(text) : {};
     } catch {

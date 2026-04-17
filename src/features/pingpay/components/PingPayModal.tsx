@@ -43,8 +43,9 @@ export const PingPayModal = create((props: PingPayModalProps) => {
   const { tokenSymbol, tokenDecimals } = props;
   const campaignId = "campaignId" in props ? props.campaignId : undefined;
   const campaignName = "campaignName" in props ? props.campaignName : undefined;
-  const recipientAccountId =
-    "recipientAccountId" in props ? props.recipientAccountId : undefined;
+
+  const recipientAccountId = "recipientAccountId" in props ? props.recipientAccountId : undefined;
+
   const recipientName = "recipientName" in props ? props.recipientName : undefined;
   const isCampaign = campaignId !== undefined;
 

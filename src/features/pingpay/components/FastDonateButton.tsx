@@ -48,9 +48,7 @@ export const FastDonateButton: React.FC<FastDonateButtonProps> = ({
         e.stopPropagation();
         handleClick();
       }}
-      aria-label={
-        campaignName ? `Create Payment link for ${campaignName}` : "Create Payment link"
-      }
+      aria-label={campaignName ? `Create Payment link for ${campaignName}` : "Create Payment link"}
     >
       {tokenSymbol ? "Create Payment link" : "Loading…"}
     </Button>

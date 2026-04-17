@@ -25,6 +25,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
+
     const {
       amount,
       asset,
@@ -70,6 +71,7 @@ export async function POST(req: Request) {
 
     const text = await response.text();
     let data: any;
+
     try {
       data = text ? JSON.parse(text) : {};
     } catch {
