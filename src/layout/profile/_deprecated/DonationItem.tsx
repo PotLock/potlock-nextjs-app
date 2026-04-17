@@ -76,7 +76,10 @@ export const DonationItem = ({
     recipient: _recipient,
     donated_at,
     token,
+    message,
   } = donation;
+
+  const isPingPay = (message ?? "").startsWith("[via PingPay]");
 
   const { id: donorId } = donor;
   const potId = pot?.id;
@@ -124,7 +127,14 @@ export const DonationItem = ({
             )}{" "}
             {name}
           </Link>
-          <div className="type">{isPot ? "Matched donation" : "Direct donation"}</div>
+          <div className="type flex items-center gap-2">
+            <span>{isPot ? "Matched donation" : "Direct donation"}</span>
+            {isPingPay && (
+              <span className="rounded-md bg-blue-100 px-2 text-xs font-semibold text-black">
+                via PingPay
+              </span>
+            )}
+          </div>
         </div>
       </FundingSrc>
       <div className="price tab">

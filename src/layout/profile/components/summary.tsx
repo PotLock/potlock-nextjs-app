@@ -21,6 +21,7 @@ import {
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
 import { DonateToAccountButton } from "@/features/donation";
+import { FastDonateToProjectButton } from "@/features/pingpay";
 import { rootPathnames, routeSelectors } from "@/navigation";
 
 const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
@@ -159,6 +160,11 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
             <DonateToAccountButton accountId={accountId} variant="brand-filled" className="w-40" />
             <AccountFollowButton accountId={accountId} className="w-40" />
           </div>
+
+          <FastDonateToProjectButton
+            recipientAccountId={accountId}
+            recipientName={profile?.name}
+          />
         </div>
       </div>
     </div>
