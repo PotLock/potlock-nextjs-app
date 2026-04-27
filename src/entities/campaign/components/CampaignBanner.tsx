@@ -20,6 +20,7 @@ import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { useFungibleToken } from "@/entities/_shared/token";
 import { DonateToCampaign } from "@/features/donation";
+import { FastDonateButton } from "@/features/pingpay";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 import { useCampaignForm } from "../hooks/forms";
@@ -271,6 +272,15 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
                     disabled={campaign?.status !== "active"}
                     className="mb-4"
                     {...{ campaignId }}
+                  />
+
+                  <FastDonateButton
+                    recipientAccountId={campaign?.recipient?.id ?? ""}
+                    tokenId={campaign?.token.account ?? NATIVE_TOKEN_ID}
+                    campaignId={campaignId}
+                    campaignName={campaign?.name ?? undefined}
+                    disabled={campaign?.status !== "active"}
+                    className="mb-4"
                   />
 
                   <SocialsShare

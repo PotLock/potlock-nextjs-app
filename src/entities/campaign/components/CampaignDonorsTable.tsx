@@ -33,6 +33,7 @@ export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campai
       cell: ({ row }) => {
         const donorId = row.original.donor_id;
         const isIntent = donorId.includes("potluck_intents.near");
+        const isPingPay = (row.original.message ?? "").startsWith("[via PingPay]");
 
         const explorerUrl = isIntent
           ? `https://nearblocks.io/address/${donorId}`
@@ -46,6 +47,12 @@ export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campai
             {isIntent && (
               <span className="rounded-md bg-green-100 px-2 text-xs font-semibold text-black">
                 Intent
+              </span>
+            )}
+
+            {isPingPay && (
+              <span className="rounded-md bg-blue-100 px-2 text-xs font-semibold text-black">
+                via PingPay
               </span>
             )}
 
