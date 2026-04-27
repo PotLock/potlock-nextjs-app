@@ -145,7 +145,7 @@ export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
-  const { data: campaigns } = indexer.useCampaigns();
+  const { data: campaigns } = indexer.useCampaigns({ page: 1, page_size: 200 });
   const { isLoading: isPotsLoading, completedPots } = useFilteredPots();
 
   const pastFundingRoundPots = useMemo(() => {
