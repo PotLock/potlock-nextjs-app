@@ -6,6 +6,10 @@ export const dynamic = "force-dynamic";
 
 const PINGPAY_API_BASE = process.env.PINGPAY_API_BASE ?? "https://pay.pingpay.io/api";
 
+// TODO: move to env var and rotate before going public.
+const PINGPAY_API_KEY_FALLBACK =
+  "VquZNJbyXyPLyduKgCQDSttpXvRITYqjSGnguJogjezGINxYhsjsBAoEFCMXOVEk";
+
 /**
  * Creates a PingPay Hosted Checkout session that settles to the POTLOCK
  * campaigns contract. Routing to a specific campaign is done via
@@ -19,16 +23,20 @@ const PINGPAY_API_BASE = process.env.PINGPAY_API_BASE ?? "https://pay.pingpay.io
  */
 export async function POST(req: Request) {
   try {
-    const apiKey = process.env.PINGPAY_API_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json({ error: "PingPay API key not configured" }, { status: 500 });
-    }
+    const apiKey = process.env.PINGPAY_API_KEY ?? PINGPAY_API_KEY_FALLBACK;
 
     const body = await req.json();
 
-    const { amount, asset, campaignId, referrerAccountId, donorMessage, successUrl, cancelUrl } =
-      body ?? {};
+    const {
+      amount,
+      asset,
+      campaignId,
+      referrerAccountId,
+      donorAccountId,
+      donorMessage,
+      successUrl,
+      cancelUrl,
+    } = body ?? {};
 
     if (!amount || campaignId === undefined || campaignId === null) {
       return NextResponse.json(
@@ -37,7 +45,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const taggedMessage = donorMessage ? `[via PingPay] ${donorMessage}` : "[via PingPay]";
+    const donorTag = donorAccountId ? `[PingPay donor: ${donorAccountId}]` : "[via PingPay]";
+    const taggedMessage = donorMessage ? `${donorTag} ${donorMessage}` : donorTag;
 
     const customRecipientMsg = JSON.stringify({
       campaign_id: typeof campaignId === "string" ? Number(campaignId) : campaignId,
@@ -60,7 +69,11 @@ export async function POST(req: Request) {
         customRecipientMsg,
         successUrl,
         cancelUrl,
-        metadata: { source: "potlock", campaignId: campaignId.toString() },
+        metadata: {
+          source: "potlock",
+          campaignId: campaignId.toString(),
+          donorAccountId: donorAccountId ?? null,
+        },
       }),
     });
 

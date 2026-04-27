@@ -6,6 +6,10 @@ export const dynamic = "force-dynamic";
 
 const PINGPAY_API_BASE = process.env.PINGPAY_API_BASE ?? "https://pay.pingpay.io/api";
 
+// TODO: move to env var and rotate before going public.
+const PINGPAY_API_KEY_FALLBACK =
+  "VquZNJbyXyPLyduKgCQDSttpXvRITYqjSGnguJogjezGINxYhsjsBAoEFCMXOVEk";
+
 /**
  * Creates a PingPay Hosted Checkout session that settles to the POTLOCK
  * donation contract for a direct project donation. Routing to the recipient
@@ -18,11 +22,7 @@ const PINGPAY_API_BASE = process.env.PINGPAY_API_BASE ?? "https://pay.pingpay.io
  */
 export async function POST(req: Request) {
   try {
-    const apiKey = process.env.PINGPAY_API_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json({ error: "PingPay API key not configured" }, { status: 500 });
-    }
+    const apiKey = process.env.PINGPAY_API_KEY ?? PINGPAY_API_KEY_FALLBACK;
 
     const body = await req.json();
 
@@ -31,6 +31,7 @@ export async function POST(req: Request) {
       asset,
       recipientAccountId,
       referrerAccountId,
+      donorAccountId,
       donorMessage,
       successUrl,
       cancelUrl,
@@ -43,7 +44,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const taggedMessage = donorMessage ? `[via PingPay] ${donorMessage}` : "[via PingPay]";
+    // Embed donor account in the on-chain message so the real donor is
+    // recoverable — sender_id on the FT transfer is intent.near (PingPay's
+    // settlement gateway), not the human donor.
+    const donorTag = donorAccountId ? `[PingPay donor: ${donorAccountId}]` : "[via PingPay]";
+    const taggedMessage = donorMessage ? `${donorTag} ${donorMessage}` : donorTag;
 
     const customRecipientMsg = JSON.stringify({
       recipient_id: recipientAccountId,
@@ -65,7 +70,11 @@ export async function POST(req: Request) {
         customRecipientMsg,
         successUrl,
         cancelUrl,
-        metadata: { source: "potlock", recipientAccountId },
+        metadata: {
+          source: "potlock",
+          recipientAccountId,
+          donorAccountId: donorAccountId ?? null,
+        },
       }),
     });
 

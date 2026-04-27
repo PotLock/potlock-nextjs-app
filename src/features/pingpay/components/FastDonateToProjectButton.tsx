@@ -2,7 +2,6 @@ import { useCallback } from "react";
 
 import { show } from "@ebay/nice-modal-react";
 
-import { NATIVE_TOKEN_DECIMALS } from "@/common/constants";
 import { Button } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 
@@ -25,8 +24,8 @@ export const FastDonateToProjectButton: React.FC<FastDonateToProjectButtonProps>
     if (!recipientAccountId) return;
 
     show(PingPayModal, {
-      tokenSymbol: "NEAR",
-      tokenDecimals: NATIVE_TOKEN_DECIMALS,
+      tokenSymbol: "USDC",
+      tokenDecimals: 6,
       recipientAccountId,
       recipientName,
     });
