@@ -5,8 +5,7 @@ export const dynamic = "force-dynamic";
 const PINGPAY_API_BASE = process.env.PINGPAY_API_BASE ?? "https://pay.pingpay.io/api";
 
 // TODO: move to env var and rotate before going public.
-const PINGPAY_API_KEY_FALLBACK =
-  "VquZNJbyXyPLyduKgCQDSttpXvRITYqjSGnguJogjezGINxYhsjsBAoEFCMXOVEk";
+const PINGPAY_API_KEY_FALLBACK = "VquZNJbyXyPLyduKgCQDSttpXvRITYqjSGnguJogjezGINxYhsjsBAoEFCMXOVEk";
 
 /**
  * Fetches PingPay session + payment details to extract txHash and sender.

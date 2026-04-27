@@ -45,13 +45,15 @@ export const PingPayModal = create((props: PingPayModalProps) => {
   const { tokenSymbol, tokenDecimals } = props;
   const campaignId = "campaignId" in props ? props.campaignId : undefined;
   const campaignName = "campaignName" in props ? props.campaignName : undefined;
-  const recipientAccountId =
-    "recipientAccountId" in props ? props.recipientAccountId : undefined;
+
+  const recipientAccountId = "recipientAccountId" in props ? props.recipientAccountId : undefined;
+
   const recipientName = "recipientName" in props ? props.recipientName : undefined;
   const isCampaign = campaignId !== undefined;
 
   const self = useModal();
   const walletUser = useWalletUserSession();
+
   const donorAccountId =
     walletUser.isSignedIn && walletUser.accountId ? walletUser.accountId : null;
 
@@ -72,6 +74,7 @@ export const PingPayModal = create((props: PingPayModalProps) => {
 
   const handleCopy = useCallback(() => {
     if (!sessionUrl) return;
+
     navigator.clipboard.writeText(sessionUrl).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -247,7 +250,9 @@ export const PingPayModal = create((props: PingPayModalProps) => {
                 </div>
 
                 <p className="text-sm text-neutral-500">
-                  {"Share this link with anyone to let them complete the payment, or pay now yourself."}
+                  {
+                    "Share this link with anyone to let them complete the payment, or pay now yourself."
+                  }
                 </p>
               </div>
             </DialogDescription>
