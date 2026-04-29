@@ -14,10 +14,12 @@ import { AppProps } from "next/app";
 import { Lora } from "next/font/google";
 import Head from "next/head";
 import { Provider as ReduxProvider } from "react-redux";
+import { useSWRConfig } from "swr";
 
 import { APP_METADATA } from "@/common/constants";
 import { TooltipProvider } from "@/common/ui/layout/components";
 import { Toaster } from "@/common/ui/layout/components/molecules/toaster";
+import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { WalletUserSessionProvider } from "@/common/wallet";
 import { AppBar } from "@/layout/components/app-bar";
@@ -38,6 +40,40 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
+function PingPayBroadcastListener() {
+  const { mutate } = useSWRConfig();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    let channel: BroadcastChannel | null = null;
+
+    try {
+      channel = new BroadcastChannel("pingpay");
+
+      channel.onmessage = (e) => {
+        if (e.data?.type === "pingpay-complete") {
+          if (e.data?.paymentStatus === "success") {
+            toast({
+              title: "Donation Successful",
+              description: "Your donation has been recorded.",
+            });
+          }
+
+          mutate(() => true, undefined, { revalidate: true });
+        }
+      };
+    } catch {
+      // BroadcastChannel unsupported
+    }
+
+    return () => {
+      channel?.close();
+    };
+  }, [mutate, toast]);
+
+  return null;
+}
+
 export default function RootLayout({ Component, pageProps }: AppPropsWithLayout) {
   useEffect(() => void store.dispatch.core.init(), []);
 
@@ -51,6 +87,7 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
       </Head>
 
       <ReduxProvider {...{ store }}>
+        <PingPayBroadcastListener />
         <NiceModalProvider>
           <TooltipProvider>
             <div
