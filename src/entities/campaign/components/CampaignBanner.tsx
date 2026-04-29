@@ -20,7 +20,7 @@ import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfileLink } from "@/entities/_shared/account";
 import { useFungibleToken } from "@/entities/_shared/token";
 import { DonateToCampaign } from "@/features/donation";
-import { FastDonateButton } from "@/features/pingpay";
+// import { FastDonateButton } from "@/features/pingpay";
 
 import { CampaignProgressBar } from "./CampaignProgressBar";
 import { useCampaignForm } from "../hooks/forms";
@@ -274,14 +274,15 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ campaignId }) =>
                     {...{ campaignId }}
                   />
 
-                  <FastDonateButton
+                  {/* Create Payment link disabled — campaigns contract for pinpay is not active, needs migration for pingpay integration. */}
+                  {/* <FastDonateButton
                     recipientAccountId={campaign?.recipient?.id ?? ""}
                     tokenId={campaign?.token.account ?? NATIVE_TOKEN_ID}
                     campaignId={campaignId}
                     campaignName={campaign?.name ?? undefined}
                     disabled={campaign?.status !== "active"}
                     className="mb-4"
-                  />
+                  /> */}
 
                   <SocialsShare
                     shareText={`Support ${campaign?.name} Campaign on ${

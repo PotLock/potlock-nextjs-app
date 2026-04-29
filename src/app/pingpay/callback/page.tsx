@@ -111,7 +111,10 @@ async function pollSessionStatus(sessionId: string): Promise<{
   txHash: string | null;
   senderId: string | null;
 } | null> {
-  const maxAttempts = 15;
+  // 60 attempts × 2 s = 120 s. PingPay's relayer can take >30 s to submit the
+  // on-chain tx, especially for first-ever donations to a recipient. The old
+  // 30 s window silently dropped the sync when settlement was slow.
+  const maxAttempts = 60;
   const delayMs = 2000;
 
   let lastData: {
