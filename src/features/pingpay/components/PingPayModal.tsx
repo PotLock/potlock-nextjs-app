@@ -1,9 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 import { Check, Copy, ExternalLink } from "lucide-react";
 import { useForm } from "react-hook-form";
 
+import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { floatToIndivisible } from "@/common/lib/format";
 import { TextField } from "@/common/ui/form/components";
 import {
@@ -18,6 +19,17 @@ import {
   FormField,
 } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
+
+import { PINGPAY_USDC_TOKEN_CONTRACT_ID } from "../constants";
+
+// Fallback registration deposit when the FT contract's storage_balance_bounds
+// is unavailable. Mirrors what direct-ft-donation.ts uses for headroom.
+const STORAGE_DEPOSIT_FALLBACK_YOCTO = "100000000000000000000000"; // 0.1 NEAR
+
+const ftContractIdForSymbol = (symbol: string): string | null => {
+  if (symbol.toUpperCase() === "USDC") return PINGPAY_USDC_TOKEN_CONTRACT_ID;
+  return null;
+};
 
 export type PingPayModalProps = {
   tokenSymbol: string;
@@ -66,6 +78,47 @@ export const PingPayModal = create((props: PingPayModalProps) => {
   const [error, setError] = useState<string | null>(null);
   const [sessionUrl, setSessionUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  // null = not yet checked; true = recipient is unregistered on the FT contract
+  // and will need a one-time storage_deposit before PingPay can settle.
+  const [needsStorageDeposit, setNeedsStorageDeposit] = useState<boolean | null>(null);
+
+  const ftContractId = ftContractIdForSymbol(tokenSymbol);
+
+  // Pre-flight: check whether the recipient has storage on the FT token contract.
+  // PingPay routes through intents.near and skips the storage_deposit step the
+  // native flow performs; if the recipient isn't registered, the donation
+  // contract refunds the FT transfer.
+  useEffect(() => {
+    if (isCampaign || !recipientAccountId || !ftContractId) {
+      setNeedsStorageDeposit(false);
+      return;
+    }
+
+    let cancelled = false;
+    setNeedsStorageDeposit(null);
+
+    const tokenClient = nearProtocolClient.contractApi({ contractId: ftContractId });
+
+    tokenClient
+      .view<{ account_id: string }, { total: string; available: string } | null>(
+        "storage_balance_of",
+        { args: { account_id: recipientAccountId } },
+      )
+      .then((balance) => {
+        if (cancelled) return;
+        setNeedsStorageDeposit(balance === null);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        // On view failure, don't block the user — assume registered and let
+        // the on-chain flow surface a real error if it fails.
+        setNeedsStorageDeposit(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isCampaign, recipientAccountId, ftContractId]);
 
   const close = useCallback(() => {
     self.hide();
@@ -104,6 +157,46 @@ export const PingPayModal = create((props: PingPayModalProps) => {
     setIsSubmitting(true);
 
     try {
+      // Register the recipient on the FT contract before creating the PingPay
+      // session. If the donor cancels or signing fails, abort — no payment link
+      // is created, so no funds are at risk.
+      if (!isCampaign && recipientAccountId && ftContractId && needsStorageDeposit === true) {
+        try {
+          const tokenClient = nearProtocolClient.contractApi({ contractId: ftContractId });
+
+          let depositYocto = STORAGE_DEPOSIT_FALLBACK_YOCTO;
+
+          try {
+            const bounds = await tokenClient.view<{}, { min: string; max: string }>(
+              "storage_balance_bounds",
+            );
+
+            // Prefer the contract's declared minimum; fall back if missing.
+            if (bounds?.min) depositYocto = bounds.min;
+          } catch {
+            // keep fallback
+          }
+
+          await tokenClient.call("storage_deposit", {
+            args: { account_id: recipientAccountId },
+            deposit: depositYocto,
+            gas: "100000000000000",
+          });
+
+          setNeedsStorageDeposit(false);
+        } catch (storageErr) {
+          console.error("FT storage_deposit pre-flight failed:", storageErr);
+
+          setError(
+            "Could not register this project on the token contract. " +
+              "Please try again or use a different wallet.",
+          );
+
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       const origin = typeof window !== "undefined" ? window.location.origin : "";
       const indivisibleAmount = floatToIndivisible(amountFloat, tokenDecimals).toString();
 
@@ -217,6 +310,12 @@ export const PingPayModal = create((props: PingPayModalProps) => {
                     isCampaign ? "this campaign" : "this project"
                   }.`}
                 </p>
+
+                {needsStorageDeposit === true && (
+                  <p className="mt-2 text-xs italic text-neutral-500">
+                    {`Note: This project hasn't received ${tokenSymbol} before. A one-time ~0.1 NEAR registration will be signed from your wallet so the donation can settle on-chain.`}
+                  </p>
+                )}
               </DialogDescription>
 
               <DialogFooter>

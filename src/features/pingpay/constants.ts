@@ -1,8 +1,7 @@
 /**
- * Reserved for future PingPay-related constants.
- * Token gating was previously done here but removed: PingPay's Hosted Checkout
- * accepts whatever NEAR-chain asset symbol you pass; the API surfaces an error
- * if the asset is unsupported. The button now enables for every campaign and
- * defers asset validation to PingPay.
+ * PingPay routes USDC donations through this NEAR Intents-wrapped USDC token
+ * contract. Used to pre-check / register recipient storage on the FT contract
+ * so PingPay donations don't get refunded.
  */
-export {};
+export const PINGPAY_USDC_TOKEN_CONTRACT_ID =
+  "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1";
