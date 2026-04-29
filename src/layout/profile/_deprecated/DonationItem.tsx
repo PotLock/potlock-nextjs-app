@@ -91,10 +91,12 @@ export const DonationItem = ({
   // The indexer reports decimals=24 for wrapped Intents stablecoins (USDC/USDT)
   // even though they actually use 6 decimals. Override by symbol as a workaround.
   const symbolDecimalsOverride: Record<string, number> = { USDC: 6, USDT: 6 };
+
   const decimals =
     token.symbol && symbolDecimalsOverride[token.symbol.toUpperCase()] !== undefined
       ? symbolDecimalsOverride[token.symbol.toUpperCase()]
       : token.decimals;
+
   const isPot = !!potId;
 
   const donationAmount = parseFloat(

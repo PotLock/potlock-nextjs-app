@@ -170,6 +170,7 @@ export const PingPayModal = create((props: PingPayModalProps) => {
             const bounds = await tokenClient.view<{}, { min: string; max: string }>(
               "storage_balance_bounds",
             );
+
             // Prefer the contract's declared minimum; fall back if missing.
             if (bounds?.min) depositYocto = bounds.min;
           } catch {
@@ -185,10 +186,12 @@ export const PingPayModal = create((props: PingPayModalProps) => {
           setNeedsStorageDeposit(false);
         } catch (storageErr) {
           console.error("FT storage_deposit pre-flight failed:", storageErr);
+
           setError(
             "Could not register this project on the token contract. " +
               "Please try again or use a different wallet.",
           );
+
           setIsSubmitting(false);
           return;
         }
