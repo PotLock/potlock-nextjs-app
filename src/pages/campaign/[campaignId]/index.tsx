@@ -3,7 +3,6 @@ import { ReactElement, useMemo } from "react";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
-import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
 import { APP_METADATA } from "@/common/constants";
 import { CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
@@ -120,9 +119,9 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
       image: campaign?.cover_image_url ?? fallbackSeo.image,
     };
 
-    return { props: { seo }, revalidate: 300 };
+    return { props: { seo }, revalidate: 3600 };
   } catch {
-    return { props: { seo: fallbackSeo }, revalidate: 60 };
+    return { props: { seo: fallbackSeo }, revalidate: 600 };
   } finally {
     clearTimeout(timeoutId);
   }

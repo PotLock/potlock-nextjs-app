@@ -26,7 +26,7 @@ ${sitemapLines}
 `;
 
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
-  res.setHeader("Cache-Control", "s-maxage=1800, stale-while-revalidate=3600");
+  res.setHeader("Cache-Control", "s-maxage=86400, stale-while-revalidate=86400");
   res.write(robots);
   res.end();
 

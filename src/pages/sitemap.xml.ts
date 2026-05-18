@@ -66,7 +66,7 @@ ${urls
 </urlset>`;
 
     res.setHeader("Content-Type", "application/xml");
-    res.setHeader("Cache-Control", "s-maxage=1800, stale-while-revalidate=3600");
+    res.setHeader("Cache-Control", "s-maxage=86400, stale-while-revalidate=86400");
     res.write(xml);
     res.end();
   } catch {
@@ -84,7 +84,7 @@ ${urls
 
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/xml");
-    res.setHeader("Cache-Control", "s-maxage=600, stale-while-revalidate=1200");
+    res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate=86400");
     res.end(xml);
   }
 

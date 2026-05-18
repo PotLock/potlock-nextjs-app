@@ -3,9 +3,12 @@ import { NextResponse } from "next/server";
 import { DONATION_CONTRACT_ACCOUNT_ID, NETWORK } from "@/common/_config";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 15;
 
 const NEAR_RPC_URL =
   NETWORK === "mainnet" ? "https://rpc.mainnet.near.org" : "https://rpc.testnet.near.org";
+
+const NEAR_RPC_TIMEOUT_MS = 10000;
 
 /**
  * Confirms a PingPay-sourced donation actually landed on-chain (not refunded).
@@ -29,7 +32,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing txHash or senderId" }, { status: 400 });
     }
 
-    const rpcRes = await fetch(NEAR_RPC_URL, {
+    const rpcRes = await fetchWithTimeout(NEAR_RPC_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -129,4 +132,13 @@ function findDonationLog(receipts: any[], expectedRecipient?: string): any | nul
   }
 
   return null;
+}
+
+function fetchWithTimeout(input: string, init: RequestInit = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), NEAR_RPC_TIMEOUT_MS);
+
+  return fetch(input, { ...init, signal: controller.signal }).finally(() => {
+    clearTimeout(timeoutId);
+  });
 }

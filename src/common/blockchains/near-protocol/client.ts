@@ -7,13 +7,87 @@ import type {
   QueryResponseKind,
 } from "@near-js/types/lib/provider/response";
 import { providers } from "near-api-js";
+import type { CodeResult } from "near-api-js/lib/providers/provider";
 
 import { NETWORK, SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { FULL_TGAS } from "@/common/constants";
 
-export const RPC_NODE_URL = `https://${NETWORK === "mainnet" ? "free.rpc.fastnear.com" : "test.rpc.fastnear.com"}`;
+const RPC_NODE_URLS =
+  NETWORK === "mainnet"
+    ? [
+        "https://1rpc.io/near",
+        "https://free.rpc.fastnear.com",
+        "https://near.blockpi.network/v1/rpc/public",
+        "https://near.lava.build",
+        "https://rpc.ankr.com/near",
+      ]
+    : ["https://rpc.testnet.near.org", "https://test.rpc.fastnear.com"];
 
-const nearRpc = new providers.JsonRpcProvider({ url: RPC_NODE_URL });
+export const RPC_NODE_URL = RPC_NODE_URLS[0];
+
+const RPC_COOLDOWN_MS = 60_000;
+
+const rpcCooldownUntil = new Map<string, number>();
+
+const rpcProviders = RPC_NODE_URLS.map((url) => ({
+  url,
+  provider: new providers.JsonRpcProvider({ url }),
+}));
+
+let preferredRpcIndex = 0;
+
+const getRpcProviderOrder = () => {
+  const indexes = rpcProviders.map((_, index) => index);
+
+  return [preferredRpcIndex, ...indexes.filter((index) => index !== preferredRpcIndex)];
+};
+
+const markRpcUnavailable = (url: string) => {
+  rpcCooldownUntil.set(url, Date.now() + RPC_COOLDOWN_MS);
+};
+
+const isRpcAvailable = (url: string) => (rpcCooldownUntil.get(url) ?? 0) <= Date.now();
+
+type NearRpcProvider = InstanceType<typeof providers.JsonRpcProvider>;
+
+const queryNearRpc = async <R>(run: (provider: NearRpcProvider) => Promise<R>): Promise<R> => {
+  let lastError: unknown;
+
+  for (const index of getRpcProviderOrder()) {
+    const { provider, url } = rpcProviders[index];
+
+    if (!isRpcAvailable(url)) continue;
+
+    try {
+      const result = await run(provider);
+      preferredRpcIndex = index;
+      return result;
+    } catch (error) {
+      lastError = error;
+      markRpcUnavailable(url);
+    }
+  }
+
+  const fallbackIndex = preferredRpcIndex === 0 ? 1 : 0;
+  const fallback = rpcProviders[fallbackIndex] ?? rpcProviders[0];
+
+  try {
+    const result = await run(fallback.provider);
+    preferredRpcIndex = fallbackIndex;
+    return result;
+  } catch (error) {
+    throw lastError ?? error;
+  }
+};
+
+const nearRpc = {
+  query: <R extends QueryResponseKind = CodeResult>(
+    ...args: Parameters<NearRpcProvider["query"]>
+  ) => queryNearRpc((provider) => provider.query<R>(...args)),
+
+  txStatus: (...args: Parameters<NearRpcProvider["txStatus"]>) =>
+    queryNearRpc((provider) => provider.txStatus(...args)),
+};
 
 type CallProps<A extends object = Record<string, unknown>> = {
   args?: A;

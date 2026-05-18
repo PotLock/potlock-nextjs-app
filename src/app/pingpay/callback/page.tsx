@@ -111,11 +111,13 @@ async function pollSessionStatus(sessionId: string): Promise<{
   txHash: string | null;
   senderId: string | null;
 } | null> {
-  // 60 attempts × 2 s = 120 s. PingPay's relayer can take >30 s to submit the
-  // on-chain tx, especially for first-ever donations to a recipient. The old
-  // 30 s window silently dropped the sync when settlement was slow.
-  const maxAttempts = 60;
-  const delayMs = 2000;
+  // Keep a long settlement window, but back off so each checkout does not keep
+  // a Vercel function hot with dozens of identical status calls.
+  const delaysMs = [
+    ...Array.from({ length: 5 }, () => 2000),
+    ...Array.from({ length: 8 }, () => 5000),
+    ...Array.from({ length: 8 }, () => 10000),
+  ];
 
   let lastData: {
     status: string;
@@ -123,7 +125,7 @@ async function pollSessionStatus(sessionId: string): Promise<{
     senderId: string | null;
   } | null = null;
 
-  for (let i = 0; i < maxAttempts; i++) {
+  for (let i = 0; i <= delaysMs.length; i++) {
     try {
       const res = await fetch(
         `/api/pingpay/session-status?sessionId=${encodeURIComponent(sessionId)}`,
@@ -143,7 +145,8 @@ async function pollSessionStatus(sessionId: string): Promise<{
       // retry
     }
 
-    await new Promise((r) => setTimeout(r, delayMs));
+    const delayMs = delaysMs[i];
+    if (delayMs) await new Promise((r) => setTimeout(r, delayMs));
   }
 
   return lastData;
