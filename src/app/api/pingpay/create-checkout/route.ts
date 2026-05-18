@@ -3,8 +3,10 @@ import { NextResponse } from "next/server";
 import { CAMPAIGNS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 15;
 
 const PINGPAY_API_BASE = process.env.PINGPAY_API_BASE ?? "https://pay.pingpay.io/api";
+const PINGPAY_TIMEOUT_MS = 10000;
 
 // TODO: move to env var and rotate before going public.
 const PINGPAY_API_KEY_FALLBACK = "VquZNJbyXyPLyduKgCQDSttpXvRITYqjSGnguJogjezGINxYhsjsBAoEFCMXOVEk";
@@ -55,7 +57,7 @@ export async function POST(req: Request) {
       message: taggedMessage,
     });
 
-    const response = await fetch(`${PINGPAY_API_BASE}/checkout/sessions`, {
+    const response = await fetchWithTimeout(`${PINGPAY_API_BASE}/checkout/sessions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -97,4 +99,13 @@ export async function POST(req: Request) {
     console.error("PingPay checkout error:", error);
     return NextResponse.json({ error: "Failed to create checkout" }, { status: 500 });
   }
+}
+
+function fetchWithTimeout(input: string, init: RequestInit = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), PINGPAY_TIMEOUT_MS);
+
+  return fetch(input, { ...init, signal: controller.signal }).finally(() => {
+    clearTimeout(timeoutId);
+  });
 }
