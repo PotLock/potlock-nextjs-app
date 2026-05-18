@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 15;
 
 const PINGPAY_API_BASE = process.env.PINGPAY_API_BASE ?? "https://pay.pingpay.io/api";
+const PINGPAY_TIMEOUT_MS = 10000;
 
 // TODO: move to env var and rotate before going public.
 const PINGPAY_API_KEY_FALLBACK = "VquZNJbyXyPLyduKgCQDSttpXvRITYqjSGnguJogjezGINxYhsjsBAoEFCMXOVEk";
@@ -22,10 +24,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Missing sessionId" }, { status: 400 });
     }
 
-    // Fetch session to get paymentId
-    const sessionRes = await fetch(`${PINGPAY_API_BASE}/checkout/sessions/${sessionId}`, {
-      headers: { "x-api-key": apiKey },
-    });
+    const sessionRes = await fetchWithTimeout(
+      `${PINGPAY_API_BASE}/checkout/sessions/${sessionId}`,
+      {
+        headers: { "x-api-key": apiKey },
+      },
+    );
 
     if (!sessionRes.ok) {
       return NextResponse.json({ error: "Failed to fetch session" }, { status: sessionRes.status });
@@ -42,8 +46,7 @@ export async function GET(req: Request) {
       });
     }
 
-    // Fetch payment to get txHash and sender
-    const paymentRes = await fetch(`${PINGPAY_API_BASE}/payments/${paymentId}`, {
+    const paymentRes = await fetchWithTimeout(`${PINGPAY_API_BASE}/payments/${paymentId}`, {
       headers: { "x-api-key": apiKey },
     });
 
@@ -71,4 +74,13 @@ export async function GET(req: Request) {
     console.error("PingPay session-status error:", error);
     return NextResponse.json({ error: "Failed to fetch session status" }, { status: 500 });
   }
+}
+
+function fetchWithTimeout(input: string, init: RequestInit = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), PINGPAY_TIMEOUT_MS);
+
+  return fetch(input, { ...init, signal: controller.signal }).finally(() => {
+    clearTimeout(timeoutId);
+  });
 }

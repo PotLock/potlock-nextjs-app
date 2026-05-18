@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { pinataClient } from "@/common/services/pinata";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 15;
 
 /**
  * @link https://docs.pinata.cloud/frameworks/next-js-ipfs#create-api-route-2
