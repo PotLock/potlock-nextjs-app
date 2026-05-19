@@ -33,6 +33,9 @@ const nextConfig = {
         hostname: "**",
       },
     ],
+    // Cache each optimized image variant for 7 days (default is 60s, which
+    // causes constant re-optimization invocations on Vercel).
+    minimumCacheTTL: 60 * 60 * 24 * 7,
   },
 
   webpack(config) {
