@@ -203,10 +203,22 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     if (!isAccountViewLoading && accountView === undefined && accountViewError !== undefined) {
-      router.replace("/404", { pathname: routeSelectors.PROFILE_BY_ID("404") });
-    } else {
-      setSelectedTab(tabs.find((tab) => router.pathname.includes(tab.href)) || tabs[0]);
+      // Only redirect to /404 when the RPC explicitly reports the account is missing.
+      // Transient RPC failures (network blip, rate limit, all providers down) should NOT
+      // flag a valid account as nonexistent — e.g. sub-accounts like *.sputnik-dao.near
+      // were being falsely 404'd whenever the view_account call errored for any reason.
+      const errorMessage = accountViewError.message?.toLowerCase() ?? "";
+
+      const accountActuallyMissing =
+        errorMessage.includes("does not exist") || errorMessage.includes("unknown_account");
+
+      if (accountActuallyMissing) {
+        router.replace("/404", { pathname: routeSelectors.PROFILE_BY_ID("404") });
+        return;
+      }
     }
+
+    setSelectedTab(tabs.find((tab) => router.pathname.includes(tab.href)) || tabs[0]);
   }, [accountId, accountView, accountViewError, isAccountViewLoading, router, tabs]);
 
   return (
