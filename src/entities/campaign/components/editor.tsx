@@ -135,13 +135,24 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   // Keep the min attribute on datetime inputs up to date (client-side only).
   useEffect(() => {
     const updateMinDateTime = () => {
-      const newMin = Temporal.Now.instant()
-        .add({ minutes: 1 })
+      const newMinInstant = Temporal.Now.instant().add({ minutes: 1 });
+
+      const newMin = newMinInstant
         .toZonedDateTimeISO(Temporal.Now.timeZoneId())
         .toPlainDateTime()
         .toString({ smallestUnit: "minute" });
 
       setMinStartDateTime(newMin);
+
+      // If the form's stored start_ms has fallen into the past while the user
+      // was filling out the rest of the form, silently bump it to the new min.
+      // Otherwise submit fails with a confusing "please fill in required field"
+      // browser error because the input value is now below its min attribute.
+      const currentStartMs = form.getValues("start_ms");
+
+      if (typeof currentStartMs === "number" && currentStartMs < newMinInstant.epochMilliseconds) {
+        form.setValue("start_ms", newMinInstant.epochMilliseconds, { shouldDirty: true });
+      }
     };
 
     // Set initial value immediately on mount (client-side only)
@@ -151,7 +162,7 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
     const interval = setInterval(updateMinDateTime, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [form]);
 
   // "Set to current" — sets start date to right now
   const handleStartNow = () => {
