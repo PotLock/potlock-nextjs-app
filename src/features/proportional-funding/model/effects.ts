@@ -1,7 +1,7 @@
 import { type Transaction, calculateDepositByDataSize } from "@wpdas/naxios";
 import { values } from "remeda";
 
-import type { ByPotId } from "@/common/api/indexer";
+import { type ByPotId, syncApi } from "@/common/api/indexer";
 import { FULL_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
 import { parseNearAmount } from "@/common/lib";
@@ -15,18 +15,28 @@ export type PayoutSubmitInputs = ByPotId & {
 };
 
 export const submitPayouts = ({ potId, recipients }: PayoutSubmitInputs) => {
-  return potContractClient.chef_set_payouts({
-    potId,
+  return potContractClient
+    .chef_set_payouts({
+      potId,
 
-    payouts: values(recipients).map(({ accountId, estimatedPayoutAmount }) => ({
-      project_id: accountId,
-      amount: estimatedPayoutAmount,
-    })),
-  });
+      payouts: values(recipients).map(({ accountId, estimatedPayoutAmount }) => ({
+        project_id: accountId,
+        amount: estimatedPayoutAmount,
+      })),
+    })
+    .then(async (result) => {
+      // Sync payouts to indexer after chef sets them
+      await syncApi.potPayouts(potId).catch(() => {});
+      return result;
+    });
 };
 
 export const initiatePayoutProcessing = ({ potId }: ByPotId) =>
-  potContractClient.admin_process_payouts({ potId });
+  potContractClient.admin_process_payouts({ potId }).then(async (result) => {
+    // Sync payouts to indexer after processing
+    await syncApi.potPayouts(potId).catch(() => {});
+    return result;
+  });
 
 export const publishPayoutJustification = async ({
   potId,

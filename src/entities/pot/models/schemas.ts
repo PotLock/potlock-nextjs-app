@@ -1,8 +1,8 @@
 import { infer as FromSchema, array, boolean, object, string, z } from "zod";
 
+import { nearProtocolSchemas } from "@/common/blockchains/near-protocol";
 import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
 import { futureTimestamp, integerCappedPercentage, safePositiveNumber } from "@/common/lib";
-import { validAccountIdOrNothing } from "@/entities/_shared/account";
 
 import {
   POT_MAX_APPROVED_PROJECTS,
@@ -43,7 +43,7 @@ export const potSchema = object({
 
   admins: array(string()).optional().describe("List of pot admins' account ids."),
 
-  chef: validAccountIdOrNothing.describe("Chef's account id."),
+  chef: nearProtocolSchemas.validAccountIdOrNothing.describe("Chef's account id."),
 
   pot_name: string()
     .min(POT_MIN_NAME_LENGTH, `Must be at least ${POT_MIN_NAME_LENGTH} characters long.`)

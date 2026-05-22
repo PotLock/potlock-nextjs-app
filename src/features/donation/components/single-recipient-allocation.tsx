@@ -1,10 +1,10 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { values } from "remeda";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
 import { Pot } from "@/common/api/indexer";
-import { NOOP_STRING } from "@/common/constants";
+import { NATIVE_TOKEN_ID, NOOP_STRING } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { parseNumber } from "@/common/lib";
 import { ByAccountId, ByCampaignId } from "@/common/types";
@@ -26,19 +26,41 @@ import { useWalletUserSession } from "@/common/wallet";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { TokenBalance, TokenSelector, useFungibleToken } from "@/entities/_shared/token";
 
+import { CrossChainAmountEntry } from "./cross-chain-amount-entry";
+import { CrossChainTokenAvatar } from "./cross-chain-token-avatar";
+import { CrossChainTokenSelector } from "./cross-chain-token-selector";
 import { DonationHumanVerificationAlert } from "./human-verification-alert";
 import { DONATION_ALLOCATION_STRATEGIES } from "../constants";
+import { useCrossChainToken } from "../hooks/cross-chain-tokens";
 import { DonationAllocationInputs } from "../models/schemas";
 import { DonationAllocationStrategyEnum } from "../types";
 
 export type DonationSingleRecipientAllocationProps = Partial<ByAccountId> &
   Partial<ByCampaignId> &
-  DonationAllocationInputs & { matchingPots?: Pot[] };
+  DonationAllocationInputs & {
+    matchingPots?: Pot[];
+    onTokenDataChange?: (data: { blockchain: string; tokenData?: any } | null) => void;
+    crossChainMinAmount?: number;
+    crossChainTokenSymbol?: string;
+  };
 
 export const DonationSingleRecipientAllocation: React.FC<
   DonationSingleRecipientAllocationProps
-> = ({ form, accountId, matchingPots, campaignId }) => {
+> = ({
+  form,
+  accountId,
+  matchingPots,
+  campaignId,
+  onTokenDataChange,
+  crossChainMinAmount,
+  crossChainTokenSymbol,
+}) => {
   const walletUser = useWalletUserSession();
+
+  const [selectedTokenData, setSelectedTokenData] = useState<{
+    blockchain: string;
+    tokenData?: any;
+  } | null>(null);
 
   const [amount, tokenId, allocationStrategy, potAccountId] = form.watch([
     "amount",
@@ -47,9 +69,15 @@ export const DonationSingleRecipientAllocation: React.FC<
     "potAccountId",
   ]);
 
+  // Check if tokenId is a cross-chain token (format: "blockchain:assetId")
+  const isCrossChainToken =
+    tokenId !== undefined && tokenId !== NATIVE_TOKEN_ID && tokenId.includes(":");
+
+  // Only fetch token data for NEAR tokens, not cross-chain tokens (to avoid balance loading errors)
   const { data: token } = useFungibleToken({
-    tokenId,
-    balanceCheckAccountId: walletUser?.accountId,
+    tokenId: isCrossChainToken ? NATIVE_TOKEN_ID : (tokenId ?? NATIVE_TOKEN_ID),
+    balanceCheckAccountId: isCrossChainToken ? undefined : walletUser?.accountId,
+    enabled: !isCrossChainToken,
   });
 
   const {
@@ -69,18 +97,83 @@ export const DonationSingleRecipientAllocation: React.FC<
     campaignId: campaignId ?? 0,
   });
 
+  // Check if cross-chain donations are allowed
+  // - For campaigns: only ongoing campaigns without end date
+  // - For account donations: always allowed (no restrictions)
+  const isCrossChainAllowed = useMemo(() => {
+    if (process.env.NEXT_PUBLIC_ENV === "test") {
+      return false;
+    }
+
+    if (isCampaignDonation) {
+      return campaign?.end_ms == null;
+    }
+
+    // Allow cross-chain for account donations (projects)
+    return accountId !== undefined;
+  }, [isCampaignDonation, campaign?.end_ms, accountId]);
+
+  // Enable token selector for campaigns to allow cross-chain donations
+  // For non-campaign donations, only enable if allocation strategy is full
   const isFtSelectorAvailable =
     FEATURE_REGISTRY.FtDonation.isEnabled &&
-    (isCampaignDonation ? false : allocationStrategy === DonationAllocationStrategyEnum.full);
+    (isCampaignDonation ? true : allocationStrategy === DonationAllocationStrategyEnum.full);
 
-  const totalAmountUsdValue = useMemo(
-    () =>
-      token?.usdPrice === undefined
-        ? null
-        : `~$ ${token.usdPrice.mul(parseNumber(amount ?? 0)).toFixed(2)}`,
+  // Check if we need to show cross-chain flow (non-NEAR token selected for campaign)
+  const isCrossChainDonation = useMemo(() => {
+    return isCampaignDonation && tokenId !== NATIVE_TOKEN_ID && tokenId !== undefined;
+  }, [isCampaignDonation, tokenId]);
 
-    [amount, token?.usdPrice],
-  );
+  // Restore selectedTokenData when component mounts with a cross-chain token selected
+  const [blockchain, assetId] = useMemo(() => {
+    if (tokenId && tokenId.includes(":")) {
+      const parts = tokenId.split(":");
+      return [parts[0], parts.slice(1).join(":")];
+    }
+
+    return [undefined, undefined];
+  }, [tokenId]);
+
+  const { data: restoredTokenData } = useCrossChainToken(blockchain, assetId);
+
+  useEffect(() => {
+    if (isCrossChainToken && !selectedTokenData && restoredTokenData && blockchain && assetId) {
+      const tokenDataObj = {
+        blockchain: blockchain.toLowerCase(),
+        tokenData: restoredTokenData,
+      };
+
+      setSelectedTokenData(tokenDataObj);
+
+      if (onTokenDataChange) {
+        onTokenDataChange(tokenDataObj);
+      }
+    }
+  }, [
+    isCrossChainToken,
+    selectedTokenData,
+    restoredTokenData,
+    blockchain,
+    assetId,
+    onTokenDataChange,
+  ]);
+
+  const totalAmountUsdValue = useMemo(() => {
+    if (!amount || parseFloat(amount.toString()) === 0) return null;
+
+    // For cross-chain tokens, use price from selectedTokenData
+    if (isCrossChainToken && selectedTokenData?.tokenData?.price) {
+      const usdValue = parseFloat(amount.toString()) * selectedTokenData.tokenData.price;
+      return `~$ ${usdValue.toFixed(2)}`;
+    }
+
+    // For NEAR tokens, use price from token hook
+    if (token?.usdPrice) {
+      return `~$ ${token.usdPrice.mul(parseNumber(amount ?? 0)).toFixed(2)}`;
+    }
+
+    return null;
+  }, [amount, token?.usdPrice, isCrossChainToken, selectedTokenData]);
 
   const strategySelector = useMemo(
     () =>
@@ -152,6 +245,8 @@ export const DonationSingleRecipientAllocation: React.FC<
     [allocationStrategy, form.control, hasMatchingPots, matchingPots],
   );
 
+  // Store selected token data for cross-chain flow (will be used when proceeding)
+
   return recipientProfileError ? (
     <ModalErrorBody
       heading="Project donation"
@@ -190,31 +285,92 @@ export const DonationSingleRecipientAllocation: React.FC<
                 onClick={undefined}
                 onBlur={undefined}
                 onFocus={undefined}
-                labelExtension={<TokenBalance {...{ tokenId }} />}
+                labelExtension={
+                  isCrossChainToken && selectedTokenData ? (
+                    <CrossChainTokenAvatar
+                      blockchain={selectedTokenData.blockchain}
+                      tokenSymbol={selectedTokenData.tokenData?.symbol}
+                    />
+                  ) : (
+                    <TokenBalance {...{ tokenId }} />
+                  )
+                }
                 inputExtension={
                   <FormField
                     control={form.control}
                     name="tokenId"
-                    render={({ field: inputExtension }) => (
-                      <TokenSelector
-                        hideBalances
-                        disabled={!isFtSelectorAvailable}
-                        defaultValue={inputExtension.value}
-                        onValueChange={inputExtension.onChange}
-                      />
-                    )}
+                    render={({ field: inputExtension }) =>
+                      isCrossChainAllowed ? (
+                        <CrossChainTokenSelector
+                          disabled={!isFtSelectorAvailable}
+                          defaultValue={inputExtension.value}
+                          onTokenChange={(value, blockchain, tokenData) => {
+                            inputExtension.onChange(value);
+
+                            // Store token data for later use, but don't trigger cross-chain flow yet
+                            const tokenDataObj =
+                              value !== NATIVE_TOKEN_ID ? { blockchain, tokenData } : null;
+
+                            setSelectedTokenData(tokenDataObj);
+
+                            if (onTokenDataChange) {
+                              onTokenDataChange(tokenDataObj);
+                            }
+                          }}
+                        />
+                      ) : (
+                        <TokenSelector
+                          hideBalances={!isCampaignDonation}
+                          showBalanceOnlyForNative={isCampaignDonation}
+                          disabled={!isFtSelectorAvailable}
+                          defaultValue={inputExtension.value}
+                          onValueChange={(value) => {
+                            inputExtension.onChange(value);
+                          }}
+                        />
+                      )
+                    }
                   />
                 }
                 type="number"
                 placeholder="0.00"
                 min={0}
-                max={token?.balanceFloat ?? undefined}
+                max={isCrossChainToken ? undefined : (token?.balanceFloat ?? undefined)}
                 step={0.01}
                 appendix={totalAmountUsdValue}
               />
             )}
           />
         )}
+
+        {/* Cross-chain minimum amount warning with quick-fix button */}
+        {isCrossChainToken &&
+          crossChainMinAmount !== undefined &&
+          crossChainMinAmount > 0 &&
+          amount !== undefined &&
+          parseFloat(amount.toString()) > 0 &&
+          parseFloat(amount.toString()) < crossChainMinAmount && (
+            <div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+              <span>
+                Minimum amount is{" "}
+                <strong>
+                  {crossChainMinAmount.toFixed(4)} {crossChainTokenSymbol || "tokens"}
+                </strong>{" "}
+                (equivalent to 0.1 NEAR).
+              </span>
+              <button
+                type="button"
+                title="Set to minimum amount"
+                className="inline-flex shrink-0 items-center justify-center rounded-md border border-red-300 bg-white px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 hover:text-red-700"
+                onClick={() => {
+                  const minAmount = crossChainMinAmount * 1.01; // add 1% buffer
+                  form.setValue("amount", parseFloat(minAmount.toFixed(4)));
+                }}
+              >
+                ✏️ Update
+              </button>
+            </div>
+          )}
       </DialogDescription>
     </>
   );

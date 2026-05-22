@@ -21,7 +21,6 @@ import {
   PotApplicationReviewModal,
 } from "@/features/pot-application";
 import { PotLayout } from "@/layout/pot/components/layout";
-import { useGlobalStoreSelector } from "@/store";
 
 // TODO: Refactor using TailwindCSS classes
 const Container = styled.div`
@@ -53,9 +52,6 @@ export default function ApplicationsTab() {
   };
 
   const { data: potDetail } = usePot({ potId });
-  const { actAsDao, accountId: _accountId } = useGlobalStoreSelector((state) => state.nav);
-  const isDao = actAsDao.toggle && !!actAsDao.defaultAddress;
-  const accountId = isDao ? actAsDao.defaultAddress : _accountId;
 
   const owner = potDetail?.owner?.id || "";
   const admins = potDetail?.admins.map((adm) => adm.id) || [];

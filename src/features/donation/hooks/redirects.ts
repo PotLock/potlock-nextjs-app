@@ -3,11 +3,12 @@ import { useEffect } from "react";
 import { useModal } from "@ebay/nice-modal-react";
 
 import { useRouteQuery } from "@/common/lib";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { DonationModal } from "../components/modal";
 
 export const useDonationSuccessWalletRedirect = () => {
+  const dispatch = useDispatch();
   const donationModal = useModal(DonationModal);
 
   const {
@@ -27,7 +28,7 @@ export const useDonationSuccessWalletRedirect = () => {
       : undefined);
 
   const isTransactionOutcomeDetected =
-    transactionHash && Boolean(recipientAccountId ?? potAccountId);
+    transactionHash && Boolean(recipientAccountId ?? potAccountId ?? listId);
 
   useEffect(() => {
     if (isTransactionOutcomeDetected && !donationModal.visible) {

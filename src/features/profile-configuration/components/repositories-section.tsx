@@ -1,86 +1,131 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
-import { ACCOUNT_PROFILE_URL_PATTERNS } from "@/entities/_shared/account";
+import { X } from "lucide-react";
+
+import { Button } from "@/common/ui/layout/components";
 
 import { CustomInput } from "./editor-elements";
 import type { ProfileConfigurationInputs } from "../models/types";
 
-const extractFromUrl = (url: string, pattern: RegExp) => {
-  if (url) {
-    if (url.startsWith("/")) {
-      url = url.slice(1, url.length);
-    }
+// Simple function to extract repository path from GitHub URL or direct input
+const extractRepositoryPath = (input: string): string => {
+  if (!input) return "";
 
-    // Execute the regular expression on the URL
-    const match = url.match(pattern);
-    // If a match is found, return the extracted repository path; otherwise, return null
-    return match ? match[1] : url;
+  // Remove leading slash if present
+  const cleanInput = input.startsWith("/") ? input.slice(1) : input;
+
+  // If it's already a full GitHub URL, extract the path
+  if (cleanInput.includes("github.com/")) {
+    const githubIndex = cleanInput.indexOf("github.com/");
+    return cleanInput.substring(githubIndex + 11).replace(/\/$/, "");
   }
+
+  // Otherwise, return the input as-is (user is typing the repository path)
+  return cleanInput;
 };
 
 const Repo = ({
   repo,
   index,
   onChangeHandler,
+  onRemoveHandler,
 }: {
   repo: string;
   index: number;
   onChangeHandler: (repoIndex: number, value: string) => void;
+  onRemoveHandler: (repoIndex: number) => void;
 }) => {
-  const [fieldValue, setValue] = useState<string>(repo?.replace("https://github.com/", "") || "");
+  // NOTE: this is a workaround to avoid the input value being reset to the original value when the user clicks on the input
+  // Local state for the input value to avoid focus loss
+  const [inputValue, setInputValue] = useState(repo?.replace("https://github.com/", "") || "");
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(extractFromUrl(e.target.value, ACCOUNT_PROFILE_URL_PATTERNS.github) || "");
-  };
+  // Keep local state in sync if the prop changes externally
+  useEffect(() => {
+    setInputValue(repo?.replace("https://github.com/", "") || "");
+  }, [repo]);
+
+  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  }, []);
+
+  const onBlur = useCallback(() => {
+    // Update the form with the canonical value when user finishes typing
+    onChangeHandler(index, inputValue ? `https://github.com/${inputValue}` : "");
+  }, [inputValue, index, onChangeHandler]);
 
   return (
-    <CustomInput
-      label=""
-      prefix="github.com/"
-      prefixMinWidth={110}
-      inputProps={{
-        value: fieldValue.replace("https://github.com/", ""),
-        placeholder: "Enter repository address",
-        onChange,
-        onBlur: (_) => {
-          onChangeHandler(index, fieldValue ? `https://github.com/${fieldValue}` : "");
-        },
-      }}
-    />
+    <div className="flex items-end gap-2">
+      <div className="flex-1">
+        <CustomInput
+          label=""
+          prefix="github.com/"
+          prefixMinWidth={110}
+          inputProps={{
+            value: inputValue,
+            placeholder: "Enter repository address",
+            onChange,
+            onBlur,
+          }}
+        />
+      </div>
+      <Button variant="standard-outline" onClick={() => onRemoveHandler(index)} className="mb-2">
+        <X className="h-4 w-4" />
+      </Button>
+    </div>
   );
 };
 
 export type ProfileConfigurationRepositoriesSectionProps = {
   values: ProfileConfigurationInputs["githubRepositories"];
   onChange?: (repositories: string[]) => void;
+  onUpdate?: (index: number, value: string) => void;
+  onRemove?: (index: number) => void;
 };
 
 export const ProfileConfigurationRepositoriesSection: React.FC<
   ProfileConfigurationRepositoriesSectionProps
-> = ({ values, onChange }) => {
-  // const [repos, setRepos] = useState(repositories.length > 0 ? repositories : [""]);
+> = ({ values, onChange, onUpdate, onRemove }) => {
+  const handleChange = useCallback(
+    (index: number, value: string) => {
+      if (onUpdate) {
+        onUpdate(index, value);
+      } else if (onChange && values) {
+        const updatedRepos = [...values];
+        updatedRepos[index] = value;
+        onChange(updatedRepos);
+      }
+    },
+    [onChange, onUpdate, values],
+  );
 
-  // useEffect(() => {
-  //   setRepos(repositories);
-  // }, [repositories]);
+  const handleRemove = useCallback(
+    (index: number) => {
+      if (onRemove) {
+        onRemove(index);
+      } else if (onChange && values) {
+        const updatedRepos = [...values];
+        updatedRepos.splice(index, 1);
+        onChange(updatedRepos);
+      }
+    },
+    [onChange, onRemove, values],
+  );
 
-  // const onChangeHandler = useCallback(
-  //   (repoIndex: number, value: string) => {
-  //     const updatedState = [...repositories];
-  //     updatedState[repoIndex] = value;
-  //     setRepos(updatedState);
-  //     dispatch.projectEditor.updateRepositories(updatedState);
-  //   },
-  //   [repositories],
-  // );
+  if (!values || values.length === 0) {
+    return null;
+  }
 
-  // useEffect(() => {
-  //   if (onChange) {
-  //     onChange(repos);
-  //   }
-  // }, [repos, onChange]);
-
-  return values?.map((repo, index) => (
-    <Repo key={repo} repo={repo} index={index} onChangeHandler={() => {}} />
-  ));
+  return (
+    <div className="flex flex-col gap-4">
+      {values.map((repo, index) => (
+        <Repo
+          key={`${repo}-${index}`}
+          repo={repo}
+          index={index}
+          onChangeHandler={handleChange}
+          onRemoveHandler={handleRemove}
+        />
+      ))}
+    </div>
+  );
 };

@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
-import { Pot } from "@/common/api/indexer";
+import { Pot, syncApi } from "@/common/api/indexer";
 import { potContractClient } from "@/common/contracts/core/pot";
 
 import { challengeResolveSchema, challengeSchema } from "../models/schemas";
@@ -25,6 +25,9 @@ export const useChallengeForm = ({ potDetail }: { potDetail: Pot }) => {
           potId: potDetail.account,
           args: { reason: formData.data.message },
         });
+
+        // Sync payout challenges to indexer
+        await syncApi.potChallenges(potDetail.account).catch(() => {});
       } catch (e) {
         console.error(e);
         setInProgress(false);
@@ -66,6 +69,10 @@ export const useChallengeResolveForm = ({
 
       potContractClient
         .admin_update_payouts_challenge({ potId, args })
+        .then(async () => {
+          // Sync payout challenges to indexer after admin response
+          await syncApi.potChallenges(potId).catch(() => {});
+        })
         .catch((error) => {
           console.error(error);
         })

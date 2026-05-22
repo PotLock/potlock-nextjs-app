@@ -2,10 +2,7 @@ import { useCallback } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
 
-import {
-  AccountGroupEditModal,
-  AccountGroupEditModalProps,
-} from "../components/AccountGroupEditModal";
+import { AccountGroupEditModal, AccountGroupEditModalProps } from "../components/group-edit-modal";
 
 // TODO: Remove if not needed
 export const useAccountGroupEditModal = (params: AccountGroupEditModalProps) => {

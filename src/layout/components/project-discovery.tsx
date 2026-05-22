@@ -138,7 +138,7 @@ export const ProjectDiscovery: React.FC<ProjectDiscoveryProps> = ({
   const numberOfPages = useMemo(() => Math.ceil(totalCount / 30), [totalCount]);
 
   return (
-    <div className="flex w-full flex-col px-2 py-10 md:px-10 md:py-12">
+    <div className="flex w-full flex-col px-2 py-10 md:py-12">
       <div className="flex w-full flex-col gap-5">
         <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
           <span>{"All projects"}</span>
@@ -165,7 +165,13 @@ export const ProjectDiscovery: React.FC<ProjectDiscoveryProps> = ({
 
       <div className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {listRegistrations.length === 0 ? (
-          <>{isPending ? <ListRegistrationLookupPlaceholder /> : (noResultsPlaceholder ?? null)}</>
+          isPending ? (
+            <ListRegistrationLookupPlaceholder />
+          ) : (
+            <div className="col-span-full flex items-center justify-center py-16">
+              {noResultsPlaceholder ?? null}
+            </div>
+          )
         ) : (
           listRegistrations.map(({ id, registrant: registrantAccount }) => (
             <AccountCard

@@ -108,11 +108,14 @@ export const useEnhancedForm = <TSchema extends ZodSchema>({
     injectedEffect,
   });
 
-  const isUnpopulated =
-    !isDeepEqual(
-      defaultValues,
-      pick(self.formState.defaultValues ?? {}, keys(defaultValues ?? {})),
-    ) && !self.formState.isDirty;
+  const currentDefaultValues = self.formState.defaultValues;
+
+  const pickedValues =
+    defaultValues && currentDefaultValues
+      ? pick(currentDefaultValues, keys(defaultValues))
+      : (currentDefaultValues ?? {});
+
+  const isUnpopulated = !isDeepEqual(defaultValues ?? {}, pickedValues) && !self.formState.isDirty;
 
   useEffect(() => {
     if (followDefaultValues && isUnpopulated) {

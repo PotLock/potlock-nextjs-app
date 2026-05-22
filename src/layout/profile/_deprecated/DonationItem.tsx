@@ -8,7 +8,7 @@ import getTimePassed from "@/common/lib/getTimePassed";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 import { TokenIcon } from "@/entities/_shared/token";
 import { DonationInfo } from "@/layout/profile/_deprecated/accounts";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 // TODO: refactor by breaking into TailwindCSS classes
 const FundingSrc = styled.div`
@@ -76,7 +76,10 @@ export const DonationItem = ({
     recipient: _recipient,
     donated_at,
     token,
+    message,
   } = donation;
+
+  const isPingPay = (message ?? "").startsWith("[via PingPay]");
 
   const { id: donorId } = donor;
   const potId = pot?.id;
@@ -84,14 +87,22 @@ export const DonationItem = ({
   const recipient = _recipient ?? { id: "" };
   const { id: recipientId } = recipient;
   const paidAt = new Date(donated_at).getTime();
-  const ftId = token.id || baseCurrency;
-  const decimals = token.decimals;
+  const ftId = (token as any).account || (token as any).id || baseCurrency;
+  // The indexer reports decimals=24 for wrapped Intents stablecoins (USDC/USDT)
+  // even though they actually use 6 decimals. Override by symbol as a workaround.
+  const symbolDecimalsOverride: Record<string, number> = { USDC: 6, USDT: 6 };
+
+  const decimals =
+    token.symbol && symbolDecimalsOverride[token.symbol.toUpperCase()] !== undefined
+      ? symbolDecimalsOverride[token.symbol.toUpperCase()]
+      : token.decimals;
+
   const isPot = !!potId;
 
   const donationAmount = parseFloat(
     Big(total_amount || amount)
       .div(Big(10).pow(ftId === "near" ? 24 : decimals || 24))
-      .toFixed(2),
+      .toFixed(decimals && decimals <= 6 ? 4 : 2),
   );
 
   const url = isPot
@@ -124,18 +135,32 @@ export const DonationItem = ({
             )}{" "}
             {name}
           </Link>
-          <div className="type">{isPot ? "Matched donation" : "Direct donation"}</div>
+          <div className="type flex items-center gap-2">
+            <span>{isPot ? "Matched donation" : "Direct donation"}</span>
+            {isPingPay && (
+              <span className="rounded-md bg-blue-100 px-2 text-xs font-semibold text-black">
+                via PingPay
+              </span>
+            )}
+          </div>
         </div>
       </FundingSrc>
       <div className="price tab">
         <div className="near-icon">
-          {ftId === NATIVE_TOKEN_ID ? (
+          {ftId === NATIVE_TOKEN_ID || token.symbol?.toUpperCase() === "NEAR" ? (
             <TokenIcon tokenId={NATIVE_TOKEN_ID} />
-          ) : (
-            <img className="h-[21px] w-[21px]" src={token.icon} alt="Token icon" />
-          )}
+          ) : token.icon ? (
+            <img
+              className="h-[21px] w-[21px]"
+              src={token.icon}
+              alt="Token icon"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = "none";
+              }}
+            />
+          ) : null}
         </div>
-        {addTrailingZeros(donationAmount)}
+        {addTrailingZeros(donationAmount)} {token.symbol ?? ""}
       </div>
       <div className="tab date">{getTimePassed(paidAt, true)} ago</div>
     </div>

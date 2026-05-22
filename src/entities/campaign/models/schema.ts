@@ -1,6 +1,6 @@
 import { literal, preprocess, string, z } from "zod";
 
-import { near } from "@/common/blockchains/near-protocol/client";
+import { nearProtocolSchemas } from "@/common/blockchains/near-protocol";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
 import { futureTimestamp, safePositiveNumber } from "@/common/lib";
@@ -65,7 +65,7 @@ const baseSchema = z.object({
     .min(3, "Name must be at least 3 characters")
     .max(100, "Name must be less than 100 characters"),
 
-  description: z.string().max(250, "Description must be less than 250 characters").optional(),
+  description: z.string().max(500, "Description must be less than 500 characters").optional(),
   ft_id: ftIdSchema,
   target_amount: positiveNumberParser.describe("Target Amount of the campaign"),
   min_amount: positiveNumberParser.optional().describe("Minimum Amount of the Campaign"),
@@ -92,10 +92,9 @@ const baseSchema = z.object({
 export const createCampaignSchema = baseSchema
   .extend({
     start_ms: futureTimestamp.describe("Campaign Start Date"),
-
-    recipient: z.string().min(1, "Recipient account is required").refine(near.isAccountValid, {
-      message: `Invalid Account, must be a valid NEAR account`,
-    }),
+    project_name: z.string().optional(),
+    project_description: z.string().optional(),
+    recipient: nearProtocolSchemas.validAccountId.describe("Recipient's account id"),
   })
   .superRefine((data, ctx) => {
     if (data.end_ms && data.start_ms && data.start_ms >= data.end_ms) {
@@ -171,14 +170,7 @@ export const createCampaignSchema = baseSchema
 export const updateCampaignSchema = baseSchema.extend({
   // start_ms might not be updatable or optional for update, adjust as needed
   start_ms: futureTimestamp.optional().describe("Campaign Start Date"),
-  recipient: z
-    .string()
-    .min(1)
-    .refine(near.isAccountValid, {
-      // Ensure it's still valid if provided
-      message: `Invalid Account, must be a valid NEAR account`,
-    })
-    .optional(), // Optional for update
+  recipient: nearProtocolSchemas.validAccountIdOrNothing.describe("Recipient's account id"),
 });
 
 export type CreateCampaignSchema = z.infer<typeof createCampaignSchema>;

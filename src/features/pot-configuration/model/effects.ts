@@ -1,14 +1,14 @@
 import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
 import { omit } from "remeda";
 
-import { ByPotId } from "@/common/api/indexer";
+import { ByPotId, syncApi } from "@/common/api/indexer";
 import { nearRpc, walletApi } from "@/common/blockchains/near-protocol/client";
 import { type PotConfig, potContractClient } from "@/common/contracts/core/pot";
 import {
   type PotDeploymentResult,
   potFactoryContractClient,
 } from "@/common/contracts/core/pot-factory";
-import { AppDispatcher } from "@/store";
+import { type AppDispatcher } from "@/store";
 
 import { PotDeploymentInputs, PotSettings } from "./schemas";
 import { potInputsToPotArgs } from "../utils/normalization";
@@ -56,7 +56,9 @@ export const effects = (dispatch: AppDispatcher) => ({
             pot_args,
             pot_handle: (pot_handle?.length ?? 0) > 0 ? pot_handle : undefined,
           })
-          .then((result) => {
+          .then(async (result) => {
+            // Sync pot to indexer after deployment
+            await syncApi.pot(result.id).catch(() => {});
             dispatch.potConfiguration.handleDeploymentSuccess(result);
             onDeploymentSuccess({ potId: result.id });
           })
@@ -66,7 +68,11 @@ export const effects = (dispatch: AppDispatcher) => ({
           .admin_dangerously_set_pot_config(potId, {
             update_args: omit(pot_args, ["custom_sybil_checks"]),
           })
-          .then(onUpdate)
+          .then(async (config) => {
+            // Sync pot to indexer after config update
+            await syncApi.pot(potId).catch(() => {});
+            onUpdate(config);
+          })
           .catch(dispatch.potConfiguration.updateFailure);
       }
     }

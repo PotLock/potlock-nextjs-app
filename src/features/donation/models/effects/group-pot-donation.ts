@@ -50,7 +50,7 @@ export const groupPotDonationMulticall = ({
         [] as DonationBatchCallDraft["entries"],
       ),
     )
-    .then((finalExecutionOutcomes = undefined) => {
+    .then((finalExecutionOutcomes) => {
       const receipts: PotDonation[] =
         finalExecutionOutcomes?.reduce(
           (acc, { status }) => {
