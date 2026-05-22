@@ -24,6 +24,7 @@ import { cn } from "@/common/ui/layout/utils";
 import { WalletUserSessionProvider } from "@/common/wallet";
 import { AppBar } from "@/layout/components/app-bar";
 import { CampaignRouteLoading } from "@/layout/components/campaign-route-loading";
+import { FloatingDocsButton } from "@/layout/components/floating-docs-button";
 import { store } from "@/store";
 
 const lora = Lora({
@@ -98,6 +99,7 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
             >
               <AppBar />
               <CampaignRouteLoading>{getLayout(<Component {...pageProps} />)}</CampaignRouteLoading>
+              <FloatingDocsButton />
             </div>
           </TooltipProvider>
         </NiceModalProvider>

@@ -170,20 +170,18 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
     return new Date(time).getTime();
   };
 
-  const formatFullDateTime = (timestampMs: number) => {
-    const date = new Date(timestampMs);
-    const day = date.getDate();
+  const formatRelativeFromNow = (timestampMs: number) => {
+    const diffMs = timestampMs - Date.now();
+    if (diffMs <= 0) return "now";
 
-    let suffix = "th";
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    const minutes = Math.round(diffMs / 60_000);
+    if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"}`;
 
-    const month = date.toLocaleString("en-US", { month: "long" });
-    const year = date.getFullYear();
-    const time = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+    const hours = Math.round(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"}`;
 
-    return `${day}${suffix} ${month} ${year}, ${time}`;
+    const days = Math.round(hours / 24);
+    return `${days} day${days === 1 ? "" : "s"}`;
   };
 
   const handleDeleteCampaign = async () => {
@@ -367,7 +365,7 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
       };
 
       if (campaignId) {
-        campaignsContractClient
+        return campaignsContractClient
           .update_campaign({
             args: { ...args, campaign_id: campaignId },
           })
@@ -378,12 +376,12 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
             self.reset(values, { keepErrors: false });
 
             toast({
-              title: `You’ve successfully updated this campaign`,
+              title: "Campaign updated",
               description: (() => {
                 const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
 
                 if (startMs && startMs > Date.now()) {
-                  return `Campaign starts on ${formatFullDateTime(startMs)}.`;
+                  return `Campaign starts in ${formatRelativeFromNow(startMs)}.`;
                 }
 
                 return "Campaign is live.";
@@ -406,7 +404,7 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
             });
           });
       } else {
-        campaignsContractClient
+        return campaignsContractClient
           .create_campaign({ args })
           .then(async (newCampaign) => {
             const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
@@ -422,10 +420,10 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
             }
 
             toast({
-              title: `You’ve successfully created a campaign for ${values.name}.`,
+              title: "Campaign created",
               description: (() => {
                 if (startMs && startMs > Date.now()) {
-                  return `Campaign starts on ${formatFullDateTime(startMs)}.`;
+                  return `Campaign starts in ${formatRelativeFromNow(startMs)}.`;
                 }
 
                 return "Campaign is live.";
