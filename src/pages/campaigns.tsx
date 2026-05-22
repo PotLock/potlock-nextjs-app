@@ -15,6 +15,9 @@ import {
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
+import { rootPathnames } from "@/navigation";
+
+const FEATURED_CAMPAIGN_ON_CHAIN_IDS = [131, 106, 101, 91];
 
 export const FeaturedCampaigns = ({
   data,
@@ -25,6 +28,10 @@ export const FeaturedCampaigns = ({
 }) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+
+  const featuredCampaigns = (data ?? []).filter((c) =>
+    FEATURED_CAMPAIGN_ON_CHAIN_IDS.includes(c?.on_chain_id),
+  );
 
   useEffect(() => {
     if (!api) return;
@@ -42,7 +49,7 @@ export const FeaturedCampaigns = ({
     return () => clearInterval(interval);
   }, [api]);
 
-  if (!data?.length) {
+  if (!featuredCampaigns.length) {
     return <></>;
   }
 
@@ -53,7 +60,9 @@ export const FeaturedCampaigns = ({
           <h1 className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             Featured Campaigns
           </h1>
-          <p className="text-[18px]">{current + 1}/4</p>
+          <p className="text-[18px]">
+            {current + 1}/{featuredCampaigns.length}
+          </p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex gap-4">
@@ -72,7 +81,7 @@ export const FeaturedCampaigns = ({
           </div>
           {showViewAll && (
             <Button asChild variant="brand-tonal" className="h-8 shrink-0 bg-transparent text-xs">
-              <Link href="/campaigns" className="text-brand-primary">
+              <Link href={rootPathnames.CAMPAIGNS} className="text-brand-primary">
                 VIEW ALL
               </Link>
             </Button>
@@ -81,10 +90,9 @@ export const FeaturedCampaigns = ({
       </div>
       <Carousel opts={{ loop: true }} setApi={setApi}>
         <CarouselContent>
-          {data?.length &&
-            data
-              ?.filter((data) => [131, 106, 101, 91].includes(data?.on_chain_id))
-              ?.map((data) => <CampaignCarouselItem key={data.on_chain_id} data={data} />)}
+          {featuredCampaigns.map((c) => (
+            <CampaignCarouselItem key={c.on_chain_id} data={c} />
+          ))}
         </CarouselContent>
       </Carousel>
     </div>

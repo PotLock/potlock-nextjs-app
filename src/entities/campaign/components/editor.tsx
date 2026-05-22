@@ -13,7 +13,7 @@ import { pinataHooks } from "@/common/services/pinata";
 import { CampaignId } from "@/common/types";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { RichTextEditor } from "@/common/ui/form/components/richtext";
-import { Button, Form, FormField, Switch } from "@/common/ui/layout/components";
+import { Button, Form, FormField, Spinner, Switch } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import {
@@ -918,8 +918,19 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                   )}
                 </div>
               )}
-              <Button variant="brand-filled" disabled={isDisabled} type="submit">
-                {isUpdate ? "Update" : "Create"} Campaign
+              <Button
+                variant="brand-filled"
+                disabled={isDisabled || form.formState.isSubmitting}
+                type="submit"
+              >
+                {form.formState.isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <Spinner className="h-4 w-4" />
+                    {isUpdate ? "Updating..." : "Creating..."}
+                  </span>
+                ) : (
+                  <>{isUpdate ? "Update" : "Create"} Campaign</>
+                )}
               </Button>
             </div>
 
