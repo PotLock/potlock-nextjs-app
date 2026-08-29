@@ -1,5 +1,7 @@
 import axios from "axios";
+import { mutate } from "swr";
 
+import { syncApi } from "@/common/api/indexer";
 import { RPC_NODE_URL, walletApi } from "@/common/blockchains/near-protocol/client";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { type CampaignDonation, campaignsContractClient } from "@/common/contracts/core/campaigns";
@@ -33,6 +35,11 @@ const getTransactionStatus = ({
     method: "tx",
     params: { wait_until, ...params },
   });
+
+const revalidateCampaignData = (campaignId: number) => {
+  mutate((key) => Array.isArray(key) && key[0] === "useCampaign" && key[1] === campaignId);
+  mutate((key) => Array.isArray(key) && key[0] === "useCampaignDonations" && key[1] === campaignId);
+};
 
 export type DonationSubmitCallbacks = {
   onError: (error: Error) => void;
@@ -95,7 +102,16 @@ export const effects = (dispatch: AppDispatcher) => ({
 
                 floatToYoctoNear(amount),
               )
-              .then(dispatch.donation.success)
+              .then(async (result) => {
+                // Sync direct donation to indexer for popup wallets
+                if (result.txHash && result.donation) {
+                  await syncApi
+                    .directDonation(result.txHash, result.donation.donor_id)
+                    .catch(() => {});
+                }
+
+                dispatch.donation.success(result.donation);
+              })
               .catch((error) => {
                 onError(error);
                 dispatch.donation.failure(error);
@@ -122,7 +138,11 @@ export const effects = (dispatch: AppDispatcher) => ({
 
               floatToYoctoNear(amount),
             )
-            .then(dispatch.donation.success)
+            .then(async (result) => {
+              // Sync pot donations to indexer
+              await syncApi.potDonations(singleRecipientMatchingPotId).catch(() => {});
+              dispatch.donation.success(result);
+            })
             .catch((error) => {
               onError(error);
               dispatch.donation.failure(error);
@@ -154,7 +174,16 @@ export const effects = (dispatch: AppDispatcher) => ({
           message,
           tokenId,
         })
-          .then(dispatch.donation.success)
+          .then(async (result) => {
+            if (result.txHash && result.donation) {
+              await syncApi
+                .campaignDonation(campaignId, result.txHash, result.donation.donor_id)
+                .catch(() => {});
+            }
+
+            revalidateCampaignData(campaignId);
+            dispatch.donation.success(result.donation);
+          })
           .catch((error) => {
             onError(error);
             dispatch.donation.failure(error);
@@ -172,7 +201,16 @@ export const effects = (dispatch: AppDispatcher) => ({
 
             floatToYoctoNear(amount),
           )
-          .then(dispatch.donation.success)
+          .then(async (result) => {
+            if (result.txHash && result.donation) {
+              await syncApi
+                .campaignDonation(campaignId, result.txHash, result.donation.donor_id)
+                .catch(() => {});
+            }
+
+            revalidateCampaignData(campaignId);
+            dispatch.donation.success(result.donation);
+          })
           .catch((error) => {
             onError(error);
             dispatch.donation.failure(error);
@@ -180,7 +218,11 @@ export const effects = (dispatch: AppDispatcher) => ({
       }
     } else if (isGroupPotDonation && groupAllocationPlan !== undefined) {
       return void groupPotDonationMulticall({ ...inputs, potContractAccountId: params.potId })
-        .then(dispatch.donation.success)
+        .then(async (result) => {
+          // Sync pot donations to indexer
+          await syncApi.potDonations(params.potId).catch(() => {});
+          dispatch.donation.success(result);
+        })
         .catch((error) => {
           onError(error);
           dispatch.donation.failure(error);
@@ -198,16 +240,44 @@ export const effects = (dispatch: AppDispatcher) => ({
   },
 
   handleOutcome: async (transactionHash: string): Promise<void> => {
-    // TODO: Use nearRps.txStatus for each tx hash & handle batch tx outcome
-
     const { accountId: sender_account_id } = walletApi;
 
     if (sender_account_id) {
       const { data } = await getTransactionStatus({ tx_hash: transactionHash, sender_account_id });
+      const receiptsOutcome = data?.result?.receipts_outcome || [];
 
-      const donationData = JSON.parse(
-        atob(data?.result?.receipts_outcome[3].outcome.status.SuccessValue),
-      ) as DirectDonation | CampaignDonation | PotDonation;
+      // Parse all direct donations from receipts (handles both single and batch donations)
+      const donations: DirectDonation[] = [];
+
+      for (const receipt of receiptsOutcome) {
+        const successValue = receipt?.outcome?.status?.SuccessValue;
+
+        if (successValue) {
+          try {
+            const parsed = JSON.parse(atob(successValue));
+
+            // Check if it's a direct donation (has recipient_id, no campaign_id)
+            if (parsed && "recipient_id" in parsed && !("campaign_id" in parsed)) {
+              donations.push(parsed as DirectDonation);
+            }
+          } catch {
+            // Not valid JSON, skip
+          }
+        }
+      }
+
+      // Sync all direct donations to indexer
+      if (donations.length > 0) {
+        await syncApi.directDonation(transactionHash, sender_account_id).catch(() => {});
+      }
+
+      // Return first donation for single donations, or array for batch
+      const donationData =
+        donations.length === 1
+          ? donations[0]
+          : donations.length > 0
+            ? donations
+            : JSON.parse(atob(receiptsOutcome[3]?.outcome?.status?.SuccessValue || "null"));
 
       dispatch.donation.success(donationData);
     } else {

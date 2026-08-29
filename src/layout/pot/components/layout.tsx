@@ -1,9 +1,9 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { indexer } from "@/common/api/indexer";
+import { indexer, syncApi } from "@/common/api/indexer";
 import { PageWithBanner } from "@/common/ui/layout/components";
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
@@ -35,6 +35,17 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
     errorMessage?: string;
   };
 
+  const { activeTab, orderedTabList } = usePotLayoutTabNavigation({ potId });
+  const { data: pot } = indexer.usePot({ potId });
+
+  // Sync pot donations when returning from a wallet transaction (?done=true)
+  useEffect(() => {
+    if (query.done && potId) {
+      syncApi.potDonations(potId).catch(() => {});
+    }
+  }, [query.done, potId]);
+
+  // Modals
   const [resultModalOpen, setSuccessModalOpen] = useState(!!query.done && !query.errorMessage);
   const [errorModalOpen, setErrorModalOpen] = useState(!!query.errorMessage);
   const [fundModalOpen, setFundModalOpen] = useState(false);
@@ -43,9 +54,6 @@ export const PotLayout: React.FC<PotLayoutProps> = ({ children }) => {
   const openApplicationModal = useCallback(() => setApplyModalOpen(true), []);
   const [challengeModalOpen, setChallengeModalOpen] = useState(false);
   const openChallengeModal = useCallback(() => setChallengeModalOpen(true), []);
-
-  const { activeTab, orderedTabList } = usePotLayoutTabNavigation({ potId });
-  const { data: pot } = indexer.usePot({ potId });
 
   const onApplicationSuccess = useCallback(() => {
     setApplyModalOpen(false);

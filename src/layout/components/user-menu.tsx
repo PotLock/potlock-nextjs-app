@@ -2,7 +2,6 @@ import { useCallback } from "react";
 
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { NOOP_STRING } from "@/common/constants";
@@ -14,6 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import {
@@ -65,7 +65,7 @@ export const UserMenu: React.FC = () => {
             >
               {walletUser.registrationStatus}
 
-              <LazyLoadImage
+              <LazyImage
                 alt="Registration status icon"
                 src={listRegistrationStatuses[walletUser.registrationStatus].icon}
                 width={18}
@@ -124,11 +124,11 @@ export const UserMenu: React.FC = () => {
                 </DropdownMenuItem>
               )}
 
-              <DropdownMenuItem asChild className="px-3 py-2.5 font-medium">
+              {/* <DropdownMenuItem asChild className="px-3 py-2.5 font-medium">
                 <Link href={`https://near.social/mob.near/widget/NotificationFeed`} target="_blank">
                   {"Notifications"}
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </div>
           </div>
 

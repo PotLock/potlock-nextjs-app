@@ -55,8 +55,7 @@ const filterChipVariants = cva(
 );
 
 export interface FilterChipProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof filterChipVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof filterChipVariants> {
   asChild?: boolean;
   count?: number;
   label?: string;

@@ -21,6 +21,7 @@ import { ProjectCategoryPicker, Row, SubHeader } from "./editor-elements";
 import { ProfileConfigurationFundingSourcesTable } from "./funding-sources";
 import { ProfileConfigurationImageUpload } from "./image-upload";
 import { ProfileConfigurationLinktreeSection } from "./linktree-section";
+import { OrgVerificationSection } from "./org-verification-section";
 import { ProfileConfigurationRepositoriesSection } from "./repositories-section";
 import { LowerBannerContainer, LowerBannerContainerLeft } from "./styles";
 import { type ProfileFormParams, useProfileForm } from "../hooks/forms";
@@ -262,6 +263,9 @@ export const ProfileConfigurationEditor: React.FC<ProfileConfigurationEditorProp
           <Row>
             <ProfileConfigurationLinktreeSection form={form} />
           </Row>
+
+          <SubHeader title="501(c)(3) Tax-Exempt Verification" className="mt-16" />
+          <OrgVerificationSection accountId={accountId} />
 
           <div className="mt-16 flex gap-4 self-end">
             <Button variant="standard-outline" onClick={router.back}>

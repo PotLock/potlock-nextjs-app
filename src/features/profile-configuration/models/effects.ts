@@ -10,6 +10,7 @@ import {
   SOCIAL_DB_CONTRACT_ACCOUNT_ID,
   SOCIAL_PLATFORM_NAME,
 } from "@/common/_config";
+import { syncApi } from "@/common/api/indexer";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import {
   FIFTY_TGAS,
@@ -99,10 +100,15 @@ export const save = async ({
   if (directTransactions.length === 0) {
     return { success: false, error: "No transactions to submit." };
   } else if (!isDao) {
-    return nearProtocolClient.naxiosInstance
+    return nearProtocolClient
       .contractApi()
       .callMultiple(directTransactions, callbackUrl)
-      .then(() => ({ success: true, error: null }))
+      .then(async () => {
+        // Sync account to indexer after profile save
+        await syncApi.account(accountId).catch(() => {});
+
+        return { success: true, error: null };
+      })
       .catch((err) => {
         console.error(err);
 
@@ -112,7 +118,7 @@ export const save = async ({
     return sputnikDaoClient
       .get_policy({ accountId })
       .then(({ proposal_bond }) =>
-        nearProtocolClient.naxiosInstance
+        nearProtocolClient
           .contractApi()
           .callMultiple(
             directTransactions.map((tx) => {

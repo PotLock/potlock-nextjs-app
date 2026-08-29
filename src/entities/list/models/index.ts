@@ -20,8 +20,20 @@ const listEditorStateDefaults: ListEditorState = {
 
 export const useListActionsState = () => useGlobalStoreSelector(prop(listModelKey));
 
-const handleList = (state: ListEditorState, stateUpdate?: Partial<ListEditorState>) =>
-  mergeAll([state, stateUpdate ?? {}]);
+const handleList = (
+  state: ListEditorState,
+  stateUpdate?: Partial<ListEditorState>,
+): ListEditorState =>
+  mergeAll([
+    state,
+    {
+      ...stateUpdate,
+      type: stateUpdate?.type ?? state.type,
+      finalOutcome: stateUpdate?.finalOutcome ?? state.finalOutcome,
+      modalTextState: stateUpdate?.modalTextState ?? state.modalTextState,
+      donation: stateUpdate?.donation ?? state.donation,
+    },
+  ]) as ListEditorState;
 
 export const listEditorModel = createModel<AppModel>()({
   state: listEditorStateDefaults,

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { CampaignDonation, campaignsContractHooks } from "@/common/contracts/core/campaigns";
-import { indivisibleUnitsToFloat, oldToRecent } from "@/common/lib";
+import { indivisibleUnitsToFloat, oldToRecent, truncate } from "@/common/lib";
 import getTimePassed from "@/common/lib/getTimePassed";
 import type { ByCampaignId } from "@/common/types";
 import { DataTable } from "@/common/ui/layout/components";
@@ -30,23 +30,53 @@ export const CampaignDonorsTable: React.FC<CampaignDonorsTableProps> = ({ campai
     {
       header: "Donor",
       accessorKey: "donor_id",
-      cell: ({ row }) => (
-        <Link
-          href={`${rootPathnames.PROFILE}/${row.original.donor_id}`}
-          target="_blank"
-          key={row.id}
-          className="address flex gap-2 hover:opacity-70"
-        >
-          <AccountProfilePicture className="h-5 w-5" accountId={row.original.donor_id} />
-          <span>{row.original.donor_id}</span>
+      cell: ({ row }) => {
+        const donorId = row.original.donor_id;
+        const isIntent = donorId.includes("potluck_intents.near");
+        const isPingPay = (row.original.message ?? "").startsWith("[via PingPay]");
 
-          {row.original?.returned_at_ms && (
-            <p className="rounded-full border-2 bg-red-600 px-2 text-[10px] font-bold text-white">
-              Refunded
-            </p>
-          )}
-        </Link>
-      ),
+        const explorerUrl = isIntent
+          ? `https://nearblocks.io/address/${donorId}`
+          : `${rootPathnames.PROFILE}/${donorId}`;
+
+        const content = (
+          <>
+            <AccountProfilePicture className="h-5 w-5" accountId={donorId} />
+            <span>{isIntent ? truncate(donorId, 25) : donorId}</span>
+
+            {isIntent && (
+              <span className="rounded-md bg-green-100 px-2 text-xs font-semibold text-black">
+                Intent
+              </span>
+            )}
+
+            {isPingPay && (
+              <span className="rounded-md bg-blue-100 px-2 text-xs font-semibold text-black">
+                via PingPay
+              </span>
+            )}
+
+            {row.original?.returned_at_ms && (
+              <p className="rounded-full border-2 bg-red-600 px-2 text-[10px] font-bold text-white">
+                Refunded
+              </p>
+            )}
+          </>
+        );
+
+        return (
+          <div key={row.id} className="address flex gap-2">
+            <Link
+              href={explorerUrl}
+              target={isIntent ? "_blank" : undefined}
+              rel={isIntent ? "noopener noreferrer" : undefined}
+              className="flex gap-2 hover:opacity-70"
+            >
+              {content}
+            </Link>
+          </div>
+        );
+      },
     },
 
     {

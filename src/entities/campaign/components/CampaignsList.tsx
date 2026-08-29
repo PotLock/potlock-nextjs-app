@@ -1,16 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { Campaign } from "@/common/api/indexer";
-import { Filter, SearchBar, SortSelect, Spinner } from "@/common/ui/layout/components";
+import {
+  Filter,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  SearchBar,
+  SortSelect,
+} from "@/common/ui/layout/components";
 
 import { CampaignCard } from "./CampaignCard";
+import { CampaignCardSkeleton } from "./CampaignCardSkeleton";
 import { useAllCampaignLists } from "../hooks/useCampaigns";
 
 export const CampaignsList = () => {
   const [search, setSearch] = useState("");
   const [filteredCampaigns, setFilteredCampaigns] = useState<Campaign[]>([]);
 
-  const { buttons, campaigns, loading, currentTab, tagsList } = useAllCampaignLists();
+  const { buttons, campaigns, loading, currentTab, tagsList, pagination } = useAllCampaignLists();
 
   const SORT_LIST_PROJECTS = [
     { label: "Newest", value: "recent" },
@@ -48,8 +60,10 @@ export const CampaignsList = () => {
   const content = useMemo(() => {
     if (loading) {
       return (
-        <div className="flex h-40 items-center justify-center">
-          <Spinner className="h-7 w-7" />
+        <div className="my-10 grid gap-2 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+          {Array.from({ length: 6 }, (_, index) => (
+            <CampaignCardSkeleton key={`skeleton-${index}`} />
+          ))}
         </div>
       );
     }
@@ -101,6 +115,90 @@ export const CampaignsList = () => {
         <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
       </div>
       <div className="min-h-100 w-full">{content}</div>
+
+      {/* Pagination - Only show for ALL_CAMPAIGNS */}
+      {currentTab === "ALL_CAMPAIGNS" &&
+        pagination.totalPages > 1 &&
+        !loading &&
+        filteredCampaigns.length > 0 && (
+          <div className="mt-8 flex justify-center">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={(e) => {
+                      e.preventDefault();
+
+                      if (pagination.hasPreviousPage) {
+                        pagination.setCurrentPage(pagination.currentPage - 1);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }
+                    }}
+                    className={
+                      !pagination.hasPreviousPage
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+
+                {/* Page numbers */}
+                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                  let pageNum: number;
+
+                  if (pagination.totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (pagination.currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (pagination.currentPage >= pagination.totalPages - 2) {
+                    pageNum = pagination.totalPages - 4 + i;
+                  } else {
+                    pageNum = pagination.currentPage - 2 + i;
+                  }
+
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        onClick={(e) => {
+                          e.preventDefault();
+                          pagination.setCurrentPage(pageNum);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        isActive={pagination.currentPage === pageNum}
+                        className="cursor-pointer"
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+
+                {pagination.totalPages > 5 &&
+                  pagination.currentPage < pagination.totalPages - 2 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={(e) => {
+                      e.preventDefault();
+
+                      if (pagination.hasNextPage) {
+                        pagination.setCurrentPage(pagination.currentPage + 1);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }
+                    }}
+                    className={
+                      !pagination.hasNextPage ? "pointer-events-none opacity-50" : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
     </div>
   );
 };

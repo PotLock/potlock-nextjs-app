@@ -31,7 +31,12 @@ import { DONATION_DEFAULT_MIN_AMOUNT_FLOAT } from "@/features/donation";
 import { PotConfigurationPreview } from "./preview";
 import { POT_EDITOR_FIELDS } from "../constants";
 import { usePotConfigurationEditorForm } from "../hooks/forms";
-import { getPotDeploymentSchema, getPotSettingsSchema } from "../model";
+import {
+  type PotDeploymentSchema,
+  type PotSettingsSchema,
+  getPotDeploymentSchema,
+  getPotSettingsSchema,
+} from "../model";
 
 export type PotConfigurationEditorProps = Partial<ByPotId> & {
   className?: string;
@@ -59,8 +64,16 @@ export const PotConfigurationEditor: React.FC<PotConfigurationEditorProps> = ({
     [isNewPot, pot],
   );
 
+  const formArgs = useMemo(
+    () =>
+      isNewPot
+        ? ({ schema } as { schema: PotDeploymentSchema })
+        : ({ potId, schema } as { potId: PotId; schema: PotSettingsSchema }),
+    [isNewPot, potId, schema],
+  );
+
   const { form, handleAdminsUpdate, isDisabled, isHydrating, onSubmit } =
-    usePotConfigurationEditorForm(isNewPot ? { schema } : { potId, schema });
+    usePotConfigurationEditorForm(formArgs as any);
 
   const values = form.watch();
 

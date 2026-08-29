@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSubmitHandler, type SubmitHandler, useForm } from "react-hook-form";
 
-import { Pot } from "@/common/api/indexer";
+import { Pot, syncApi } from "@/common/api/indexer";
 import { potContractClient } from "@/common/contracts/core/pot";
 import type { AccountId } from "@/common/types";
 
@@ -90,7 +90,9 @@ export const usePotApplicationReviewForm = ({
           ...args,
           potId: potDetail.account,
         })
-        .then(() => {
+        .then(async () => {
+          // Sync pot applications to indexer after review
+          await syncApi.potApplications(potDetail.account).catch(() => {});
           onSuccess();
         })
         .catch((error) => {

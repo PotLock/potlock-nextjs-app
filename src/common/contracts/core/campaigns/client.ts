@@ -1,12 +1,14 @@
-import { Transaction, buildTransaction, calculateDepositByDataSize } from "@wpdas/naxios";
-import Big from "big.js";
+import bigJs from "big.js";
 
 import {
   CAMPAIGNS_CONTRACT_ACCOUNT_ID,
   LISTS_CONTRACT_ACCOUNT_ID,
   SOCIAL_DB_CONTRACT_ACCOUNT_ID,
 } from "@/common/_config";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import {
+  Transaction,
+  contractApi as createContractApi,
+} from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { floatToYoctoNear, parseNearAmount } from "@/common/lib";
 import { AccountId, CampaignId, type IndivisibleUnits } from "@/common/types";
@@ -22,7 +24,7 @@ import {
 } from "./interfaces";
 import { NEARSocialUserProfile } from "../../social-db";
 
-const contractApi = naxiosInstance.contractApi({
+const contractApi = createContractApi({
   contractId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
 });
 
@@ -42,38 +44,37 @@ export const create_campaign = ({ args }: CreateCampaignParams) => {
       profileImage: ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
     });
 
-    const depositFloat = Big(calculateDepositByDataSize(socialArgs)).add(0.1).toString();
+    const depositFloat = bigJs(JSON.stringify(socialArgs).length * 0.00003)
+      .add(0.1)
+      .toString();
 
-    const socialTransaction = buildTransaction("set", {
-      receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
-      args: {
-        data: {
-          [args.owner as AccountId]: {
-            profile: socialArgs,
+    const transactions: Transaction<Record<string, unknown>>[] = [
+      {
+        receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
+        method: "set",
+        args: {
+          data: {
+            [args.owner as AccountId]: {
+              profile: socialArgs,
+            },
           },
         },
+        deposit: parseNearAmount(depositFloat)!,
       },
-      deposit: parseNearAmount(depositFloat)!,
-    });
-
-    const transactions: Transaction<object>[] = [socialTransaction];
-
-    transactions.push(
-      buildTransaction("register_batch", {
+      {
         receiverId: LISTS_CONTRACT_ACCOUNT_ID,
+        method: "register_batch",
         args: { list_id: PUBLIC_GOODS_REGISTRY_LIST_ID },
         deposit: parseNearAmount("0.05")!,
         gas: FULL_TGAS,
-      }),
-    );
-
-    transactions.push(
-      buildTransaction("create_campaign", {
+      },
+      {
+        method: "create_campaign",
         args: rest,
         deposit: floatToYoctoNear(0.021),
         gas: FULL_TGAS,
-      }),
-    );
+      },
+    ];
 
     return contractApi.callMultiple(transactions);
   } else {
@@ -85,17 +86,71 @@ export const create_campaign = ({ args }: CreateCampaignParams) => {
   }
 };
 
-export const process_escrowed_donations_batch = ({ args }: { args: { campaign_id: CampaignId } }) =>
-  contractApi.call("process_escrowed_donations_batch", {
-    args,
-    gas: FULL_TGAS,
-  });
+export type TxHashResult = {
+  txHash: string | null;
+};
 
-export const process_refunds_batch = ({ args }: { args: { campaign_id: CampaignId } }) =>
-  contractApi.call("process_refunds_batch", {
+const callWithTxHash = async (
+  method: string,
+  args: Record<string, unknown>,
+  deposit?: string,
+): Promise<TxHashResult> => {
+  const { walletApi } = await import("@/common/blockchains/near-protocol/client");
+  const wallet = await walletApi.ensureWallet();
+  const signerId = walletApi.accountId;
+
+  if (!signerId) {
+    throw new Error("Wallet is not signed in.");
+  }
+
+  const { actionCreators } = await import("@near-js/transactions");
+
+  const action = actionCreators.functionCall(
+    method,
     args,
-    gas: FULL_TGAS,
-  });
+    BigInt(FULL_TGAS),
+    BigInt(deposit ?? "0"),
+  );
+
+  let outcome: any;
+  const walletAny = wallet as any;
+
+  if ("signAndSendTransaction" in walletAny) {
+    outcome = await walletAny.signAndSendTransaction({
+      signerId,
+      receiverId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+      actions: [action],
+    });
+  } else if ("signAndSendTransactions" in walletAny) {
+    const results = await walletAny.signAndSendTransactions({
+      transactions: [
+        {
+          receiverId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+          actions: [action],
+        },
+      ],
+    });
+
+    outcome = Array.isArray(results) ? results[0] : results;
+  } else {
+    throw new Error("Wallet does not support transaction signing");
+  }
+
+  const txHash = outcome?.transaction?.hash || outcome?.transaction_outcome?.id || null;
+  return { txHash };
+};
+
+export const process_escrowed_donations_batch = ({
+  args,
+}: {
+  args: { campaign_id: CampaignId };
+}): Promise<TxHashResult> => callWithTxHash("process_escrowed_donations_batch", args);
+
+export const process_refunds_batch = ({
+  args,
+}: {
+  args: { campaign_id: CampaignId };
+}): Promise<TxHashResult> => callWithTxHash("process_refunds_batch", args);
 
 export type UpdateCampaignParams = { args: CampaignInputs & { campaign_id: CampaignId } };
 
@@ -108,20 +163,65 @@ export const update_campaign = ({ args }: UpdateCampaignParams) =>
 
 export type DeleteCampaignParams = { args: { campaign_id: CampaignId } };
 
-export const delete_campaign = ({ args }: DeleteCampaignParams) =>
-  contractApi.call<DeleteCampaignParams["args"], void>("delete_campaign", {
-    args,
-    deposit: floatToYoctoNear(0.021),
-    gas: FULL_TGAS,
-  });
+export const delete_campaign = ({ args }: DeleteCampaignParams): Promise<TxHashResult> =>
+  callWithTxHash("delete_campaign", args, floatToYoctoNear(0.021));
 
-export const donate = (args: CampaignDonationArgs, depositAmountYocto: IndivisibleUnits) =>
-  contractApi.call<CampaignDonationArgs, CampaignDonation>("donate", {
+export type DonateResult = {
+  donation: CampaignDonation;
+  txHash: string | null;
+};
+
+export const donate = async (
+  args: CampaignDonationArgs,
+  depositAmountYocto: IndivisibleUnits,
+): Promise<DonateResult> => {
+  const { walletApi } = await import("@/common/blockchains/near-protocol/client");
+  const wallet = await walletApi.ensureWallet();
+  const signerId = walletApi.accountId;
+
+  if (!signerId) {
+    throw new Error("Wallet is not signed in.");
+  }
+
+  const { actionCreators } = await import("@near-js/transactions");
+  const { providers } = await import("near-api-js");
+
+  const action = actionCreators.functionCall(
+    "donate",
     args,
-    deposit: depositAmountYocto,
-    gas: FULL_TGAS,
-    callbackUrl: window.location.href,
-  });
+    BigInt(FULL_TGAS),
+    BigInt(depositAmountYocto),
+  );
+
+  let outcome: any;
+  const walletAny = wallet as any;
+
+  if ("signAndSendTransaction" in walletAny) {
+    outcome = await walletAny.signAndSendTransaction({
+      signerId,
+      receiverId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+      actions: [action],
+    });
+  } else if ("signAndSendTransactions" in walletAny) {
+    const results = await walletAny.signAndSendTransactions({
+      transactions: [
+        {
+          receiverId: CAMPAIGNS_CONTRACT_ACCOUNT_ID,
+          actions: [action],
+        },
+      ],
+    });
+
+    outcome = Array.isArray(results) ? results[0] : results;
+  } else {
+    throw new Error("Wallet does not support transaction signing");
+  }
+
+  const txHash = outcome?.transaction?.hash || outcome?.transaction_outcome?.id || null;
+  const donation = providers.getTransactionLastResult(outcome) as CampaignDonation;
+
+  return { donation, txHash };
+};
 
 export const get_campaigns = () => contractApi.view<{}, Campaign[]>("get_campaigns");
 

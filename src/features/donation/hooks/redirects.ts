@@ -28,7 +28,7 @@ export const useDonationSuccessWalletRedirect = () => {
       : undefined);
 
   const isTransactionOutcomeDetected =
-    transactionHash && Boolean(recipientAccountId ?? potAccountId);
+    transactionHash && Boolean(recipientAccountId ?? potAccountId ?? listId);
 
   useEffect(() => {
     if (isTransactionOutcomeDetected && !donationModal.visible) {

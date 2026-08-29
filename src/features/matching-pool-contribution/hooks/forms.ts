@@ -5,7 +5,7 @@ import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
 import { sputnikDaoClient } from "@/common/contracts/sputnikdao2";
 import { objectToBase64Json } from "@/common/lib";
@@ -68,14 +68,14 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
         if (viewer.isDaoRepresentative) {
           const daoPolicy = await sputnikDaoClient.get_policy({ accountId: viewer.accountId });
 
-          await naxiosInstance.contractApi({ contractId: viewer.accountId }).call("add_proposal", {
+          await contractApi({ contractId: viewer.accountId }).call("add_proposal", {
             args: daoTransactionArgs,
             deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
             gas: FULL_TGAS,
             callbackUrl,
           });
         } else {
-          await naxiosInstance.contractApi({ contractId: potDetail.account }).call("donate", {
+          await contractApi({ contractId: potDetail.account }).call("donate", {
             args,
             deposit: parseNearAmount(formData.amountNEAR.toString()) || "0",
             gas: ONE_TGAS.mul(100).toString(),

@@ -8,7 +8,7 @@ import { Temporal } from "temporal-polyfill";
 import { infer as FromSchema } from "zod";
 
 import { CONTRACT_SOURCECODE_REPO_URL, CONTRACT_SOURCECODE_VERSION } from "@/common/_config";
-import { ByPotId, type PotId } from "@/common/api/indexer";
+import { ByPotId, type PotId, indexer } from "@/common/api/indexer";
 import { PotConfig, potContractHooks } from "@/common/contracts/core/pot";
 import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
 import { daysFloatToMilliseconds } from "@/common/lib";
@@ -27,7 +27,7 @@ import {
   potDeploymentDependentFields,
   potSettingsDependentFields,
 } from "../model";
-import { potConfigToPotConfigInputs, potConfigToSettings } from "../utils/normalization";
+import { filterPastDatesForSubmit, potConfigToSettings } from "../utils/normalization";
 
 export type PotConfigurationEditorFormArgs =
   | (ByPotId & { schema: PotDeploymentSchema })
@@ -48,6 +48,12 @@ export const usePotConfigurationEditorForm = ({
     potId: potId as PotId,
   });
 
+  // Fetch pot data from indexer to get source_metadata for updates
+  const { data: pot } = indexer.usePot({
+    enabled: potId !== undefined,
+    potId: potId as PotId,
+  });
+
   const {
     contractMetadata: { latestSourceCodeCommitHash },
   } = useGlobalStoreSelector(prop("core"));
@@ -56,36 +62,63 @@ export const usePotConfigurationEditorForm = ({
 
   type Values = FromSchema<typeof schema>;
 
-  const defaultValues = useMemo<Partial<Values>>(
-    () => ({
-      source_metadata: {
-        version: CONTRACT_SOURCECODE_VERSION,
-        commit_hash: latestSourceCodeCommitHash,
-        link: CONTRACT_SOURCECODE_REPO_URL,
-      },
-
-      owner: viewer.accountId,
+  const defaultValues = useMemo<Partial<Values>>(() => {
+    // Base defaults for non-date fields
+    const nonDateDefaults = {
       max_projects: 25,
       referral_fee_matching_pool_basis_points: feeBasisPointsToPercents(100),
       referral_fee_public_round_basis_points: feeBasisPointsToPercents(100),
-
-      application_start_ms: Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(1),
-      application_end_ms: Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(15),
-
-      public_round_start_ms:
-        Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(16) + 60000,
-
-      public_round_end_ms:
-        Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(29) + 60000,
-
       chef_fee_basis_points: feeBasisPointsToPercents(100),
       isPgRegistrationRequired: true,
       isSybilResistanceEnabled: true,
-      ...(potConfig === undefined ? {} : potConfigToPotConfigInputs(potConfig)),
-    }),
+    };
 
-    [latestSourceCodeCommitHash, potConfig, viewer.accountId],
-  );
+    // For new pots, include default dates (in the future)
+    if (isNewPot) {
+      return {
+        ...nonDateDefaults,
+        application_start_ms: Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(1),
+        application_end_ms: Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(15),
+        public_round_start_ms:
+          Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(16) + 60000,
+        public_round_end_ms:
+          Temporal.Now.instant().epochMilliseconds + daysFloatToMilliseconds(29) + 60000,
+        source_metadata: {
+          version: CONTRACT_SOURCECODE_VERSION,
+          commit_hash: latestSourceCodeCommitHash,
+          link: CONTRACT_SOURCECODE_REPO_URL,
+        },
+        owner: viewer.accountId,
+      };
+    }
+
+    // For updates, use values from potConfig (includes all dates for display)
+    const potConfigInputs = potConfig === undefined ? {} : potConfigToSettings(potConfig);
+
+    // Get source_metadata from pot indexer data (includes the stored commit_hash)
+    const storedSourceMetadata = pot?.source_metadata as
+      | { version: string; commit_hash: string | null; link: string }
+      | undefined;
+
+    // For updates, include all dates from potConfig for display
+    // Past dates will be filtered out when submitting
+    return {
+      ...nonDateDefaults,
+      ...potConfigInputs,
+      // Use stored source_metadata if available, otherwise fall back to latest
+      source_metadata: storedSourceMetadata
+        ? {
+            version: storedSourceMetadata.version ?? CONTRACT_SOURCECODE_VERSION,
+            commit_hash: storedSourceMetadata.commit_hash ?? latestSourceCodeCommitHash,
+            link: storedSourceMetadata.link ?? CONTRACT_SOURCECODE_REPO_URL,
+          }
+        : {
+            version: CONTRACT_SOURCECODE_VERSION,
+            commit_hash: latestSourceCodeCommitHash,
+            link: CONTRACT_SOURCECODE_REPO_URL,
+          },
+    };
+  }, [latestSourceCodeCommitHash, potConfig, pot, viewer.accountId, isNewPot]);
 
   const { form: self } = useEnhancedForm({
     schema,
@@ -108,9 +141,9 @@ export const usePotConfigurationEditorForm = ({
 
     [
       isHydrating,
-      self.formState.isDirty,
       self.formState.isSubmitting,
       self.formState.isValid,
+      self.formState.isDirty,
       values.source_metadata,
     ],
   );
@@ -124,10 +157,15 @@ export const usePotConfigurationEditorForm = ({
     (values) => {
       self.trigger();
 
+      // For updates, filter out past dates before submitting (contract will reject them)
+      const valuesToSubmit = isNewPot
+        ? (values as PotDeploymentInputs)
+        : filterPastDatesForSubmit(values as PotSettings);
+
       dispatch.potConfiguration.save({
         onDeploymentSuccess: ({ potId }: ByPotId) => router.push(`${rootPathnames.pot}/${potId}`),
         onUpdate: (config: PotConfig) => self.reset(potConfigToSettings(config)),
-        ...(isNewPot ? (values as PotDeploymentInputs) : { potId, ...(values as PotSettings) }),
+        ...(isNewPot ? valuesToSubmit : { potId, ...valuesToSubmit }),
       });
     },
 

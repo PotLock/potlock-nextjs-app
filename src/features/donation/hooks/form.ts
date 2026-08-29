@@ -17,6 +17,7 @@ import { useFungibleToken } from "@/entities/_shared/token";
 import { extractMatchingPots } from "@/entities/pot";
 import { useDispatch } from "@/store/hooks";
 
+import { useCrossChainTokens } from "./cross-chain-tokens";
 import {
   DONATION_DEFAULT_MIN_AMOUNT_FLOAT,
   DONATION_INSUFFICIENT_BALANCE_ERROR,
@@ -132,10 +133,54 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
     values.allocationStrategy === DonationAllocationStrategyEnum.share &&
     values.potAccountId !== undefined;
 
+  // Check if tokenId is a cross-chain token (format: "blockchain:assetId")
+  const isCrossChainToken =
+    values.tokenId !== undefined &&
+    values.tokenId !== NATIVE_TOKEN_ID &&
+    values.tokenId.includes(":");
+
+  // Only fetch token data for NEAR tokens, not cross-chain tokens (to avoid balance loading errors)
   const { data: token } = useFungibleToken({
-    tokenId: values.tokenId ?? NATIVE_TOKEN_ID,
-    balanceCheckAccountId: viewer?.accountId,
+    tokenId: isCrossChainToken ? NATIVE_TOKEN_ID : (values.tokenId ?? NATIVE_TOKEN_ID),
+    balanceCheckAccountId: isCrossChainToken ? undefined : viewer?.accountId,
+    enabled: !isCrossChainToken,
   });
+
+  // Fetch cross-chain token list to get NEAR price and selected token price
+  const { data: crossChainTokenList } = useCrossChainTokens();
+
+  const { crossChainNearPrice, crossChainTokenPrice, crossChainTokenSymbol } = useMemo(() => {
+    if (!isCrossChainToken || !crossChainTokenList || !values.tokenId) {
+      return { crossChainNearPrice: 0, crossChainTokenPrice: 0, crossChainTokenSymbol: "" };
+    }
+
+    const nearToken = crossChainTokenList.find(
+      (t) => t.symbol === "wNEAR" || t.assetId === "nep141:wrap.near",
+    );
+
+    const parts = values.tokenId.split(":");
+    const blockchain = parts[0];
+    const assetId = parts.slice(1).join(":");
+
+    const selectedToken = crossChainTokenList.find(
+      (t) => t.assetId === assetId && t.blockchain.toLowerCase() === blockchain.toLowerCase(),
+    );
+
+    return {
+      crossChainNearPrice: nearToken?.price ?? 0,
+      crossChainTokenPrice: selectedToken?.price ?? 0,
+      crossChainTokenSymbol: selectedToken?.symbol ?? "",
+    };
+  }, [isCrossChainToken, crossChainTokenList, values.tokenId]);
+
+  // Minimum amount in the selected cross-chain token equivalent to 0.1 NEAR
+  const crossChainMinAmount = useMemo(() => {
+    if (crossChainTokenPrice > 0 && crossChainNearPrice > 0) {
+      return (0.1 * crossChainNearPrice) / crossChainTokenPrice;
+    }
+
+    return 0;
+  }, [crossChainNearPrice, crossChainTokenPrice]);
 
   const { data: pot } = indexer.usePot({
     enabled: isGroupPotDonation || isSingleRecipientPotDonation,
@@ -273,8 +318,13 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
   useEffect(() => {
     //* Only trigger with user input
     if (viewer.hasWalletReady && values.amount !== undefined) {
-      //* Checking for insufficient balance
-      if (token?.balance !== undefined && token.balance.lt(totalAmountFloat)) {
+      //* Skip balance validation for cross-chain tokens (we don't have balance info for other chains)
+      //* Checking for insufficient balance (only for NEAR tokens)
+      if (
+        !isCrossChainToken &&
+        token?.balance !== undefined &&
+        token.balance.lt(totalAmountFloat)
+      ) {
         if (
           customErrors?.amount?.message !== DONATION_INSUFFICIENT_BALANCE_ERROR ||
           self.formState.isValid
@@ -283,8 +333,23 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
         }
       }
 
-      //* Addressing single-recipient and group donation scenarios with evenly distributed funds
+      //* Cross-chain minimum amount validation (0.1 NEAR equivalent)
       else if (
+        isCrossChainToken &&
+        crossChainMinAmount > 0 &&
+        Big(parsedAmount).lt(crossChainMinAmount)
+      ) {
+        const errorMessage = `Amount must be at least ${crossChainMinAmount.toFixed(4)} ${crossChainTokenSymbol || "tokens"} (equivalent to 0.1 NEAR).`;
+
+        if (customErrors?.amount?.message !== errorMessage || self.formState.isValid) {
+          setCustomErrors({ amount: { message: errorMessage } });
+        }
+      }
+
+      //* Addressing single-recipient and group donation scenarios with evenly distributed funds
+      //* Skip minimum amount validation for cross-chain tokens (handled above)
+      else if (
+        !isCrossChainToken &&
         minTotalAmountFloat !== undefined &&
         Big(parsedAmount).lt(minTotalAmountFloat) &&
         (values.allocationStrategy === DonationAllocationStrategyEnum.full ||
@@ -302,7 +367,9 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
       }
 
       //* Addressing group donation scenarios with manually distributed funds
+      //* Skip minimum amount validation for cross-chain tokens
       else if (
+        !isCrossChainToken &&
         values.allocationStrategy === DonationAllocationStrategyEnum.share &&
         values.groupAllocationStrategy === DonationGroupAllocationStrategyEnum.manual &&
         (values.groupAllocationPlan?.some(
@@ -327,6 +394,9 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
     }
   }, [
     customErrors,
+    crossChainMinAmount,
+    crossChainTokenSymbol,
+    isCrossChainToken,
     isFtDonation,
     isGroupDonation,
     minRecipientShareAmountFloat,
@@ -357,5 +427,8 @@ export const useDonationForm = ({ cachedTokenId, ...params }: DonationFormParams
     // TODO: Likely not needed to be exposed anymore, try using `amount` everywhere
     // TODO: in the consuming code instead and remove this if no issues detected.
     totalAmountFloat,
+    crossChainMinAmount,
+    crossChainTokenSymbol,
+    isCrossChainToken,
   };
 };

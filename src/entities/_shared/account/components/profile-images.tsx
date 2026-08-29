@@ -1,11 +1,17 @@
-import { LazyLoadImage, LazyLoadImageProps } from "react-lazy-load-image-component";
+import type { LazyLoadImageProps } from "react-lazy-load-image-component";
 
 import { ByAccountId, type LiveUpdateParams } from "@/common/types";
-import { Avatar, AvatarImage, Skeleton } from "@/common/ui/layout/components";
+import { Avatar, AvatarFallback, AvatarImage, Skeleton } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { cn } from "@/common/ui/layout/utils";
 
-import { ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC } from "../constants";
+import {
+  ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC,
+  ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC,
+} from "../constants";
 import { useAccountSocialProfile } from "../hooks/social-profile";
+
+const getInitial = (accountId: string) => accountId?.trim()?.[0]?.toUpperCase() ?? "?";
 
 export type AccountProfilePictureProps = ByAccountId &
   LiveUpdateParams & {
@@ -25,10 +31,13 @@ export const AccountProfilePicture: React.FC<AccountProfilePictureProps> = ({
     <Avatar className={cn("h-3 w-3", className)}>
       <AvatarImage
         alt={`Profile picture of ${accountId}`}
-        src={avatar.url}
+        src={avatar.url || ACCOUNT_PROFILE_IMAGE_PLACEHOLDER_SRC}
         width={40}
         height={40}
       />
+      <AvatarFallback className="bg-[#f0e7df] text-sm font-semibold text-[#7B7B7B]">
+        {getInitial(accountId)}
+      </AvatarFallback>
     </Avatar>
   );
 };
@@ -57,7 +66,7 @@ export const AccountProfileCover: React.FC<AccountProfileCoverProps> = ({
     <Skeleton className={cn("w-full", className)} style={{ height, maxHeight: height }} />
   ) : (
     <div className={cn("w-full overflow-hidden", className)} style={{ height, maxHeight: height }}>
-      <LazyLoadImage
+      <LazyImage
         alt="Profile cover"
         placeholderSrc={ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}
         visibleByDefault={cover.url === ACCOUNT_PROFILE_COVER_IMAGE_PLACEHOLDER_SRC}

@@ -5,10 +5,12 @@ import { useRouter } from "next/router";
 import { prop } from "remeda";
 
 import { LISTS_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { syncApi } from "@/common/api/indexer";
+import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { listsContractClient } from "@/common/contracts/core/lists";
 import { floatToYoctoNear } from "@/common/lib";
 import { AccountId } from "@/common/types";
+import { useWalletUserSession } from "@/common/wallet";
 import { AccountGroupItem, validateAccountId } from "@/entities/_shared/account";
 import { useDispatch } from "@/store/hooks";
 
@@ -17,6 +19,7 @@ import { ListFormModalType } from "../types";
 export const useListForm = () => {
   const { push, query } = useRouter();
   const dispatch = useDispatch();
+  const viewer = useWalletUserSession();
   const [transferAccountField, setTransferAccountField] = useState<string>("");
   const [transferAccountError, setTransferAccountError] = useState<string | undefined>("");
 
@@ -36,7 +39,12 @@ export const useListForm = () => {
 
     listsContractClient
       .delete_list({ list_id: id })
-      .then(() => {
+      .then(async ({ txHash }) => {
+        // Sync deletion to indexer
+        if (txHash && viewer.accountId) {
+          await syncApi.listDelete(id, txHash, viewer.accountId).catch(() => {});
+        }
+
         push("/lists");
       })
       .catch((error) => {
@@ -51,9 +59,11 @@ export const useListForm = () => {
   };
 
   const handleRegisterBatch = (registrants: string[]) => {
+    const listId = parseInt(id as any);
+
     listsContractClient
       .register_batch({
-        list_id: parseInt(id as any) as any,
+        list_id: listId as any,
         registrations: registrants.map((data: string) => ({
           registrant_id: data,
           status: "Approved",
@@ -62,7 +72,10 @@ export const useListForm = () => {
           notes: "",
         })),
       })
-      .then(() => {
+      .then(async () => {
+        // Sync registrations to indexer
+        await syncApi.listRegistrations(listId).catch(() => {});
+
         setFinishModal({ open: true, type: ListFormModalType.BATCH_REGISTER });
       })
       .catch((error) => console.error(error));
@@ -76,6 +89,7 @@ export const useListForm = () => {
 
   const handleUnRegisterAccount = (registrants: AccountGroupItem[]) => {
     if (!id) return;
+    const listId = Number(id);
     const allTransactions: any = [];
 
     registrants.map((registrant: AccountGroupItem) => {
@@ -83,7 +97,7 @@ export const useListForm = () => {
         buildTransaction("unregister", {
           receiverId: LISTS_CONTRACT_ACCOUNT_ID,
           args: {
-            list_id: Number(id),
+            list_id: listId,
             registration_id: Number(registrant.registrationId),
           },
           deposit: floatToYoctoNear(0.015),
@@ -92,12 +106,14 @@ export const useListForm = () => {
       );
     });
 
-    naxiosInstance
-      .contractApi({
-        contractId: LISTS_CONTRACT_ACCOUNT_ID,
-      })
+    contractApi({
+      contractId: LISTS_CONTRACT_ACCOUNT_ID,
+    })
       .callMultiple(allTransactions)
-      .then((_res) => {
+      .then(async (_res) => {
+        // Sync registrations to indexer after unregister
+        await syncApi.listRegistrations(listId).catch(() => {});
+
         dispatch.listEditor.updateListModalState({
           header: "Account(s) Deleted From List Successfully",
           description,
@@ -109,13 +125,17 @@ export const useListForm = () => {
 
   const handleRemoveAdmin = (accounts: AccountGroupItem[]) => {
     const accountIds = accounts.map(prop("accountId"));
+    const listId = Number(id);
 
     listsContractClient
       .remove_admins_from_list({
-        list_id: Number(id),
+        list_id: listId,
         admins: accountIds,
       })
-      .then(() => {
+      .then(async () => {
+        // Sync list to indexer after admin removal
+        await syncApi.list(listId).catch(() => {});
+
         setFinishModal({ open: true, type: ListFormModalType.REMOVE_ADMINS });
       })
       .catch((error) => {
@@ -131,13 +151,17 @@ export const useListForm = () => {
 
   const handleSaveAdminsSettings = (admins: AccountId[]) => {
     if (!id) return;
+    const listId = Number(id);
 
     listsContractClient
       .add_admins_to_list({
-        list_id: Number(id),
+        list_id: listId,
         admins,
       })
-      .then(() => {
+      .then(async () => {
+        // Sync list to indexer after admin addition
+        await syncApi.list(listId).catch(() => {});
+
         setFinishModal({ open: true, type: ListFormModalType.ADD_ADMINS });
       })
       .catch((error) => {
@@ -162,14 +186,18 @@ export const useListForm = () => {
   const handleTransferOwner = () => {
     if (transferAccountError && !transferAccountField) return;
     if (!id) return; // Ensure id is available
+    const listId = parseInt(id as string);
 
     listsContractClient
       .transfer_list_ownership({
-        list_id: parseInt(id as string),
+        list_id: listId,
         new_owner_id: transferAccountField,
       })
-      .then((data) => {
+      .then(async (data) => {
         if (data) {
+          // Sync list to indexer after ownership transfer
+          await syncApi.list(listId).catch(() => {});
+
           setFinishModal({
             open: true,
             type: ListFormModalType.TRANSFER_OWNER,

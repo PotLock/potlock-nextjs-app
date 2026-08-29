@@ -76,6 +76,28 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         HTMLAttributes: {
           class: "text-blue-600 hover:text-blue-800 underline",
         },
+      }).extend({
+        addKeyboardShortcuts() {
+          return {
+            // Ctrl/Cmd+K: add a link on plain text, or edit the URL when the
+            // cursor is on hyperlinked text (the prompt pre-fills with the
+            // existing href). Submitting an empty string removes the link.
+            "Mod-k": () => {
+              const previousUrl: string | undefined = this.editor.getAttributes("link").href;
+              const url = window.prompt("Enter URL:", previousUrl ?? "");
+
+              if (url === null) return false;
+
+              if (url === "") {
+                this.editor.chain().focus().extendMarkRange("link").unsetLink().run();
+                return true;
+              }
+
+              this.editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+              return true;
+            },
+          };
+        },
       }),
     ],
     content: value || `<p>${placeholder ?? ""}</p>`,

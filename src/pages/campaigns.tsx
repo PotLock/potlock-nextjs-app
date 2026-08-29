@@ -15,10 +15,23 @@ import {
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { CampaignCarouselItem, CampaignsList } from "@/entities/campaign";
+import { rootPathnames } from "@/navigation";
 
-export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
+const FEATURED_CAMPAIGN_ON_CHAIN_IDS = [131, 106, 101, 91];
+
+export const FeaturedCampaigns = ({
+  data,
+  showViewAll = false,
+}: {
+  data: Campaign[];
+  showViewAll?: boolean;
+}) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+
+  const featuredCampaigns = (data ?? []).filter((c) =>
+    FEATURED_CAMPAIGN_ON_CHAIN_IDS.includes(c?.on_chain_id),
+  );
 
   useEffect(() => {
     if (!api) return;
@@ -28,42 +41,58 @@ export const FeaturedCampaigns = ({ data }: { data: Campaign[] }) => {
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap());
     });
+
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [api]);
 
-  if (!data?.length) {
+  if (!featuredCampaigns.length) {
     return <></>;
   }
 
   return (
     <div className="mt-8 w-full p-0 ">
-      <div className="mb-4 flex w-full flex-row justify-between p-2 md:p-0">
-        <div className=" flex items-center gap-4 ">
+      <div className="mb-4 flex w-full flex-col gap-4 p-2 md:flex-row md:items-center md:justify-between md:gap-0 md:p-0">
+        <div className="flex items-center gap-4">
           <h1 className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             Featured Campaigns
           </h1>
-          <p className="text-[18px]">{current + 1}/6</p>
+          <p className="text-[18px]">
+            {current + 1}/{featuredCampaigns.length}
+          </p>
         </div>
-        <div className="flex gap-4">
-          <img
-            src="/assets/icons/left-arrow.svg"
-            alt=""
-            onClick={() => api?.scrollTo(current - 1)}
-            className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
-          />
-          <img
-            src="/assets/icons/right-arrow.svg"
-            alt=""
-            onClick={() => api?.scrollTo(current + 1)}
-            className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
-          />
+        <div className="flex items-center gap-4">
+          <div className="flex gap-4">
+            <img
+              src="/assets/icons/left-arrow.svg"
+              alt=""
+              onClick={() => api?.scrollTo(current - 1)}
+              className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
+            />
+            <img
+              src="/assets/icons/right-arrow.svg"
+              alt=""
+              onClick={() => api?.scrollTo(current + 1)}
+              className="h-6 w-6 cursor-pointer rounded-full border border-gray-400 text-[14px] text-gray-500"
+            />
+          </div>
+          {showViewAll && (
+            <Button asChild variant="brand-tonal" className="h-8 shrink-0 bg-transparent text-xs">
+              <Link href={rootPathnames.CAMPAIGNS} className="text-brand-primary">
+                VIEW ALL
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
       <Carousel opts={{ loop: true }} setApi={setApi}>
         <CarouselContent>
-          {data?.length &&
-            data
-              ?.filter((data) => [52, 63, 62, 56, 51, 45].includes(data?.on_chain_id))
-              ?.map((data) => <CampaignCarouselItem key={data.on_chain_id} data={data} />)}
+          {featuredCampaigns.map((c) => (
+            <CampaignCarouselItem key={c.on_chain_id} data={c} />
+          ))}
         </CarouselContent>
       </Carousel>
     </div>
@@ -103,10 +132,14 @@ export default function CampaignsPage() {
         </h1>
 
         <div className="flex gap-4">
-          {viewer.isSignedIn && (
-            <Button asChild className="mt-4" variant="brand-filled">
-              <Link href="/campaign/create">{"Start Campaign"}</Link>
-            </Button>
+          {!viewer.hasWalletReady ? (
+            <div className="mt-4 h-10 w-36 animate-pulse rounded-md bg-gray-200" />
+          ) : (
+            viewer.isSignedIn && (
+              <Button asChild className="mt-4" variant="brand-filled">
+                <Link href="/campaign/create">{"Start Campaign"}</Link>
+              </Button>
+            )
           )}
           <Button variant="brand-tonal" asChild className="mt-4">
             <Link target="_blank" href="https://docs.potlock.io/user-guides/campaigns">
