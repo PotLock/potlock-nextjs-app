@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { Campaign, V1CampaignsRetrieveStatus } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { truncateHtml } from "@/common/lib";
 import { toTimestamp } from "@/common/lib/datetime";
 import getTimePassed from "@/common/lib/getTimePassed";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { BadgeIcon } from "@/common/ui/layout/svg/BadgeIcon";
 import { cn } from "@/common/ui/layout/utils";
 import { AccountProfileLink } from "@/entities/_shared/account";
@@ -26,9 +26,9 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
         "transition-all duration-500 hover:shadow-[0_6px_10px_rgba(0,0,0,0.2)]",
       )}
     >
-      <Link href={`/campaign/${data.on_chain_id}/leaderboard`} passHref prefetch>
+      <Link href={`/campaign/${data.on_chain_id}`} passHref prefetch>
         <div className="relative h-[212px] w-full">
-          <LazyLoadImage
+          <LazyImage
             src={data?.cover_image_url || "/assets/images/list-gradient-3.png"}
             alt="Campaign cover"
             className="h-52 w-full rounded-t-lg object-cover hover:scale-150"
@@ -39,7 +39,7 @@ export const CampaignCard = ({ data }: { data: Campaign }) => {
           <h1 className="absolute bottom-0 px-6 py-3 text-[20px] font-semibold text-white">
             {data.name}
           </h1>
-          {data?.owner === data?.recipient && (
+          {data?.owner?.id === data?.recipient?.id && (
             <div className="absolute right-2 top-2 flex  items-center gap-1">
               <BadgeIcon size={5} />
               <span className="m-0 font-bold text-white">OFFICIAL</span>

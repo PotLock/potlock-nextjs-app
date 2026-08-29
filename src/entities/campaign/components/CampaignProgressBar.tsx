@@ -210,25 +210,13 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
           minAmount={`${minAmountFloat} ${token?.metadata.symbol ?? ""}`}
           minValuePercentage={((): number | undefined => {
             if (!minAmountFloat || !targetAmountFloat) return undefined;
+            if (isTargetMet) return undefined;
 
-            // Compute geometric min arrow position
             const rawMinPercent = (minAmountFloat / targetAmountFloat) * 100;
             const LEFT_PAD_PCT = 3;
             const RIGHT_PAD_PCT = 3;
 
-            const clampedMinPercent = Math.max(
-              LEFT_PAD_PCT,
-              Math.min(100 - RIGHT_PAD_PCT, rawMinPercent),
-            );
-
-            const PASSED_DELTA = 0.5;
-
-            const minArrowPercent =
-              progressExact >= clampedMinPercent
-                ? Math.min(clampedMinPercent, Math.max(LEFT_PAD_PCT, progressExact - PASSED_DELTA))
-                : clampedMinPercent;
-
-            return minArrowPercent;
+            return Math.max(LEFT_PAD_PCT, Math.min(100 - RIGHT_PAD_PCT, rawMinPercent));
           })()}
           value={progressPercentage}
           bgColor={color}
@@ -246,7 +234,7 @@ export const CampaignProgressBar: React.FC<CampaignProgressBarProps> = ({
 
         <div>
           <p className="font-semibold" style={{ color }}>
-            {progressPercentage}%
+            {progressExact > 100 ? "> 100%" : `${progressPercentage}%`}
           </p>
         </div>
       </div>

@@ -24,7 +24,15 @@ const handleStep = (
   state: PotConfigurationState,
   step: PotConfigurationStep,
   stateUpdate?: Partial<PotConfigurationState>,
-) => mergeAll([state, stateUpdate ?? {}, { currentStep: step }]);
+): PotConfigurationState =>
+  mergeAll([
+    state,
+    stateUpdate ?? {},
+    {
+      currentStep: step,
+      finalOutcome: stateUpdate?.finalOutcome ?? state.finalOutcome,
+    },
+  ]) as PotConfigurationState;
 
 export const potConfigurationModel = createModel<AppModel>()({
   state: potConfigurationStateDefaults,

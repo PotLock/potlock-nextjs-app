@@ -137,7 +137,7 @@ export const getAccountDonationsReceived = async ({
   limit?: number;
 }) => {
   const res = await fetch(
-    `${INDEXER_API_ENDPOINT_URL}/api/v1/accounts/${accountId}/donations_received?limit=${limit || 9999}`,
+    `${INDEXER_API_ENDPOINT_URL}/api/v1/accounts/${accountId}/donations_received?page_size=${limit || 9999}`,
   );
 
   const json = await res.json();

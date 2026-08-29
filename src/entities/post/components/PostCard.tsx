@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import Markdown from "react-markdown";
 
 import { PotApplicationStatus } from "@/common/api/indexer";
 import { fetchTimeByBlockHeight } from "@/common/api/near-social-indexer";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { AccountHandle, AccountProfilePicture } from "@/entities/_shared/account";
 import { potApplicationFiltersTags } from "@/features/pot-application";
 
@@ -127,7 +127,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, isPot, status }) => {
           {post.content}
         </Markdown>
         {post?.imageIPFSHash && (
-          <LazyLoadImage
+          <LazyImage
             src={`${IPFS_NEAR_SOCIAL_URL}${post.imageIPFSHash}`}
             alt=""
             className="w-100 h-max max-h-[420px] rounded-lg object-contain shadow-sm"

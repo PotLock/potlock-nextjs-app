@@ -13,7 +13,7 @@ import { pinataHooks } from "@/common/services/pinata";
 import { CampaignId } from "@/common/types";
 import { TextAreaField, TextField } from "@/common/ui/form/components";
 import { RichTextEditor } from "@/common/ui/form/components/richtext";
-import { Button, Form, FormField, Switch, Textarea } from "@/common/ui/layout/components";
+import { Button, Form, FormField, Spinner, Switch } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import {
@@ -38,11 +38,34 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
   const [recipientType, setRecipientType] = useState<"yourself" | "someone_else">("yourself");
   const isUpdate = campaignId !== undefined;
 
-  const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled } = useCampaignForm({
-    campaignId,
-    ftId: existingData?.token?.account ?? NATIVE_TOKEN_ID,
-    onUpdateSuccess: close,
+  // Minimum datetime for start date (current time + 1 minute buffer)
+  // Initialize with empty string to avoid SSR/SSG issues with Temporal.Now.timeZoneId()
+  const [minStartDateTime, setMinStartDateTime] = useState<string>("");
+
+  // Track when project fields should be shown (prevent disappearing after being shown)
+  const [showProjectFields, setShowProjectFields] = useState(false);
+
+  const { form, handleCoverImageUploadResult, onSubmit, watch, isDisabled, handleDeleteCampaign } =
+    useCampaignForm({
+      campaignId,
+      ftId: existingData?.token?.account ?? NATIVE_TOKEN_ID,
+      onUpdateSuccess: close,
+    });
+
+  const { profile, isLoading: isProfileLoading } = useAccountSocialProfile({
+    accountId: walletUser?.accountId ?? "",
   });
+
+  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl, description, recipient] =
+    form.watch([
+      "ft_id",
+      "target_amount",
+      "min_amount",
+      "max_amount",
+      "cover_image_url",
+      "description",
+      "recipient",
+    ]);
 
   // Set initial recipient when component mounts (only for create mode)
   useEffect(() => {
@@ -51,22 +74,125 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
     }
   }, [recipientType, walletUser?.accountId, form, isUpdate]);
 
+  // Validate and auto-correct start date if it's in the past
+  const handleStartDateChange = (value: string) => {
+    if (!value) {
+      form.setValue("start_ms", undefined, { shouldValidate: false });
+      return;
+    }
+
+    const selectedTime = Temporal.PlainDateTime.from(value)
+      .toZonedDateTime(Temporal.Now.timeZoneId())
+      .toInstant().epochMilliseconds;
+
+    const minTime = Temporal.Now.instant().add({ minutes: 1 }).epochMilliseconds;
+
+    // Only validate if end_ms has been touched or has a value
+    // This prevents showing validation errors on untouched end_ms field
+    const endMsValue = form.getValues("end_ms");
+    const endMsTouched = form.formState.touchedFields.end_ms;
+    const shouldValidate = endMsTouched === true || endMsValue !== undefined;
+
+    if (selectedTime < minTime) {
+      // Auto-correct to minimum valid time (silently)
+      const correctedTime = Temporal.Now.instant().add({ minutes: 1 }).epochMilliseconds;
+      form.setValue("start_ms", correctedTime, { shouldValidate, shouldDirty: true });
+    } else {
+      form.setValue("start_ms", selectedTime, { shouldValidate, shouldDirty: true });
+    }
+  };
+
+  // Validate and auto-correct end date if it's before start date
+  const handleEndDateChange = (value: string) => {
+    if (!value) {
+      form.setValue("end_ms", undefined, { shouldValidate: false });
+      return;
+    }
+
+    const selectedTime = Temporal.PlainDateTime.from(value)
+      .toZonedDateTime(Temporal.Now.timeZoneId())
+      .toInstant().epochMilliseconds;
+
+    const startMs = form.getValues("start_ms");
+
+    const minTime = startMs
+      ? (startMs as number) + 60000 // At least 1 minute after start
+      : Temporal.Now.instant().add({ minutes: 1 }).epochMilliseconds;
+
+    // Only validate if start_ms has been touched or has a value
+    // This prevents showing validation errors on untouched start_ms field
+    const startMsTouched = form.formState.touchedFields.start_ms;
+    const shouldValidate = startMsTouched === true || startMs !== undefined;
+
+    if (selectedTime < minTime) {
+      // Auto-correct to minimum valid time (silently)
+      form.setValue("end_ms", minTime, { shouldValidate, shouldDirty: true });
+    } else {
+      form.setValue("end_ms", selectedTime, { shouldValidate, shouldDirty: true });
+    }
+  };
+
+  // Keep the min attribute on datetime inputs up to date (client-side only).
+  useEffect(() => {
+    const updateMinDateTime = () => {
+      const newMinInstant = Temporal.Now.instant().add({ minutes: 1 });
+
+      const newMin = newMinInstant
+        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+        .toPlainDateTime()
+        .toString({ smallestUnit: "minute" });
+
+      setMinStartDateTime(newMin);
+
+      // If the form's stored start_ms has fallen into the past while the user
+      // was filling out the rest of the form, silently bump it to the new min.
+      // Otherwise submit fails with a confusing "please fill in required field"
+      // browser error because the input value is now below its min attribute.
+      const currentStartMs = form.getValues("start_ms");
+
+      if (typeof currentStartMs === "number" && currentStartMs < newMinInstant.epochMilliseconds) {
+        form.setValue("start_ms", newMinInstant.epochMilliseconds, { shouldDirty: true });
+      }
+    };
+
+    // Set initial value immediately on mount (client-side only)
+    updateMinDateTime();
+
+    // Then update every 60 seconds
+    const interval = setInterval(updateMinDateTime, 60000);
+
+    return () => clearInterval(interval);
+  }, [form]);
+
+  // "Set to current" — sets start date to right now
+  const handleStartNow = () => {
+    const startEpoch = Temporal.Now.instant().add({ minutes: 1 }).epochMilliseconds;
+    form.setValue("start_ms", startEpoch, { shouldDirty: true, shouldValidate: true });
+  };
+
+  // Track project fields visibility to prevent them from disappearing
+  useEffect(() => {
+    const shouldShow =
+      !isUpdate &&
+      !isProfileLoading &&
+      !profile &&
+      process.env.NEXT_PUBLIC_ENV !== "test" &&
+      walletUser?.accountId &&
+      walletUser?.accountId === recipient;
+
+    // Hide fields if profile exists (user already has NEAR Social account)
+    const shouldHide = !isProfileLoading && profile;
+
+    if (shouldHide && showProjectFields) {
+      setShowProjectFields(false);
+    } else if (shouldShow && !showProjectFields) {
+      setShowProjectFields(true);
+    }
+  }, [isUpdate, isProfileLoading, profile, walletUser?.accountId, recipient, showProjectFields]);
+
   const { handleFileInputChange, isPending: isBannerUploadPending } = pinataHooks.useFileUpload({
     onSuccess: handleCoverImageUploadResult,
   });
-
-  const { profile, isLoading: isProfileLoading } = useAccountSocialProfile({
-    accountId: walletUser?.accountId ?? "",
-  });
-
-  const [ftId, targetAmount, minAmount, maxAmount, coverImageUrl, description] = form.watch([
-    "ft_id",
-    "target_amount",
-    "min_amount",
-    "max_amount",
-    "cover_image_url",
-    "description",
-  ]);
 
   const { data: token } = useFungibleToken({
     tokenId: existingData?.token?.account ?? ftId ?? NATIVE_TOKEN_ID,
@@ -90,6 +216,50 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
       return indivisibleUnitsToFloat(existingData.max_amount, token.metadata.decimals);
     } else return null;
   }, [existingData, token]);
+
+  const fieldErrorMessages = useMemo(() => {
+    const errors = form.formState.errors;
+
+    const fields: [string, string][] = [
+      ["name", "Campaign Name"],
+      ["description", "Description"],
+      ["target_amount", "Target Amount"],
+      ["min_amount", "Minimum Target Amount"],
+      ["max_amount", "Maximum Target Amount"],
+      ["start_ms", "Start Date"],
+      ["end_ms", "End Date"],
+      ["recipient", "Recipient"],
+      ["cover_image_url", "Cover Image URL"],
+      ["referral_fee_basis_points", "Referral Fee"],
+      ["creator_fee_basis_points", "Creator Fee"],
+      ["ft_id", "Token"],
+    ];
+
+    const messages: string[] = [];
+
+    for (const [key, label] of fields) {
+      const error = errors[key as keyof typeof errors];
+
+      if (error?.message) {
+        messages.push(`${label}: ${String(error.message)}`);
+      }
+    }
+
+    return messages;
+  }, [
+    form.formState.errors.name,
+    form.formState.errors.description,
+    form.formState.errors.target_amount,
+    form.formState.errors.min_amount,
+    form.formState.errors.max_amount,
+    form.formState.errors.start_ms,
+    form.formState.errors.end_ms,
+    form.formState.errors.recipient,
+    form.formState.errors.cover_image_url,
+    form.formState.errors.referral_fee_basis_points,
+    form.formState.errors.creator_fee_basis_points,
+    form.formState.errors.ft_id,
+  ]);
 
   // TODO: Use `useEnhancedForm` for form setup instead, this effect is called upon EVERY RENDER,
   // TODO: which impacts UX and performance SUBSTANTIALLY!
@@ -212,6 +382,11 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
               <strong>Time-limited Campaign:</strong> Has a specified end date—concludes on the set
               date.
             </li>
+
+            <li>
+              <strong>Campaign Deletion:</strong> Campaigns can only be deleted before they start.
+              Once a campaign has started, it cannot be deleted.
+            </li>
           </ul>
         </div>
       </div>
@@ -219,77 +394,89 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
       <Form {...form}>
         <form
           onSubmit={(e) => {
-            e.preventDefault();
+            // Refresh start_ms if it has drifted into the past while filling the form
+            if (!isUpdate) {
+              const currentStartMs = form.getValues("start_ms");
+              const now = Temporal.Now.instant().epochMilliseconds;
 
-            onSubmit({
-              ...form.getValues(),
-              allow_fee_avoidance: avoidFee,
-            });
+              if (typeof currentStartMs === "number" && currentStartMs < now) {
+                form.setValue(
+                  "start_ms",
+                  Temporal.Now.instant().add({ minutes: 1 }).epochMilliseconds,
+                  {
+                    shouldValidate: false,
+                  },
+                );
+              }
+            }
+
+            form.handleSubmit((values) => {
+              onSubmit({
+                ...values,
+                allow_fee_avoidance: avoidFee,
+              });
+            })(e);
           }}
         >
           <div className="mb-8 mt-8">
-            {!isUpdate &&
-              !isProfileLoading &&
-              !profile &&
-              walletUser?.accountId &&
-              walletUser?.accountId === form.getValues("recipient") && (
-                <div className="mb-12 rounded-lg border border-neutral-200 bg-neutral-50 p-8">
-                  <div className="mb-6">
-                    <div className="mb-3 flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
-                        <svg
-                          className="h-4 w-4 text-blue-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </div>
-                      <h2 className="text-xl font-semibold text-neutral-900">Project Details</h2>
+            {showProjectFields && (
+              <div className="mb-12 rounded-lg border border-neutral-200 bg-neutral-50 p-8">
+                <div className="mb-6">
+                  <div className="mb-3 flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                      <svg
+                        className="h-4 w-4 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
                     </div>
-                    <p className="text-sm font-normal leading-6 text-neutral-600">
-                      Please note that you do not have a project yet, that is why you&apos;re
-                      required to input your project details now.
-                    </p>
+                    <h2 className="text-xl font-semibold text-neutral-900">Project Details</h2>
                   </div>
-
-                  <div className="space-y-6">
-                    <FormField
-                      control={form.control}
-                      name="project_name"
-                      render={({ field }) => (
-                        <TextField
-                          label="Project Name"
-                          placeholder="Enter name"
-                          required
-                          type="text"
-                          classNames={{ root: "w-full" }}
-                          {...field}
-                        />
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="project_description"
-                      render={({ field }) => (
-                        <TextAreaField
-                          label="Describe your project"
-                          placeholder="Enter description"
-                          required
-                          maxLength={ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH}
-                          {...field}
-                        />
-                      )}
-                    />
-                  </div>
+                  <p className="text-sm font-normal leading-6 text-neutral-600">
+                    Please note that you do not have a project yet, that is why you&apos;re required
+                    to input your project details now.
+                  </p>
                 </div>
-              )}
+
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="project_name"
+                    render={({ field }) => (
+                      <TextField
+                        label="Project Name"
+                        placeholder="Enter name"
+                        required
+                        type="text"
+                        classNames={{ root: "w-full" }}
+                        {...field}
+                      />
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="project_description"
+                    render={({ field }) => (
+                      <TextAreaField
+                        label="Describe your project"
+                        placeholder="Enter description"
+                        required
+                        maxLength={ACCOUNT_PROFILE_DESCRIPTION_MAX_LENGTH}
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+            )}
             <h3 className="mb-2 mt-10 text-xl font-semibold">
               <span>{"Upload Campaign Image"}</span>
               <span className="font-normal text-gray-500">{"(Optional)"}</span>
@@ -555,37 +742,16 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             )}
           >
             {!campaignId ? (
-              <FormField
-                control={form.control}
-                name="start_ms"
-                render={({ field: { value, ...field } }) => (
-                  <TextField
-                    {...field}
-                    required={true}
-                    label="Start Date"
-                    value={
-                      typeof value === "number"
-                        ? Temporal.Instant.fromEpochMilliseconds(value)
-                            .toZonedDateTimeISO(Temporal.Now.timeZoneId())
-                            .toPlainDateTime()
-                            .toString({ smallestUnit: "minute" })
-                        : undefined
-                    }
-                    classNames={{ root: "lg:w-90 md:w-90 mb-8 md:mb-0" }}
-                    type="datetime-local"
-                  />
-                )}
-              />
-            ) : (
-              existingData?.start_at &&
-              toTimestamp(existingData?.start_at) > Temporal.Now.instant().epochMilliseconds && (
+              <div className="lg:w-90 md:w-90 mb-8 flex flex-col md:mb-0">
                 <FormField
                   control={form.control}
                   name="start_ms"
-                  render={({ field: { value, ...field } }) => (
+                  render={({ field: { value, onChange: _onChange, ...field } }) => (
                     <TextField
                       {...field}
+                      required={true}
                       label="Start Date"
+                      min={minStartDateTime}
                       value={
                         typeof value === "number"
                           ? Temporal.Instant.fromEpochMilliseconds(value)
@@ -594,6 +760,41 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
                               .toString({ smallestUnit: "minute" })
                           : undefined
                       }
+                      onChange={(e) => handleStartDateChange(e.target.value)}
+                      type="datetime-local"
+                    />
+                  )}
+                />
+
+                <Button
+                  type="button"
+                  variant="standard-outline"
+                  onClick={handleStartNow}
+                  className="mt-2 w-fit"
+                >
+                  Set to current
+                </Button>
+              </div>
+            ) : (
+              existingData?.start_at &&
+              toTimestamp(existingData?.start_at) > Temporal.Now.instant().epochMilliseconds && (
+                <FormField
+                  control={form.control}
+                  name="start_ms"
+                  render={({ field: { value, onChange: _onChange, ...field } }) => (
+                    <TextField
+                      {...field}
+                      label="Start Date"
+                      min={minStartDateTime}
+                      value={
+                        typeof value === "number"
+                          ? Temporal.Instant.fromEpochMilliseconds(value)
+                              .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+                              .toPlainDateTime()
+                              .toString({ smallestUnit: "minute" })
+                          : undefined
+                      }
+                      onChange={(e) => handleStartDateChange(e.target.value)}
                       classNames={{ root: "lg:w-90 md:w-90  mb-8 md:mb-0" }}
                       type="datetime-local"
                     />
@@ -605,24 +806,37 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
             <FormField
               control={form.control}
               name="end_ms"
-              render={({ field: { value, ...field } }) => (
-                <TextField
-                  {...field}
-                  required={!!watch("min_amount")}
-                  label="End Date"
-                  hint="If the minimum amount isn't reached by the end date specified all donations will be refunded automatically."
-                  value={
-                    typeof value === "number"
-                      ? Temporal.Instant.fromEpochMilliseconds(value)
-                          .toZonedDateTimeISO(Temporal.Now.timeZoneId())
-                          .toPlainDateTime()
-                          .toString({ smallestUnit: "minute" })
-                      : undefined
-                  }
-                  classNames={{ root: "lg:w-90 md:w-90" }}
-                  type="datetime-local"
-                />
-              )}
+              render={({ field: { value, onChange: _onChange, ...field } }) => {
+                const startMs = form.watch("start_ms");
+
+                const endMin = startMs
+                  ? Temporal.Instant.fromEpochMilliseconds((startMs as number) + 60000)
+                      .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+                      .toPlainDateTime()
+                      .toString({ smallestUnit: "minute" })
+                  : minStartDateTime;
+
+                return (
+                  <TextField
+                    {...field}
+                    required={!!watch("min_amount")}
+                    label="End Date"
+                    min={endMin}
+                    hint="If the minimum amount isn't reached by the end date specified all donations will be refunded automatically."
+                    value={
+                      typeof value === "number"
+                        ? Temporal.Instant.fromEpochMilliseconds(value)
+                            .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+                            .toPlainDateTime()
+                            .toString({ smallestUnit: "minute" })
+                        : undefined
+                    }
+                    onChange={(e) => handleEndDateChange(e.target.value)}
+                    classNames={{ root: "lg:w-90 md:w-90" }}
+                    type="datetime-local"
+                  />
+                );
+              }}
             />
           </div>
 
@@ -687,17 +901,61 @@ export const CampaignEditor = ({ existingData, campaignId, close }: CampaignEdit
           </div>
 
           <div className="my-10 flex flex-row-reverse justify-between">
-            <Button variant="standard-filled" disabled={isDisabled} type="submit">
-              {isUpdate ? "Update" : "Create"} Campaign
-            </Button>
+            <div className="flex flex-col items-end gap-2">
+              {!form.formState.isSubmitting && isDisabled && (
+                <div className="flex flex-col items-end gap-1">
+                  {fieldErrorMessages.length > 0 ? (
+                    fieldErrorMessages.map((msg, i) => (
+                      <p key={i} className="text-sm text-orange-600">
+                        {msg}
+                      </p>
+                    ))
+                  ) : (
+                    <p className="text-sm text-orange-600">
+                      Please fill in all required fields (name, description, start date, recipient,
+                      target amount)
+                    </p>
+                  )}
+                </div>
+              )}
+              <Button
+                variant="brand-filled"
+                disabled={isDisabled || form.formState.isSubmitting}
+                type="submit"
+              >
+                {form.formState.isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <Spinner className="h-4 w-4" />
+                    {isUpdate ? "Updating..." : "Creating..."}
+                  </span>
+                ) : (
+                  <>{isUpdate ? "Update" : "Create"} Campaign</>
+                )}
+              </Button>
+            </div>
 
-            <Button
-              variant="standard-outline"
-              onClick={() => (campaignId ? close?.() : back())}
-              type="button"
-            >
-              Cancel
-            </Button>
+            <div className="flex gap-3">
+              {isUpdate &&
+                existingData?.start_at &&
+                toTimestamp(existingData.start_at) > Temporal.Now.instant().epochMilliseconds && (
+                  <Button
+                    variant="standard-outline"
+                    onClick={handleDeleteCampaign}
+                    type="button"
+                    className="text-red-600 hover:bg-red-50"
+                  >
+                    Delete Campaign
+                  </Button>
+                )}
+
+              <Button
+                variant="standard-outline"
+                onClick={() => (campaignId ? close?.() : back())}
+                type="button"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

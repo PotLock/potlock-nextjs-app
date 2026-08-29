@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Trigger } from "@radix-ui/react-select";
 import Link from "next/link";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { ListRegistration } from "@/common/api/indexer";
 import { walletApi } from "@/common/blockchains/near-protocol/client";
@@ -12,6 +11,7 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DropdownMenu,
@@ -23,8 +23,10 @@ import {
   SelectItem,
   Textarea,
 } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import DownArrow from "@/common/ui/layout/svg/DownArrow";
 import { ListNoteIcon } from "@/common/ui/layout/svg/list-note";
+import SuccessRedIcon from "@/common/ui/layout/svg/success-red-icon";
 import { cn } from "@/common/ui/layout/utils";
 import {
   ACCOUNT_LIST_REGISTRATION_STATUS_OPTIONS,
@@ -57,6 +59,8 @@ export const ListAccountCard = ({
 
   const [note, setNote] = useState<string>("");
 
+  const [isUpdateSuccessful, setIsUpdateSuccessful] = useState(false);
+
   const status = listRegistrationStatuses[registrationStatus];
 
   const [statusChange, setStatusChange] = useState<StatusModal>({
@@ -79,12 +83,7 @@ export const ListAccountCard = ({
           background: status.background,
         }}
       >
-        <LazyLoadImage
-          alt="List registration status icon"
-          src={status.icon}
-          width={18}
-          height={18}
-        />
+        <LazyImage alt="List registration status icon" src={status.icon} width={18} height={18} />
 
         <span className="text-[14px]">{registrationStatus}</span>
       </div>
@@ -100,7 +99,10 @@ export const ListAccountCard = ({
         ...(note && { notes: note }),
         status: statusChange.status as RegistrationStatus,
       })
-      .then((data) => setRegistrationStatus(data.status))
+      .then((data) => {
+        setIsUpdateSuccessful(true);
+        setRegistrationStatus(data.status);
+      })
       .catch((err) => console.error(err));
 
     dispatch.listEditor.handleListToast({
@@ -174,7 +176,10 @@ export const ListAccountCard = ({
               <div className="mt-4 flex items-center justify-between">
                 {accountsWithAccess?.includes(walletApi?.accountId || "") ? (
                   <Select
-                    onValueChange={(value) => setStatusChange({ open: true, status: value })}
+                    onValueChange={(value) => {
+                      setStatusChange({ open: true, status: value });
+                      setIsUpdateSuccessful(false);
+                    }}
                     defaultValue={dataForList.status}
                   >
                     <Trigger asChild>
@@ -218,45 +223,69 @@ export const ListAccountCard = ({
       <Dialog open={statusChange.open}>
         <DialogContent
           onCloseClick={() => {
-            setStatusChange({ open: false });
+            setStatusChange({ open: false, status: "" });
             setNote("");
+            setIsUpdateSuccessful(false);
           }}
         >
           <DialogHeader>
             <DialogTitle>Update Account Status</DialogTitle>
           </DialogHeader>
-
-          <div className="flex flex-col p-6">
-            <p className="text-center">
-              Are you sure you want to change the status of this Account to{" "}
-              <strong>{statusChange.status}?</strong>
-            </p>
-            <Textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              className="my-4"
-              placeholder="Add Notes..."
-              rows={4}
-            />
-            <div className="m-8 flex justify-center gap-4">
-              <Button onClick={handleUpdateStatus} variant="standard-outline">
-                Yes, I do
-              </Button>
-              <Button
-                onClick={() => {
-                  setStatusChange({
-                    open: false,
-                    status: statusChange.status,
-                  });
-
-                  setNote("");
-                }}
-                variant="standard-outline"
-              >
-                No, I don&apos;t
-              </Button>
-            </div>
-          </div>
+          <DialogDescription>
+            {isUpdateSuccessful ? (
+              <div className="h-70 flex flex-col items-center justify-center">
+                <div className="flex w-full justify-center">
+                  <SuccessRedIcon />
+                </div>
+                <h2 className="mt-4 text-center text-xl font-semibold">
+                  Account Status Updated Successfully
+                </h2>
+                <p className="mt-2 px-5 text-center text-sm text-gray-500">
+                  The account status has been updated to <strong>{statusChange.status}</strong>.
+                  {note && " Your note has been saved."}
+                </p>
+                <Button
+                  onClick={() => {
+                    setStatusChange({ open: false, status: "" });
+                    setNote("");
+                    setIsUpdateSuccessful(false);
+                  }}
+                  className="mt-8"
+                  variant="standard-outline"
+                >
+                  Close
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col p-6">
+                <p className="text-center">
+                  Are you sure you want to change the status of this Account to{" "}
+                  <strong>{statusChange.status}?</strong>
+                </p>
+                <Textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  className="my-4"
+                  placeholder="Add Notes..."
+                  rows={4}
+                />
+                <div className="m-8 flex justify-center gap-4">
+                  <Button onClick={handleUpdateStatus} variant="standard-outline">
+                    Yes, I do
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setStatusChange({ open: false, status: statusChange.status });
+                      setNote("");
+                    }}
+                    variant="standard-outline"
+                  >
+                    No, I don&apos;t
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogDescription>
         </DialogContent>
       </Dialog>
     </>

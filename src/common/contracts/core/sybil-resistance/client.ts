@@ -1,5 +1,3 @@
-import { Provider } from "near-api-js/lib/providers";
-
 import { SYBIL_CONTRACT_ACCOUNT_ID } from "@/common/_config";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { FULL_TGAS, ONE_HUNDREDTH_NEAR, TWO_HUNDREDTHS_NEAR } from "@/common/constants";
@@ -14,6 +12,7 @@ import {
   type GetStampsForAccountIdInput,
   type GetUsersForStampInput,
   type HumanScoreResponse,
+  type Provider,
   ProviderExternal,
   RegisterProviderInput,
   type StampExternal,
@@ -21,7 +20,7 @@ import {
   UpdateProviderInput,
 } from "./interfaces";
 
-const contractApi = nearProtocolClient.naxiosInstance.contractApi({
+const contractApi = nearProtocolClient.contractApi({
   contractId: SYBIL_CONTRACT_ACCOUNT_ID,
 });
 
@@ -45,8 +44,8 @@ export const is_human = (args: GetHumanScoreInput): Promise<boolean> =>
  * Anyone can call this method to register a provider. If caller is admin, provider is automatically activated.
  */
 export const register_provider = (args: RegisterProviderInput) =>
-  contractApi.call<typeof args, ProviderExternal>("register_provider", {
-    args,
+  contractApi.call<Record<string, unknown>, ProviderExternal>("register_provider", {
+    args: args as unknown as Record<string, unknown>,
     gas: FULL_TGAS,
     deposit: ONE_HUNDREDTH_NEAR,
   });
@@ -56,8 +55,8 @@ export type AdminSetDefaultHumanThresholdArgs = {
 };
 
 export const admin_set_default_human_threshold = (args: AdminSetDefaultHumanThresholdArgs) =>
-  contractApi.call<typeof args, void>("admin_set_default_human_threshold", {
-    args,
+  contractApi.call<Record<string, unknown>, void>("admin_set_default_human_threshold", {
+    args: args as unknown as Record<string, unknown>,
     deposit: ONE_HUNDREDTH_NEAR,
   });
 
@@ -84,25 +83,29 @@ export const add_stamp = (providerId: string) =>
  * @returns
  */
 export const update_provider = (args: UpdateProviderInput) =>
-  contractApi.call<typeof args, ProviderExternal>("update_provider", {
-    args,
+  contractApi.call<Record<string, unknown>, ProviderExternal>("update_provider", {
+    args: args as unknown as Record<string, unknown>,
     deposit: ONE_HUNDREDTH_NEAR,
   });
 
 export const admin_activate_provider = (args: ActivateProviderInput) =>
-  contractApi.call<typeof args, Provider>("admin_activate_provider", {
-    args,
+  contractApi.call<Record<string, unknown>, Provider>("admin_activate_provider", {
+    args: args as unknown as Record<string, unknown>,
     deposit: ONE_HUNDREDTH_NEAR,
   });
 
 export const admin_deactivate_provider = (args: DeactivateProviderInput) =>
-  contractApi.call<typeof args, Provider>("admin_deactivate_provider", {
-    args,
+  contractApi.call<Record<string, unknown>, Provider>("admin_deactivate_provider", {
+    args: args as unknown as Record<string, unknown>,
     deposit: ONE_HUNDREDTH_NEAR,
   });
 
 export const admin_flag_provider = (args: FlagProviderInput) =>
-  contractApi.call<typeof args, Provider>("admin_flag_provider", { args });
+  contractApi.call<Record<string, unknown>, Provider>("admin_flag_provider", {
+    args: args as unknown as Record<string, unknown>,
+  });
 
 export const admin_unflag_provider = (args: UnflagProviderInput) =>
-  contractApi.call<typeof args, Provider>("admin_unflag_provider", { args });
+  contractApi.call<Record<string, unknown>, Provider>("admin_unflag_provider", {
+    args: args as unknown as Record<string, unknown>,
+  });

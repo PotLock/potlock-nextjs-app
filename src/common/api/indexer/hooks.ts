@@ -1,5 +1,7 @@
 import type { AxiosResponse } from "axios";
+import useSWR from "swr";
 
+import { INDEXER_API_ENDPOINT_URL } from "@/common/_config";
 import { NOOP_STRING } from "@/common/constants";
 import { isAccountId, isEthereumAddress } from "@/common/lib";
 import {
@@ -11,7 +13,11 @@ import {
 
 import * as generatedClient from "./internal/client.generated";
 import { INDEXER_CLIENT_CONFIG, INDEXER_CLIENT_CONFIG_STAGING } from "./internal/config";
+import type { OrgVerification } from "./tax-verification";
 import { ByPotId } from "./types";
+
+const currentNetworkConfig =
+  process.env.NEXT_PUBLIC_ENV === "test" ? INDEXER_CLIENT_CONFIG : INDEXER_CLIENT_CONFIG_STAGING;
 
 /**
  * https://test-dev.potlock.io/api/schema/swagger-ui/#/v1/v1_stats_retrieve
@@ -354,7 +360,7 @@ export const useCampaigns = ({
   ...params
 }: generatedClient.V1CampaignsRetrieveParams & ConditionalActivation = {}) => {
   const queryResult = generatedClient.useV1CampaignsRetrieve(params, {
-    ...INDEXER_CLIENT_CONFIG_STAGING,
+    ...currentNetworkConfig,
     swr: { enabled },
   });
 
@@ -363,9 +369,37 @@ export const useCampaigns = ({
 
 export const useCampaign = ({ campaignId }: { campaignId: number }) => {
   const queryResult = generatedClient.useV1CampaignsRetrieve2(campaignId, {
-    ...INDEXER_CLIENT_CONFIG_STAGING,
-    swr: { enabled: true },
+    ...currentNetworkConfig,
+    swr: {
+      enabled: true,
+      refreshInterval: 3000,
+      // Retry on error (handles race condition when campaign is just created but not yet indexed)
+      errorRetryCount: 10,
+      errorRetryInterval: 2000,
+    },
   });
 
   return { ...queryResult, data: queryResult.data?.data };
+};
+
+/**
+ * Fetch 501(c)(3) verification status for an organization account.
+ */
+const orgVerificationFetcher = (url: string) =>
+  fetch(url).then((r) => {
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error("Failed to fetch org verification");
+    return r.json() as Promise<OrgVerification>;
+  });
+
+export const useOrgVerification = ({
+  accountId,
+  enabled = true,
+}: ByAccountId & ConditionalActivation) => {
+  return useSWR(
+    enabled && accountId
+      ? `${INDEXER_API_ENDPOINT_URL}/api/v1/tax-verification/org-verification/${accountId}`
+      : null,
+    orgVerificationFetcher,
+  );
 };

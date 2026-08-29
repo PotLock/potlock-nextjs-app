@@ -11,4 +11,10 @@ export const useIsHuman = ({ enabled = true, accountId }: ByAccountId & Conditio
 
     ([_queryKeyHead, accountIdKey]) =>
       !IS_CLIENT ? undefined : contractClient.is_human({ account_id: accountIdKey }),
+
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    },
   );

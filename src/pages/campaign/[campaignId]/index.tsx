@@ -1,28 +1,47 @@
-import { ReactElement } from "react";
+import { ReactElement, useMemo } from "react";
 
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
 import { APP_METADATA } from "@/common/constants";
-import { stripHtml } from "@/common/lib/datetime";
-import { CampaignBanner, CampaignDonorsTable } from "@/entities/campaign";
+import { CampaignDonorsTable, CampaignSettings } from "@/entities/campaign";
 import { CampaignLayout } from "@/layout/campaign/components/layout";
 import { RootLayout } from "@/layout/components/root-layout";
 
 type SeoProps = {
-  seoTitle: string;
-  seoDescription: string;
-  seoImage?: string;
+  title: string;
+  description: string;
+  image?: string;
 };
 
-export default function CampaignPage(props: SeoProps) {
+type CampaignPageProps = {
+  seo: SeoProps;
+};
+
+export default function CampaignPage({ seo }: CampaignPageProps) {
   const router = useRouter();
-  const { campaignId } = router.query as { campaignId: string };
+  const { tab, campaignId } = router.query as { tab?: string; campaignId?: string };
+
+  const parsedCampaignId = campaignId ? parseInt(campaignId) : undefined;
+
+  // Determine which content to show based on tab param
+  const content = useMemo(() => {
+    if (!parsedCampaignId || Number.isNaN(parsedCampaignId)) {
+      return null;
+    }
+
+    switch (tab) {
+      case "settings":
+        return <CampaignSettings campaignId={parsedCampaignId} />;
+      case "leaderboard":
+      default:
+        return <CampaignDonorsTable campaignId={parsedCampaignId} />;
+    }
+  }, [tab, parsedCampaignId]);
 
   return (
-    <RootLayout title={props.seoTitle} description={props.seoDescription} image={props.seoImage}>
-      <CampaignBanner campaignId={parseInt(campaignId)} />
-      <CampaignDonorsTable campaignId={parseInt(campaignId)} />
+    <RootLayout title={seo.title} description={seo.description} image={seo.image}>
+      {content}
     </RootLayout>
   );
 }
@@ -31,64 +50,79 @@ CampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <CampaignLayout>{page}</CampaignLayout>;
 };
 
-// Pre-generate the most popular campaigns at build time
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    // Fetch campaigns to get IDs for pre-generation
-    const res = await fetch("https://dev.potlock.io/api/v1/campaigns?limit=50");
-    if (!res.ok) throw new Error(`Failed to fetch campaigns: ${res.status}`);
-    const campaigns = await res.json();
+    const response = await fetch(`https://dev.potlock.io/api/v1/campaigns?page_size=200`, {
+      headers: { "content-type": "application/json" },
+    });
 
-    // Generate paths for the first 50 campaigns (most recent/active)
-    const paths =
-      campaigns.data?.map((campaign: any) => ({
-        params: { campaignId: campaign.on_chain_id.toString() },
-      })) || [];
+    if (!response.ok) {
+      return { paths: [], fallback: "blocking" };
+    }
 
-    return {
-      paths,
-      fallback: "blocking", // Generate new pages on-demand if not pre-built
+    const payload = (await response.json()) as {
+      results?: { on_chain_id: number | string }[];
+      data?: { on_chain_id: number | string }[];
     };
-  } catch (error) {
-    console.error("Error generating static paths:", error);
+
+    const campaigns = payload.results ?? payload.data ?? [];
+
     return {
-      paths: [],
+      paths: campaigns.map((c) => ({ params: { campaignId: String(c.on_chain_id) } })),
       fallback: "blocking",
     };
+  } catch {
+    return { paths: [], fallback: "blocking" };
   }
 };
 
-// Pre-build each campaign page with its data
-export const getStaticProps: GetStaticProps<SeoProps> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context) => {
+  const { campaignId } = context.params as { campaignId?: string };
+  const parsedCampaignId = campaignId ? parseInt(campaignId) : undefined;
+
+  const fallbackSeo: SeoProps = {
+    title: parsedCampaignId ? `Campaign ${parsedCampaignId}` : APP_METADATA.title,
+    description: APP_METADATA.description,
+    image: APP_METADATA.openGraph.images.url,
+  };
+
+  if (!parsedCampaignId || Number.isNaN(parsedCampaignId)) {
+    return { props: { seo: fallbackSeo } };
+  }
+
+  const timeoutMs = 10000;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
   try {
-    const campaignId = params?.campaignId as string;
+    const response = await fetch(`https://dev.potlock.io/api/v1/campaigns/${parsedCampaignId}`, {
+      headers: { "content-type": "application/json" },
+      signal: controller.signal,
+    });
 
-    const res = await fetch(
-      `https://dev.potlock.io/api/v1/campaigns/${encodeURIComponent(campaignId)}`,
-    );
+    if (!response.ok) {
+      return { props: { seo: fallbackSeo } };
+    }
 
-    if (!res.ok) throw new Error(`Failed to fetch campaign: ${res.status}`);
-    const campaign = await res.json();
-
-    const seoTitle = campaign?.name ?? "Campaign";
-    const seoDescription = stripHtml(campaign?.description) || "Support this campaign on Potlock.";
-    // Use cover_image_url field which is the correct field for campaign images
-    const seoImage = campaign?.cover_image_url ?? APP_METADATA.openGraph.images.url;
-
-    return {
-      props: { seoTitle, seoDescription, seoImage },
-      // Revalidate every 5 minutes (300 seconds) to keep data fresh
-      revalidate: 300,
+    const campaign = (await response.json()) as {
+      name?: string | null;
+      description?: string | null;
+      cover_image_url?: string | null;
     };
-  } catch (error) {
-    console.error("Error generating static props:", error);
-    return {
-      props: {
-        seoTitle: APP_METADATA.title,
-        seoDescription: APP_METADATA.description,
-        seoImage: APP_METADATA.openGraph.images.url,
-      },
-      revalidate: 300,
+
+    const seo: SeoProps = {
+      title: campaign?.name ? `${campaign.name}` : fallbackSeo.title,
+      description:
+        campaign?.description && campaign.description.trim()
+          ? campaign.description.substring(0, 160)
+          : fallbackSeo.description,
+      image: campaign?.cover_image_url ?? fallbackSeo.image,
     };
+
+    return { props: { seo }, revalidate: 3600 };
+  } catch {
+    return { props: { seo: fallbackSeo }, revalidate: 600 };
+  } finally {
+    clearTimeout(timeoutId);
   }
 };

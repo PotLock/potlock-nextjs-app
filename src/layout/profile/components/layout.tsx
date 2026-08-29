@@ -78,6 +78,17 @@ const tabRoutesProfile = [
     id: "funding",
     href: "/funding-raised",
   },
+  {
+    label: "Lists",
+    id: "lists",
+    href: "/lists",
+  },
+
+  {
+    label: "Campaigns",
+    id: "campaigns",
+    href: "/campaigns",
+  },
 ] as TabOption[];
 
 type ProfileLayoutTabPanelProps = {
@@ -91,6 +102,12 @@ const Tabs: React.FC<ProfileLayoutTabPanelProps> = ({ options, selectedTab, onSe
   const router = useRouter();
   const { accountId } = router.query as { accountId: AccountId };
   const _selectedTab = selectedTab || options[0].id;
+
+  const queryString = (() => {
+    const asPath = router.asPath;
+    const qIndex = asPath.indexOf("?");
+    return qIndex >= 0 ? asPath.substring(qIndex) : "";
+  })();
 
   return (
     <div className="mb-[46px] flex w-full flex-row flex-wrap gap-2">
@@ -107,7 +124,7 @@ const Tabs: React.FC<ProfileLayoutTabPanelProps> = ({ options, selectedTab, onSe
             if (asLink) {
               return (
                 <Link
-                  href={`/profile/${accountId}${option.href}`}
+                  href={`/profile/${accountId}${option.href}${queryString}`}
                   key={option.id}
                   className={cn(
                     "font-500 border-b-solid transition-duration-300 whitespace-nowrap",

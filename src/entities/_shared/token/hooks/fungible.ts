@@ -131,16 +131,16 @@ export const useFungibleToken = ({
               usdPrice: oneTokenUsdPrice ? Big(oneTokenUsdPrice) : undefined,
 
               balance: accountSummary?.amount
-                ? indivisibleUnitsToBigNum(accountSummary.amount, ntMetadata.decimals)
+                ? indivisibleUnitsToBigNum(accountSummary.amount.toString(), ntMetadata.decimals)
                 : undefined,
 
               balanceFloat: accountSummary?.amount
-                ? indivisibleUnitsToFloat(accountSummary.amount, ntMetadata.decimals)
+                ? indivisibleUnitsToFloat(accountSummary.amount.toString(), ntMetadata.decimals)
                 : undefined,
 
               balanceUsd:
                 accountSummary?.amount && oneTokenUsdPrice
-                  ? Big(accountSummary.amount).mul(oneTokenUsdPrice)
+                  ? Big(accountSummary.amount.toString()).mul(oneTokenUsdPrice)
                   : undefined,
             },
           };

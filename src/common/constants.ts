@@ -1,6 +1,5 @@
 import { Big } from "big.js";
-import { utils } from "near-api-js";
-import { NEAR_NOMINATION_EXP } from "near-api-js/lib/utils/format";
+import { NEAR_NOMINATION_EXP, parseNearAmount } from "near-api-js/lib/utils/format";
 import { Metadata } from "next";
 import type { SWRConfiguration } from "swr";
 
@@ -132,14 +131,17 @@ export const PLATFORM_LISTED_TOKEN_IDS: TokenId[] = [];
 // List ID of PotLock Public Goods Registry
 export const PUBLIC_GOODS_REGISTRY_LIST_ID = 1;
 
+// List ID of 501(c)(3) Verified Organizations Registry (on lists.potlock.near)
+export const VERIFIED_501C3_LIST_ID = 68;
+
 // Separates contract_id and method_name in ProviderId
 export const PROVIDER_ID_DELIMITER = ":";
 
-export const ONE_NEAR = utils.format.parseNearAmount("1")!;
-export const HALF_NEAR = utils.format.parseNearAmount("0.5")!;
-export const ONE_TENTH_NEAR = utils.format.parseNearAmount("0.1")!;
-export const ONE_HUNDREDTH_NEAR = utils.format.parseNearAmount("0.01")!;
-export const TWO_HUNDREDTHS_NEAR = utils.format.parseNearAmount("0.02")!;
+export const ONE_NEAR = parseNearAmount("1")!;
+export const HALF_NEAR = parseNearAmount("0.5")!;
+export const ONE_TENTH_NEAR = parseNearAmount("0.1")!;
+export const ONE_HUNDREDTH_NEAR = parseNearAmount("0.01")!;
+export const TWO_HUNDREDTHS_NEAR = parseNearAmount("0.02")!;
 
 // 300 TGas (full)
 export const FULL_TGAS = "300000000000000";
