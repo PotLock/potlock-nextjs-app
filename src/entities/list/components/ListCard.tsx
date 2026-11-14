@@ -3,15 +3,16 @@ import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FaHeart } from "react-icons/fa";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
+import { syncApi } from "@/common/api/indexer";
 import { listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { LayersIcon } from "@/common/ui/layout/svg";
 import { LikeIcon } from "@/common/ui/layout/svg/like";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountProfilePicture } from "@/entities/_shared/account";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { ListFormModalType } from "../types";
 
@@ -24,6 +25,7 @@ export const ListCard = ({
   background?: string;
   backdrop: string;
 }) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const [isUpvoted, setIsUpvoted] = useState(false);
   const { push } = useRouter();
@@ -41,14 +43,32 @@ export const ListCard = ({
     e.stopPropagation();
 
     if (isUpvoted) {
-      listsContractClient.remove_upvote({ list_id: dataForList?.on_chain_id });
+      listsContractClient
+        .remove_upvote({ list_id: dataForList?.on_chain_id })
+        .then(async ({ txHash }) => {
+          if (txHash && viewer.accountId) {
+            await syncApi
+              .listRemoveUpvote(dataForList?.on_chain_id, txHash, viewer.accountId)
+              .catch(() => {});
+          }
+        })
+        .catch((error) => console.error("Error removing upvote:", error));
 
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name ?? "", 15),
         type: ListFormModalType.DOWNVOTE,
       });
     } else {
-      listsContractClient.upvote({ list_id: dataForList?.on_chain_id });
+      listsContractClient
+        .upvote({ list_id: dataForList?.on_chain_id })
+        .then(async ({ txHash }) => {
+          if (txHash && viewer.accountId) {
+            await syncApi
+              .listUpvote(dataForList?.on_chain_id, txHash, viewer.accountId)
+              .catch(() => {});
+          }
+        })
+        .catch((error) => console.error("Error upvoting:", error));
 
       dispatch.listEditor.handleListToast({
         name: truncate(dataForList?.name ?? "", 15),
@@ -82,7 +102,7 @@ export const ListCard = ({
         data-testid="list-card"
       >
         <div className="relative">
-          <LazyLoadImage
+          <LazyImage
             alt="listImage"
             className="h-[221px] w-full object-cover"
             src={dataForList?.cover_image_url ?? background}

@@ -15,6 +15,10 @@ import { useWalletUserSession } from "@/common/wallet";
 import { Button } from "../atoms/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../atoms/popover";
 
+// Type assertion to fix React 18 compatibility issue
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CopyToClipboardComponent = CopyToClipboard as any;
+
 export const SocialsShare = ({
   shareContent,
   variant = "icon",
@@ -83,12 +87,12 @@ export const SocialsShare = ({
             <span className="mx-2">or</span>
             <div className="h-px flex-grow bg-[#DBDBDB]" />
           </div>
-          <CopyToClipboard {...{ text: share, onCopy }}>
+          <CopyToClipboardComponent {...{ text: share, onCopy }}>
             <Button className="w-full hover:cursor-pointer" variant="standard-outline">
               {copied ? <Check color="#A6A6A6" size={20} className="" /> : <CopyPasteIcon />} Copy
               Link
             </Button>
-          </CopyToClipboard>
+          </CopyToClipboardComponent>
         </div>
       </PopoverContent>
     </Popover>

@@ -99,8 +99,34 @@ export const timestamp = preprocess(
 );
 
 export const futureTimestamp = timestamp.refine(
-  (value) => value > Temporal.Now.instant().epochMilliseconds,
-  { message: "Cannot be in the past" },
+  (value) => value >= Temporal.Now.instant().epochMilliseconds - 60_000,
+  { message: "Must be a future date and time" },
 );
 
 export const daysFloatToMilliseconds = (daysFloat: number) => daysFloat * DAY_IN_MILLISECONDS;
+
+/**
+ * Converts an ISO date string or timestamp to a timestamp in milliseconds.
+ * Handles both the new ISO string format (e.g., "2025-06-10T02:32:24.026000Z")
+ * and legacy timestamp numbers.
+ */
+export const toTimestamp = (dateValue: string | number): number => {
+  if (typeof dateValue === "number") {
+    return dateValue;
+  }
+
+  return new Date(dateValue).getTime();
+};
+
+export const stripHtml = (html: string | null | undefined): string => {
+  if (!html) {
+    return "";
+  }
+
+  try {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent || doc.body.innerText || "";
+  } catch (e) {
+    return html.replace(/<[^>]*>/g, "");
+  }
+};

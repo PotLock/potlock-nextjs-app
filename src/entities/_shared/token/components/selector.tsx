@@ -61,16 +61,21 @@ export type TokenSelectorProps = Pick<SelectFieldProps, "disabled"> &
   (ControlledSelectFieldProps | UncontrolledSelectFieldProps) & {
     hideBalances?: boolean;
     hideZeroBalanceOptions?: boolean;
+    showBalanceOnlyForNative?: boolean;
   };
 
 export const TokenSelector: React.FC<TokenSelectorProps> = ({
   hideBalances = false,
   hideZeroBalanceOptions = false,
+  showBalanceOnlyForNative = false,
   ...props
 }) => {
   const { data: tokenAllowlist } = useFungibleTokenAllowlist({
     enabled: FEATURE_REGISTRY.FtDonation.isEnabled,
   });
+
+  const shouldShowBalanceForNative = !hideBalances;
+  const shouldShowBalanceForOthers = !hideBalances && !showBalanceOnlyForNative;
 
   return (
     // TODO: Move FormField wrapper from target parent layouts to here
@@ -84,13 +89,13 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({
       }}
       {...props}
     >
-      <TokenSelectorOption tokenId={NATIVE_TOKEN_ID} showBalance={!hideBalances} />
+      <TokenSelectorOption tokenId={NATIVE_TOKEN_ID} showBalance={shouldShowBalanceForNative} />
 
       {tokenAllowlist.map((tokenAccountId) => (
         <TokenSelectorOption
           key={tokenAccountId}
           tokenId={tokenAccountId}
-          showBalance={!hideBalances}
+          showBalance={shouldShowBalanceForOthers}
           skipIfZeroBalance={hideZeroBalanceOptions}
         />
       ))}

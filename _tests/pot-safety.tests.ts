@@ -30,12 +30,12 @@ vi.mock("@/common/constants", () => ({ FULL_TGAS: "300000000000000", ONE_HUNDRED
 
 vi.mock("@/common/blockchains/near-protocol", () => ({
   nearProtocolClient: {
-    naxiosInstance: { contractApi: () => mocks },
+    contractApi: () => mocks,
   },
 }));
 
 vi.mock("@/common/blockchains/near-protocol/client", () => ({
-  naxiosInstance: { contractApi: () => mocks },
+  contractApi: () => mocks,
 }));
 
 beforeEach(() => {

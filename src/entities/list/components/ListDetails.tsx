@@ -5,11 +5,10 @@ import { Copy } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import { prop } from "remeda";
 
 import { PLATFORM_NAME } from "@/common/_config";
-import { List } from "@/common/api/indexer";
+import { List, syncApi } from "@/common/api/indexer";
 import { PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { listsContractClient } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
@@ -20,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { SocialsShare } from "@/common/ui/layout/components/molecules/social-share";
 import { AdminUserIcon, DeleteListIcon, DotsIcons, PenIcon } from "@/common/ui/layout/svg";
 import { useWalletUserSession } from "@/common/wallet";
@@ -29,7 +29,7 @@ import {
   AccountProfilePicture,
 } from "@/entities/_shared/account";
 import { DonateToListProjects } from "@/features/donation";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { ApplyToListModal } from "./ApplyToListModal";
 import { ListConfirmationModal } from "./ListConfirmationModals";
@@ -46,6 +46,7 @@ interface ListDetailsType {
 }
 
 export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDetailsType) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const { push } = useRouter();
 
@@ -76,9 +77,11 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
   } = useListForm();
 
   const applyToListModal = (note: string) => {
+    const onChainListId = parseInt(listDetails?.on_chain_id as any);
+
     listsContractClient
       .register_batch({
-        list_id: parseInt(listDetails?.on_chain_id as any) as any,
+        list_id: onChainListId as any,
         notes: note,
         registrations: [
           {
@@ -94,7 +97,12 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
           },
         ],
       })
-      .then((data) => {
+      .then(async (data) => {
+        // Sync registration to indexer
+        if (viewer.accountId) {
+          await syncApi.listRegistration(onChainListId, viewer.accountId).catch(() => {});
+        }
+
         setIsApplicationSuccessful(true);
       })
       .catch((error) => console.error("Error applying to list:", error));
@@ -124,10 +132,17 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
     admins.includes(viewer.accountId ?? "") || listDetails.owner?.id === viewer.accountId;
 
   const handleUpvote = () => {
+    const onChainId = Number(listDetails.on_chain_id);
+
     if (isUpvoted) {
       listsContractClient
-        .remove_upvote({ list_id: Number(listDetails.on_chain_id) })
-        .catch((error) => console.error("Error upvoting:", error));
+        .remove_upvote({ list_id: onChainId })
+        .then(async ({ txHash }) => {
+          if (txHash && viewer.accountId) {
+            await syncApi.listRemoveUpvote(onChainId, txHash, viewer.accountId).catch(() => {});
+          }
+        })
+        .catch((error) => console.error("Error removing upvote:", error));
 
       dispatch.listEditor.handleListToast({
         name: truncate(listDetails?.name ?? "", 15),
@@ -135,7 +150,12 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
       });
     } else {
       listsContractClient
-        .upvote({ list_id: Number(listDetails.on_chain_id) })
+        .upvote({ list_id: onChainId })
+        .then(async ({ txHash }) => {
+          if (txHash && viewer.accountId) {
+            await syncApi.listUpvote(onChainId, txHash, viewer.accountId).catch(() => {});
+          }
+        })
         .catch((error) => console.error("Error upvoting:", error));
 
       dispatch.listEditor.handleListToast({
@@ -278,7 +298,7 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
 
         <div className="mb-4 w-full md:mb-0 md:max-w-[54%]">
           <div className="flex flex-col p-[1rem] md:hidden">{nameContent}</div>
-          <LazyLoadImage
+          <LazyImage
             alt="alt-text"
             src={
               listDetails.cover_image_url
@@ -290,7 +310,7 @@ export const ListDetails = ({ admins, listId, listDetails, savedUsers }: ListDet
             height={300}
           />
           <div className="m-0 w-full  p-0 md:rounded-[12px]" un-w="full" un-flex="~ col">
-            <LazyLoadImage
+            <LazyImage
               src={listDetails.cover_image_url || "/assets/images/list-gradient-3.png"}
               alt="cover"
               width={500}

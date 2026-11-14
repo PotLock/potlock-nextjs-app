@@ -100,15 +100,12 @@ export const Table = styled.div`
 export type ProfileConfigurationFundingSourcesTableProps = {
   values: ProfileConfigurationInputs["fundingSources"];
   onEditClick: (fundingIndex: number) => void;
+  onDeleteClick: (fundingIndex: number) => void;
 };
 
 export const ProfileConfigurationFundingSourcesTable: React.FC<
   ProfileConfigurationFundingSourcesTableProps
-> = ({ values, onEditClick }) => {
-  const onDeleteHandler = useCallback((fundingIndex: number) => {
-    //dispatch.projectEditor.removeFundingSource(fundingIndex);
-  }, []);
-
+> = ({ values, onEditClick, onDeleteClick }) => {
   return values === undefined || values.length === 0 ? null : (
     <Table>
       <div className="header">
@@ -119,7 +116,7 @@ export const ProfileConfigurationFundingSourcesTable: React.FC<
       </div>
 
       {values.map((funding, index) => (
-        <div className="funding-row" key={funding.investorName}>
+        <div className="funding-row" key={`${funding.investorName}-${index}`}>
           <div className="item source">
             <p>{funding.investorName}</p>
             {funding.date && (
@@ -139,11 +136,11 @@ export const ProfileConfigurationFundingSourcesTable: React.FC<
           </div>
           <div className="btns item">
             {/* Edit Button */}
-            <button onClick={() => onEditClick(index)}>
+            <button type="button" onClick={() => onEditClick(index)}>
               <Edit />
             </button>
             {/* Delete Button */}
-            <button onClick={() => onDeleteHandler(index)}>
+            <button type="button" onClick={() => onDeleteClick(index)}>
               <Delete />
             </button>
           </div>

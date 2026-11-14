@@ -2,7 +2,7 @@ import { List } from "@/common/api/indexer";
 import { RegistrationStatus } from "@/common/contracts/core/lists";
 import { AccountId } from "@/common/types";
 
-export type ListRegistrationStatus = RegistrationStatus | "Human";
+export type ListRegistrationStatus = RegistrationStatus | "Unregistered" | "Human";
 
 export type ListRegistrationStatusConfig = {
   icon: string;

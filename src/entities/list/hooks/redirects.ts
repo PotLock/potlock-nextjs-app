@@ -1,16 +1,19 @@
 import { useEffect } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
+import { useDispatch } from "react-redux";
 
 import { useRouteQuery } from "@/common/lib";
 import { useToast } from "@/common/ui/layout/hooks/toasts";
-import { dispatch, useGlobalStoreSelector } from "@/store";
+import { type AppDispatcher } from "@/store";
+import { useGlobalStoreSelector } from "@/store/hooks";
 
 import { ListActionsModal } from "../components/listActionsModal";
 import { ListFormModalType } from "../types";
 
 export const useListDeploymentSuccessRedirect = () => {
   const { toast } = useToast();
+  const dispatch = useDispatch<AppDispatcher>();
 
   const resultModal = useModal(ListActionsModal);
 
@@ -41,7 +44,10 @@ export const useListDeploymentSuccessRedirect = () => {
     } else if (voteType && isTransactionOutcomeDetected && listValues.name) {
       toast({
         className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
-        title: `${listValues.name} has been ${listValues.type === ListFormModalType.UPVOTE ? "added" : "removed"} to your favorites`,
+
+        title: `${listValues.name} has been ${
+          listValues.type === ListFormModalType.UPVOTE ? "added to" : "removed from"
+        } your favorites`,
       });
 
       setSearchParams({ transactionHashes: null });
@@ -52,6 +58,7 @@ export const useListDeploymentSuccessRedirect = () => {
       });
     }
   }, [
+    dispatch.listEditor,
     isTransactionOutcomeDetected,
     listValues.name,
     listValues.type,

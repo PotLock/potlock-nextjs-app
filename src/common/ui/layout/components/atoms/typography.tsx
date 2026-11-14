@@ -1,8 +1,11 @@
 import { useMemo } from "react";
 
+import type { LabelProps } from "@radix-ui/react-label";
+
 import { cn } from "../../utils";
 
-export type LabeledIconProps = {
+export type LabeledIconProps = Pick<LabelProps, "htmlFor"> & {
+  bold?: boolean;
   caption: string | number;
   hint?: string;
   href?: string;
@@ -20,15 +23,21 @@ export type LabeledIconProps = {
  * Combination of text and icon with better vertical alignment
  */
 export const LabeledIcon = ({
+  bold = false,
   caption,
   hint,
   href,
+  htmlFor,
   lineHeight = 20,
   positioning = "text-icon",
   children,
   classNames,
 }: LabeledIconProps) => {
-  const labelClassName = cn("mt-0.8 font-400 leading-none", classNames?.caption);
+  const labelClassName = cn(
+    "mt-0.8 leading-none",
+    { "font-medium": bold, "font-normal": !bold },
+    classNames?.caption,
+  );
 
   const labelElement = useMemo(
     () =>
@@ -36,18 +45,18 @@ export const LabeledIcon = ({
         <a
           target="_blank"
           title={hint}
-          {...{ href }}
+          {...{ href, htmlFor }}
           className={cn(labelClassName, "decoration-none hover:underline")}
         >
           {caption}
         </a>
       ) : (
-        <span title={hint} className={labelClassName}>
+        <span title={hint} {...{ htmlFor }} className={labelClassName}>
           {caption}
         </span>
       ),
 
-    [caption, hint, href, labelClassName],
+    [caption, hint, href, htmlFor, labelClassName],
   );
 
   return (

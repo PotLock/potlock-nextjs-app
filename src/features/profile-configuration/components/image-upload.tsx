@@ -2,10 +2,10 @@ import { useCallback } from "react";
 
 import Files from "react-files";
 import { MdOutlineAddAPhoto } from "react-icons/md";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { type FileUploadResult, pinataHooks } from "@/common/services/pinata";
 import { Button, Spinner } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 
@@ -53,12 +53,12 @@ export const ProfileConfigurationImageUpload: React.FC<ProfileConfigurationImage
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative flex h-[280px] w-full rounded-[6px] bg-neutral-200">
+      <div className="relative flex h-[280px] w-full bg-neutral-200 xl:rounded-lg">
         {backgroundImage && (
-          <LazyLoadImage
+          <LazyImage
             alt="Profile Background"
             src={backgroundImage}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover xl:rounded-lg"
           />
         )}
 
@@ -98,7 +98,7 @@ export const ProfileConfigurationImageUpload: React.FC<ProfileConfigurationImage
         }}
       >
         {profileImage && (
-          <LazyLoadImage
+          <LazyImage
             alt="Profile Image"
             src={profileImage}
             className="h-full w-full rounded-[50%] object-cover"

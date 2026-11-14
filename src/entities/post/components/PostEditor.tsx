@@ -1,10 +1,9 @@
 import { useState } from "react";
 
-import { LazyLoadImage } from "react-lazy-load-image-component";
-
 import { socialDbContractClient } from "@/common/contracts/social-db";
 import { AccountId } from "@/common/types";
 import { Button, Textarea } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { useWalletUserSession } from "@/common/wallet";
 import { useAccountSocialProfile } from "@/entities/_shared/account";
 
@@ -35,7 +34,7 @@ export const PostEditor = ({ accountId }: { accountId: AccountId }) => {
     <div className="py-4">
       <form onSubmit={handleCreatePost}>
         <div className="flex items-start gap-2 rounded-2xl border-none p-6 shadow-lg">
-          <LazyLoadImage
+          <LazyImage
             alt="Your avatar"
             src={avatar.url}
             width={50}

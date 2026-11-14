@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { prop } from "remeda";
 
+import { syncApi } from "@/common/api/indexer";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
 import {
   RegistrationStatus,
@@ -19,7 +20,7 @@ import { Button, Input, Spinner } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountGroup, AccountListItem, AccountProfilePicture } from "@/entities/_shared/account";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import {
   ListConfirmationModal,
@@ -49,6 +50,7 @@ export type ListFormProps = Partial<ByListId> & {
 };
 
 export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate = false }) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const { back } = useRouter();
   const onEditPage = listId !== undefined;
@@ -158,7 +160,10 @@ export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate =
           list_id: listId,
           image_cover_url: coverImage || undefined,
         })
-        .then((updatedData) => {
+        .then(async (updatedData) => {
+          // Sync list to indexer after update
+          await syncApi.list(listId).catch(() => {});
+
           setListCreateSuccess({
             open: true,
             type: "UPDATE_LIST",
@@ -183,16 +188,22 @@ export const ListFormDetails: React.FC<ListFormProps> = ({ listId, isDuplicate =
           })),
           image_cover_url: coverImage,
         })
-        .then((dataToReturn) => {
+        .then(async (dataToReturn) => {
+          // Sync list to indexer after creation
+          const listData = Array.isArray(dataToReturn) ? dataToReturn[0] : dataToReturn;
+          const createdListId = listData?.id;
+
+          if (createdListId) {
+            await syncApi.list(createdListId).catch(() => {});
+          }
+
           setListCreateSuccess({
             open: true,
             type: "CREATE_LIST",
-            data: dataToReturn,
+            data: listData,
           });
         })
-        .catch((error) => {
-          console.error("Error creating list:", error);
-        });
+        .catch(() => {});
     }
   };
 

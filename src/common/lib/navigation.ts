@@ -17,12 +17,12 @@ import { useRouter } from "next/router";
  * // Sets `accountId` query parameter to "root.near"
  * setSearchParams({ accountId: "root.near" });
  *
- * console.log(accountId); -> "root.near"
+ * console.info(accountId); -> "root.near"
  *
  * // Deletes `transactionHashes` query parameter
  * setSearchParams({ transactionHashes: null });
  *
- * console.log(transactionHashes); -> undefined
+ * console.info(transactionHashes); -> undefined
  */
 export const useRouteQuery = () => {
   const { pathname, query, replace } = useRouter();

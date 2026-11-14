@@ -1,13 +1,21 @@
 import useSWR from "swr";
 
 import { IS_CLIENT } from "@/common/constants";
-import type { ByAccountId, ByListId, ConditionalActivation } from "@/common/types";
+import type {
+  ByAccountId,
+  ByListId,
+  ConditionalActivation,
+  LiveUpdateParams,
+} from "@/common/types";
 
 import * as contractClient from "./client";
 
 export const useList = ({ enabled = true, listId }: ByListId & ConditionalActivation) =>
-  useSWR(["useList", listId], ([_queryKeyHead, listIdKey]) =>
-    !enabled || !IS_CLIENT ? undefined : contractClient.get_list({ list_id: listIdKey }),
+  useSWR(
+    () => (enabled ? ["useList", listId] : null),
+
+    ([_queryKeyHead, listIdKey]) =>
+      !IS_CLIENT ? undefined : contractClient.get_list({ list_id: listIdKey }),
   );
 
 export const useIsRegistered = ({
@@ -20,9 +28,10 @@ export const useIsRegistered = ({
   Pick<contractClient.IsRegisteredArgs, "required_status"> &
   ConditionalActivation) =>
   useSWR(
-    ["useIsRegistered", accountId, listId, params],
+    () => (enabled ? ["useIsRegistered", accountId, listId, params] : null),
+
     ([_queryKeyHead, accountIdKey, listIdKey, paramsKey]) =>
-      !enabled || !IS_CLIENT
+      !IS_CLIENT
         ? undefined
         : contractClient.is_registered({
             account_id: accountIdKey,
@@ -38,19 +47,34 @@ export const useRegistrations = ({
 }: ByListId &
   Omit<contractClient.GetRegistrationsForListArgs, "list_id"> &
   ConditionalActivation) =>
-  useSWR(["useRegistrations", listId, params], ([_queryKeyHead, listIdKey, paramsKey]) =>
-    !enabled || !IS_CLIENT
-      ? undefined
-      : contractClient.get_registrations_for_list({ list_id: listIdKey, ...paramsKey }),
+  useSWR(
+    () => (enabled ? ["useRegistrations", listId, params] : null),
+
+    ([_queryKeyHead, listIdKey, paramsKey]) =>
+      !IS_CLIENT
+        ? undefined
+        : contractClient.get_registrations_for_list({ list_id: listIdKey, ...paramsKey }),
   );
 
 export const useRegistration = ({
   enabled = true,
+  live = false,
   accountId,
   listId,
-}: ByAccountId & ByListId & ConditionalActivation) =>
-  useSWR(["useRegistration", accountId, listId], ([_queryKeyHead, accountIdKey, listIdKey]) =>
-    !enabled || !IS_CLIENT
-      ? undefined
-      : contractClient.getRegistration({ registrant_id: accountIdKey, list_id: listIdKey }),
+}: ByAccountId & ByListId & ConditionalActivation & LiveUpdateParams) =>
+  useSWR(
+    () => (enabled ? ["useRegistration", accountId, listId] : null),
+
+    ([_queryKeyHead, accountIdKey, listIdKey]) =>
+      !IS_CLIENT
+        ? undefined
+        : contractClient.getRegistration({ registrant_id: accountIdKey, list_id: listIdKey }),
+
+    live
+      ? {}
+      : {
+          revalidateIfStale: false,
+          revalidateOnFocus: false,
+          revalidateOnReconnect: false,
+        },
   );

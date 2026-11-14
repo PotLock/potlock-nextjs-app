@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from "react";
 
-import { useSet, useWindowSize } from "@uidotdev/usehooks";
+import { useSet } from "@uidotdev/usehooks";
 import { MdIndeterminateCheckBox } from "react-icons/md";
+import { useWindowSize } from "usehooks-ts";
 
 import {
   ByElectionId,
@@ -31,6 +32,7 @@ export const VotingRoundCandidateTable: React.FC<VotingRoundCandidateTableProps>
   const { height: windowHeight } = useWindowSize();
   const { toast } = useToast();
   const viewer = useWalletUserSession();
+  // TODO: Use raw Set and remove `@uidotdev/usehooks` dependency ( not `usehooks-ts`!! )
   const selectedEntries = useSet<AccountId>();
 
   const { data: isVotingPeriodOngoing } = votingContractHooks.useIsVotingPeriod({

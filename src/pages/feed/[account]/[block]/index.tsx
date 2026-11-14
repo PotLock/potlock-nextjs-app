@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { fetchSinglePost, fetchTimeByBlockHeight } from "@/common/api/near-social-indexer";
 import { IPFS_NEAR_SOCIAL_URL } from "@/common/constants";
+import { Skeleton } from "@/common/ui/layout/components";
+import { LazyImage } from "@/common/ui/layout/components/LazyImage";
 import { AccountProfilePicture } from "@/entities/_shared/account";
 
 export default function FeedAccountBlockPostPage() {
@@ -43,7 +44,26 @@ export default function FeedAccountBlockPostPage() {
   }, [account, block]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{ boxShadow: "0px 8px 24px rgba(149, 157, 165, 0.2)" }}
+        className="2xl-container w-full rounded-2xl p-8 px-5 pb-12 md:px-10"
+      >
+        <div className="mb-4 flex items-center space-x-2">
+          <Skeleton className="h-8 w-8 rounded-full" />
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+        <Skeleton className="mb-3 h-4 w-1/3" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-11/12" />
+          <Skeleton className="h-4 w-10/12" />
+          <Skeleton className="h-4 w-8/12" />
+        </div>
+        <Skeleton className="mt-6 h-64 w-full" />
+      </div>
+    );
   }
 
   if (!post) {
@@ -96,7 +116,7 @@ export default function FeedAccountBlockPostPage() {
         {post.content}
       </ReactMarkdown>
       {post.imageIPFSHash && (
-        <LazyLoadImage
+        <LazyImage
           src={`${IPFS_NEAR_SOCIAL_URL}${post.imageIPFSHash}`}
           alt=""
           className="mt-2"

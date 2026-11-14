@@ -29,7 +29,6 @@ export const ListAccounts = ({
   const [accountsWithAccess, setAccountsWithAccess] = useState<string[]>([]);
   const [statusFilter, setsStatusFilter] = useState<string>("all");
 
-
   const SORT_LIST_PROJECTS = [
     { label: "Most recent", value: "recent" },
     { label: "Least recent", value: "older" },
@@ -61,23 +60,25 @@ export const ListAccounts = ({
     return matchesSearch;
   };
 
-
   const searchedAccounts = useMemo(() => {
     return listRegistrations.filter(handleFilter);
-  }, [search, handleFilter])
+  }, [search, handleFilter]);
 
-  const handleSort = useCallback((sortType: string) => {
-    return [...listRegistrations].sort((a, b) => {
-      switch (sortType) {
-        case "recent":
-          return new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime();
-        case "older":
-          return new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime();
-        default:
-          return 0; // No sorting
-      }
-    });
-  }, [listRegistrations]);
+  const handleSort = useCallback(
+    (sortType: string) => {
+      return [...listRegistrations].sort((a, b) => {
+        switch (sortType) {
+          case "recent":
+            return new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime();
+          case "older":
+            return new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime();
+          default:
+            return 0; // No sorting
+        }
+      });
+    },
+    [listRegistrations],
+  );
 
   useEffect(() => {
     if (!loadingListData && listData) {
@@ -90,17 +91,15 @@ export const ListAccounts = ({
     }
   }, [listData]);
 
-  const data = search ? searchedAccounts : listRegistrations ?? [];
+  const data = search ? searchedAccounts : (listRegistrations ?? []);
 
   return (
-    <div className="md:pb-0 md:pt-12 flex w-full flex-col px-2 pt-10">
+    <div className="flex w-full flex-col px-2 pt-10 md:pb-0 md:pt-12">
       <div className="flex w-full flex-col gap-5">
         <div className="flex items-center justify-between">
           <div className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             Accounts in the list
-            <span
-              style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}
-            >
+            <span style={{ color: "#DD3345", marginLeft: "8px", fontWeight: 600 }}>
               {listRegistrations?.length}
             </span>
           </div>
@@ -111,20 +110,17 @@ export const ListAccounts = ({
             onChange={(e) => setSearch(e.target.value.toLowerCase())}
           />
           <Filter groups={tagsList} />
-          <SortSelect
-            options={SORT_LIST_PROJECTS}
-            onValueChange={handleSort}
-          />
+          <SortSelect options={SORT_LIST_PROJECTS} onValueChange={handleSort} />
         </div>
       </div>
       {isLoading ? (
-        <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+        <div className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 12 }, (_, index) => (
             <ListCardSkeleton key={index} />
           ))}
         </div>
       ) : data?.length ? (
-        <div className="md:grid-cols-2 lg:grid-cols-3 mt-8 grid w-full grid-cols-1 gap-8">
+        <div className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {data?.map((item, index) => (
             <ListAccountCard
               accountsWithAccess={accountsWithAccess}
@@ -136,8 +132,7 @@ export const ListAccounts = ({
       ) : (
         <NoListItem
           type={
-            search !== "" ||
-            JSON.stringify(statusFilter) != JSON.stringify(["all"])
+            search !== "" || JSON.stringify(statusFilter) != JSON.stringify(["all"])
               ? NoListItemType.NO_RESULTS
               : NoListItemType.ACCOUNT
           }

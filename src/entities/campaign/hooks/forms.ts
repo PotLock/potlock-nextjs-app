@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { isDeepEqual } from "remeda";
+import { Temporal } from "temporal-polyfill";
 
+import { syncApi } from "@/common/api/indexer/sync";
 import { NATIVE_TOKEN_DECIMALS, NATIVE_TOKEN_ID } from "@/common/constants";
 import { campaignsContractClient } from "@/common/contracts/core/campaigns";
+import type { Campaign } from "@/common/contracts/core/campaigns/interfaces";
 import { feePercentsToBasisPoints } from "@/common/contracts/core/utils";
 import { floatToIndivisible, parseNumber } from "@/common/lib";
 import type { FileUploadResult } from "@/common/services/pinata";
@@ -13,11 +17,12 @@ import { type ByCampaignId, type FromSchema, type TokenId } from "@/common/types
 import { toast } from "@/common/ui/layout/hooks";
 import { useWalletUserSession } from "@/common/wallet";
 import { useFungibleToken } from "@/entities/_shared/token";
-import { routeSelectors } from "@/pathnames";
-import { dispatch } from "@/store";
+import { routeSelectors } from "@/navigation";
+import { useDispatch } from "@/store/hooks";
 
 import { createCampaignSchema, updateCampaignSchema } from "../models/schema";
 import { CampaignEnumType } from "../types";
+import { parseContractError } from "../utils";
 
 export type CampaignFormParams = Partial<ByCampaignId> & {
   ftId?: TokenId;
@@ -25,17 +30,27 @@ export type CampaignFormParams = Partial<ByCampaignId> & {
 };
 
 export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignFormParams) => {
+  const dispatch = useDispatch();
   const viewer = useWalletUserSession();
   const router = useRouter();
   const isNewCampaign = campaignId === undefined;
   const schema = isNewCampaign ? createCampaignSchema : updateCampaignSchema;
 
-  type Values = FromSchema<typeof schema>;
+  type Values = FromSchema<typeof schema> & {
+    project_name?: string;
+    project_description?: string;
+  };
 
   const self = useForm<Values>({
     resolver: zodResolver(schema),
     mode: "all",
-    defaultValues: { ft_id: ftId ?? NATIVE_TOKEN_ID, target_amount: 0.01 },
+    defaultValues: {
+      ft_id: ftId ?? NATIVE_TOKEN_ID,
+      target_amount: 0.01,
+      ...(isNewCampaign
+        ? { start_ms: Temporal.Now.instant().add({ minutes: 5 }).epochMilliseconds }
+        : {}),
+    },
     resetOptions: { keepDirtyValues: false },
   });
 
@@ -70,12 +85,13 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
 
   const isDisabled = useMemo(
     () =>
-      !self.formState.isDirty ||
+      (!isNewCampaign && !self.formState.isDirty) ||
       !self.formState.isValid ||
       self.formState.isSubmitting ||
       (values.ft_id !== NATIVE_TOKEN_ID && !isTokenDataLoading && token === undefined),
 
     [
+      isNewCampaign,
       isTokenDataLoading,
       self.formState.isDirty,
       self.formState.isSubmitting,
@@ -85,8 +101,15 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
     ],
   );
 
+  // Track previous cross-field errors to prevent infinite loops
+  const prevCrossFieldErrorsRef = useRef<Record<string, { message: string } | undefined>>({});
+
   useEffect(() => {
-    const errors: Record<string, { message: string }> = {};
+    const errors: Record<string, { message: string } | undefined> = {
+      min_amount: undefined,
+      max_amount: undefined,
+      target_amount: undefined,
+    };
 
     // Validate min_amount vs max_amount
     if (parsedMinAmount && parsedMaxAmount && parsedMinAmount > parsedMaxAmount) {
@@ -121,8 +144,15 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
       };
     }
 
+    // Only update if errors have changed to prevent infinite loops
+    if (isDeepEqual(prevCrossFieldErrorsRef.current, errors)) {
+      return;
+    }
+
+    prevCrossFieldErrorsRef.current = errors;
+
     // Clear errors only for fields that are now valid
-    ["min_amount", "max_amount", "target_amount"].forEach((field) => {
+    (["min_amount", "max_amount", "target_amount"] as const).forEach((field) => {
       if (!errors[field]) {
         self.clearErrors(field as keyof Values);
       }
@@ -130,23 +160,57 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
 
     // Set all collected errors
     Object.entries(errors).forEach(([field, error]) => {
-      self.setError(field as keyof Values, error);
+      if (error) {
+        self.setError(field as keyof Values, error);
+      }
     });
-  }, [values, self, parsedMinAmount, parsedMaxAmount, parsedTargetAmount]);
+  }, [parsedMinAmount, parsedMaxAmount, parsedTargetAmount, self]);
 
   const timeToMilliseconds = (time: number) => {
     return new Date(time).getTime();
   };
 
-  const handleDeleteCampaign = () => {
-    if (!isNewCampaign) {
-      campaignsContractClient.delete_campaign({ args: { campaign_id: campaignId } });
+  const formatRelativeFromNow = (timestampMs: number) => {
+    const diffMs = timestampMs - Date.now();
+    if (diffMs <= 0) return "now";
 
-      dispatch.campaignEditor.updateCampaignModalState({
-        header: "Campaign Deleted Successfully",
-        description: "You can now proceed to close this window",
-        type: CampaignEnumType.DELETE_CAMPAIGN,
-      });
+    const minutes = Math.round(diffMs / 60_000);
+    if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+
+    const hours = Math.round(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"}`;
+
+    const days = Math.round(hours / 24);
+    return `${days} day${days === 1 ? "" : "s"}`;
+  };
+
+  const handleDeleteCampaign = async () => {
+    if (!isNewCampaign) {
+      try {
+        const { txHash } = await campaignsContractClient.delete_campaign({
+          args: { campaign_id: campaignId },
+        });
+
+        // Sync deletion to indexer database
+        if (txHash && viewer.accountId) {
+          await syncApi.campaignDelete(campaignId, txHash, viewer.accountId).catch(console.warn);
+        }
+
+        dispatch.campaignEditor.updateCampaignModalState({
+          header: "Campaign Deleted Successfully",
+          description: "You can now proceed to close this window",
+          type: CampaignEnumType.DELETE_CAMPAIGN,
+        });
+
+        router.push("/campaigns");
+      } catch (error) {
+        console.error("Failed to delete campaign:", error);
+
+        toast({
+          title: "Failed to delete campaign. Please try again later.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -156,7 +220,14 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
         .process_escrowed_donations_batch({
           args: { campaign_id: campaignId },
         })
-        .then(() => {
+        .then(async ({ txHash }) => {
+          // Sync unescrow to indexer database
+          if (txHash && viewer.accountId) {
+            await syncApi
+              .campaignUnescrow(campaignId, txHash, viewer.accountId)
+              .catch(console.warn);
+          }
+
           return toast({
             title: "Successfully processed escrowed donations",
           });
@@ -178,7 +249,12 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
         .process_refunds_batch({
           args: { campaign_id: campaignId },
         })
-        .then(() => {
+        .then(async ({ txHash }) => {
+          // Sync refunds to indexer database
+          if (txHash && viewer.accountId) {
+            await syncApi.campaignRefund(campaignId, txHash, viewer.accountId).catch(console.warn);
+          }
+
           return toast({
             title: "Successfully processed donation refunds",
           });
@@ -197,6 +273,21 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
   // TODO: Use token metadata to convert amounts
   const onSubmit: SubmitHandler<Values> = useCallback(
     (values) => {
+      // Validate end_ms is in the future before building args
+      if (values.end_ms) {
+        const endMs = timeToMilliseconds(values.end_ms);
+
+        if (endMs <= Date.now()) {
+          toast({
+            title: "End date must be in the future",
+            description: "Please update the end date and try again.",
+            variant: "destructive",
+          });
+
+          return;
+        }
+      }
+
       const args = {
         description: values.description || "",
         name: values.name || "",
@@ -207,7 +298,10 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           parseNumber(values.target_amount ?? 0),
           token?.metadata.decimals ?? NATIVE_TOKEN_DECIMALS,
         ),
-
+        ...(isNewCampaign && values.project_name ? { project_name: values.project_name } : {}),
+        ...(isNewCampaign && values.project_description
+          ? { project_description: values.project_description }
+          : {}),
         ...(values.cover_image_url
           ? {
               cover_image_url: values.cover_image_url,
@@ -232,7 +326,7 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
             }
           : {}),
 
-        ...(values?.allow_fee_avoidance && {
+        ...(values?.allow_fee_avoidance !== undefined && {
           allow_fee_avoidance: values.allow_fee_avoidance,
         }),
         ...(values?.referral_fee_basis_points && {
@@ -241,30 +335,57 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
         ...(values?.creator_fee_basis_points && {
           creator_fee_basis_points: feePercentsToBasisPoints(values.creator_fee_basis_points),
         }),
-        ...(values.start_ms &&
-          timeToMilliseconds(values.start_ms) > Date.now() && {
-            start_ms: timeToMilliseconds(values.start_ms),
-          }),
+        ...(() => {
+          if (values.start_ms) {
+            const startMs = timeToMilliseconds(values.start_ms);
+
+            // For new campaigns, always send start_ms; use now + 5 min if value is in the past
+            if (isNewCampaign) {
+              return {
+                start_ms:
+                  startMs > Date.now()
+                    ? startMs
+                    : Temporal.Now.instant().add({ minutes: 5 }).epochMilliseconds,
+              };
+            }
+
+            // For updates, only send if in the future
+            if (startMs > Date.now()) {
+              return { start_ms: startMs };
+            }
+          }
+
+          return {};
+        })(),
         ...(values.end_ms && {
           end_ms: timeToMilliseconds(values.end_ms),
         }),
         ...(campaignId ? {} : { owner: viewer.accountId as string }),
-        ...(campaignId ? {} : { recipient: values.recipient }),
+        ...(campaignId ? {} : { recipient: values.recipient ?? undefined }),
       };
 
       if (campaignId) {
-        campaignsContractClient
+        return campaignsContractClient
           .update_campaign({
             args: { ...args, campaign_id: campaignId },
           })
-          .then(() => {
+          .then(async () => {
+            // Sync campaign to database
+            await syncApi.campaign(campaignId).catch(console.warn);
+
             self.reset(values, { keepErrors: false });
 
             toast({
-              title: `You’ve successfully updated this campaign`,
+              title: "Campaign updated",
+              description: (() => {
+                const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
 
-              description:
-                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
+                if (startMs && startMs > Date.now()) {
+                  return `Campaign starts in ${formatRelativeFromNow(startMs)}.`;
+                }
+
+                return "Campaign is live.";
+              })(),
             });
 
             onUpdateSuccess?.();
@@ -272,29 +393,67 @@ export const useCampaignForm = ({ campaignId, ftId, onUpdateSuccess }: CampaignF
           .catch((error) => {
             console.error("Failed to update Campaign:", error);
 
+            const parsedError = parseContractError(error);
+
             toast({
-              description: "Failed to update Campaign.",
+              title: parsedError.title,
+              description: parsedError.hint
+                ? `${parsedError.message} ${parsedError.hint}`
+                : parsedError.message,
               variant: "destructive",
             });
           });
       } else {
-        campaignsContractClient
+        return campaignsContractClient
           .create_campaign({ args })
-          .then((newCampaign) => {
-            toast({
-              title: `You’ve successfully created a campaign for ${values.name}.`,
+          .then(async (newCampaign) => {
+            const startMs = values.start_ms ? timeToMilliseconds(values.start_ms) : undefined;
 
-              description:
-                "If you are not a member of the project, the campaign will be considered unofficial until it has been approved by the project.",
+            // Sync new campaign to database
+            if (
+              newCampaign &&
+              typeof newCampaign === "object" &&
+              "id" in newCampaign &&
+              newCampaign.id
+            ) {
+              await syncApi.campaign((newCampaign as Campaign).id).catch(console.warn);
+            }
+
+            toast({
+              title: "Campaign created",
+              description: (() => {
+                if (startMs && startMs > Date.now()) {
+                  return `Campaign starts in ${formatRelativeFromNow(startMs)}.`;
+                }
+
+                return "Campaign is live.";
+              })(),
             });
 
-            router.push(routeSelectors.CAMPAIGN_BY_ID(newCampaign.id));
+            // Fix: Ensure newCampaign has an id before accessing it
+            console.log(newCampaign);
+
+            if (
+              newCampaign &&
+              typeof newCampaign === "object" &&
+              "id" in newCampaign &&
+              newCampaign.id
+            ) {
+              router.push(routeSelectors.CAMPAIGN_BY_ID((newCampaign as Campaign).id));
+            } else {
+              router.push(`/campaigns`);
+            }
           })
           .catch((error) => {
             console.error("Failed to create Campaign:", error);
 
+            const parsedError = parseContractError(error);
+
             toast({
-              title: "Failed to create Campaign.",
+              title: parsedError.title,
+              description: parsedError.hint
+                ? `${parsedError.message} ${parsedError.hint}`
+                : parsedError.message,
               variant: "destructive",
             });
           });

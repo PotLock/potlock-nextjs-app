@@ -1,13 +1,11 @@
-import { buildTransaction } from "@wpdas/naxios";
-
 import { SOCIAL_DB_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { AccountId } from "@/common/types";
 
 /**
  * NEAR Social DB Contract API
  */
-const nearSocialDbContractApi = naxiosInstance.contractApi({
+const nearSocialDbContractApi = contractApi({
   contractId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
 });
 
@@ -107,20 +105,16 @@ type NEARSocialGetResponse = {
  * Get User Profile Info from NEAR Social DB
  * @returns
  */
-export const getSocialProfile = async (input: { accountId: string; useCache?: boolean }) => {
+export const getSocialProfile = async (input: { accountId: string }) => {
   try {
     const response = await nearSocialDbContractApi.view<
       NEARSocialUserProfileInput,
       NEARSocialGetResponse
-    >(
-      "get",
-      {
-        args: {
-          keys: [`${input.accountId}/profile/**`],
-        },
+    >("get", {
+      args: {
+        keys: [`${input.accountId}/profile/**`],
       },
-      { useCache: input.useCache },
-    );
+    });
 
     return response[input.accountId]?.profile || null;
   } catch (e) {
@@ -135,7 +129,7 @@ export const getAccount = async (input: { accountId: string }) => {
     {
       node_id: number;
       permissions: {}[];
-      shared_storage: any;
+      shared_storage: Record<string, unknown>;
       storage_balance: string;
       used_bytes: number;
     } | null
@@ -146,37 +140,7 @@ export const getAccount = async (input: { accountId: string }) => {
   return response;
 };
 
-export const getSocialData = async <R>({ path }: { path: string }) => {
-  try {
-    const response = await nearSocialDbContractApi.view<any, R>("keys", {
-      args: {
-        keys: [path],
-        options: {
-          return_type: "BlockHeight",
-          values_only: true,
-        },
-      },
-    });
-
-    return response;
-  } catch (e) {
-    console.error("getSocialData:", e);
-  }
-};
-
-export const getPolicy = async () => {
-  try {
-    const response = await nearSocialDbContractApi.view<any, { proposal_bond: string }>(
-      "get_policy",
-    );
-
-    return response;
-  } catch (e) {
-    console.error("getPolicy:", e);
-  }
-};
-
-export const setSocialData = async ({ data }: { data: Record<string, any> }) => {
+export const setSocialData = async ({ data }: { data: Record<string, unknown> }) => {
   try {
     const response = await nearSocialDbContractApi.call("set", {
       args: {
@@ -198,8 +162,9 @@ export const createPost = async ({
   content: { type: string; text: string };
 }) => {
   try {
-    const buildContract = buildTransaction("set", {
+    const buildContract = {
       receiverId: SOCIAL_DB_CONTRACT_ACCOUNT_ID,
+      method: "set",
       args: {
         data: {
           [accountId]: {
@@ -217,13 +182,12 @@ export const createPost = async ({
           },
         },
       },
-    });
+    };
 
-    await naxiosInstance
-      .contractApi()
+    await contractApi()
       .callMultiple([buildContract])
       .then((data) => {
-        console.log(data);
+        console.info(data);
       })
       .catch((error) => {
         console.error(error);

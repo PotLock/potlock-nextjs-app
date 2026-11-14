@@ -3,8 +3,8 @@ import { merge, mergeAll, prop } from "remeda";
 
 import { List } from "@/common/api/indexer";
 import { AccountId } from "@/common/types";
-import { useGlobalStoreSelector } from "@/store";
-import { AppModel } from "@/store/models";
+import { useGlobalStoreSelector } from "@/store/hooks";
+import { type AppModel } from "@/store/models";
 
 import { effects } from "./effects";
 import { ListEditorState, ListFormModalType } from "../types";
@@ -20,8 +20,20 @@ const listEditorStateDefaults: ListEditorState = {
 
 export const useListActionsState = () => useGlobalStoreSelector(prop(listModelKey));
 
-const handleList = (state: ListEditorState, stateUpdate?: Partial<ListEditorState>) =>
-  mergeAll([state, stateUpdate ?? {}]);
+const handleList = (
+  state: ListEditorState,
+  stateUpdate?: Partial<ListEditorState>,
+): ListEditorState =>
+  mergeAll([
+    state,
+    {
+      ...stateUpdate,
+      type: stateUpdate?.type ?? state.type,
+      finalOutcome: stateUpdate?.finalOutcome ?? state.finalOutcome,
+      modalTextState: stateUpdate?.modalTextState ?? state.modalTextState,
+      donation: stateUpdate?.donation ?? state.donation,
+    },
+  ]) as ListEditorState;
 
 export const listEditorModel = createModel<AppModel>()({
   state: listEditorStateDefaults,

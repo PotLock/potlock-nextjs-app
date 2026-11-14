@@ -1,6 +1,6 @@
 import { ExecutionStatusBasic } from "near-api-js/lib/providers/provider";
 
-import { List } from "@/common/api/indexer";
+import { syncApi } from "@/common/api/indexer";
 import { nearRpc, walletApi } from "@/common/blockchains/near-protocol/client";
 import { AppDispatcher } from "@/store";
 
@@ -11,7 +11,7 @@ export const effects = (dispatch: AppDispatcher) => ({
     const { accountId: owner_account_id } = walletApi;
 
     if (owner_account_id) {
-      nearRpc.txStatus(transactionHash, owner_account_id).then((response) => {
+      nearRpc.txStatus(transactionHash, owner_account_id).then(async (response) => {
         const method = response.transaction?.actions[0]?.FunctionCall?.method_name;
         const { status } = response.receipts_outcome.at(method === "donate" ? 6 : 0)?.outcome ?? {};
         let type: ListFormModalType = ListFormModalType.NONE;
@@ -52,6 +52,16 @@ export const effects = (dispatch: AppDispatcher) => ({
             break;
           }
 
+          case "register_batch": {
+            type = ListFormModalType.BATCH_REGISTER;
+            break;
+          }
+
+          case "unregister": {
+            type = ListFormModalType.UNREGISTER;
+            break;
+          }
+
           default: {
             type = ListFormModalType.NONE;
             break;
@@ -70,19 +80,47 @@ export const effects = (dispatch: AppDispatcher) => ({
           }
         } else if (typeof status?.SuccessValue === "string") {
           try {
+            const rawData =
+              type === ListFormModalType.DELETE_LIST
+                ? undefined
+                : JSON.parse(atob(status.SuccessValue));
+
+            // Handle both array and object responses
+            const parsedData = Array.isArray(rawData) ? rawData[0] : rawData;
+
+            // Sync list to indexer after successful transaction
+            if (parsedData?.id && type !== ListFormModalType.DELETE_LIST) {
+              await syncApi.list(parsedData.id).catch(() => {});
+            }
+
+            // Sync registrations for registration-related operations
+            if (
+              type === ListFormModalType.BATCH_REGISTER ||
+              type === ListFormModalType.UNREGISTER
+            ) {
+              const args = response.transaction?.actions[0]?.FunctionCall?.args;
+
+              if (args) {
+                try {
+                  const decodedArgs = JSON.parse(atob(args));
+
+                  if (decodedArgs?.list_id) {
+                    await syncApi.listRegistrations(decodedArgs.list_id).catch(() => {});
+                  }
+                } catch {
+                  // Ignore parse errors
+                }
+              }
+            }
+
             dispatch.listEditor.deploymentSuccess({
-              data:
-                type === ListFormModalType.DELETE_LIST
-                  ? undefined
-                  : (JSON.parse(atob(status.SuccessValue)) as List),
+              data: parsedData,
               type,
               ...(type === ListFormModalType.TRANSFER_OWNER && {
                 accountId: JSON.parse(atob(status.SuccessValue)) as string,
               }),
             });
-          } catch (error) {
-            console.error("Error parsing JSON:", error);
-            // Handle the error appropriately, e.g., dispatch an error action or show a notification
+          } catch {
             throw "Unable to Update List: Invalid JSON input";
           }
         } else {

@@ -5,11 +5,12 @@ import { MdArrowOutward } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import { PLATFORM_NAME } from "@/common/_config";
 import { ByPotId, indexer } from "@/common/api/indexer";
-import { NATIVE_TOKEN_ID } from "@/common/constants";
+import { NATIVE_TOKEN_ID, PLATFORM_TWITTER_ACCOUNT_ID } from "@/common/constants";
 import { potContractHooks } from "@/common/contracts/core/pot";
-import { Button, Checklist, ClipboardCopyButton, Skeleton } from "@/common/ui/layout/components";
-import { VolunteerIcon } from "@/common/ui/layout/svg";
+import { Button, Checklist, Skeleton } from "@/common/ui/layout/components";
+import { SocialsShare } from "@/common/ui/layout/components/molecules/social-share";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { TokenValueSummary } from "@/entities/_shared/token";
@@ -175,8 +176,11 @@ export const PotLayoutHero: React.FC<PotLayoutHeroProps> = ({
 
             {referrerPotLink && (
               <div className="flex items-center justify-end gap-2 text-sm">
-                <ClipboardCopyButton text={referrerPotLink} customIcon={<VolunteerIcon />} />
-                <span className="text-neutral-950">{"Earn referral fees"}</span>
+                <SocialsShare
+                  shareContent={referrerPotLink}
+                  shareText={`Check out this ${hasPFMechanism ? "Round" : "Pot"} on ${PLATFORM_NAME}! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
+                  variant="button"
+                />
               </div>
             )}
           </div>

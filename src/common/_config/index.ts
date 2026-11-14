@@ -12,6 +12,10 @@ export const {
   contractMetadata: { version: CONTRACT_SOURCECODE_VERSION, repoUrl: CONTRACT_SOURCECODE_REPO_URL },
 
   core: {
+    namespaceRoot: {
+      contract: { accountId: NAMESPACE_ROOT_CONTRACT_ACCOUNT_ID },
+    },
+
     campaigns: {
       contract: { accountId: CAMPAIGNS_CONTRACT_ACCOUNT_ID },
     },
@@ -39,6 +43,7 @@ export const {
   },
 
   social: {
+    platformName: SOCIAL_PLATFORM_NAME,
     app: { url: SOCIAL_APP_LINK_URL },
     contract: { accountId: SOCIAL_DB_CONTRACT_ACCOUNT_ID },
   },

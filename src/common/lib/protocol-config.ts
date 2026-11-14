@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Pot } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { contractApi } from "@/common/blockchains/near-protocol/client";
 
 export type ProtocolConfig = {
   basis_points: number;
@@ -18,8 +18,7 @@ export const useProtocolConfig = (potDetail: Pot) => {
 
   useEffect(() => {
     if (configContractId && configViewMethodName) {
-      naxiosInstance
-        .contractApi({ contractId: configContractId })
+      contractApi({ contractId: configContractId })
         .view<{}, ProtocolConfig>(configViewMethodName)
         .then((config) => {
           setConfig(config);

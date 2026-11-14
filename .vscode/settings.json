@@ -48,6 +48,7 @@
     "=createproject",
     "amichaeltest",
     "Aptos",
+    "astraplusplus",
     "Attributify",
     "bitget",
     "builddao",
@@ -82,6 +83,7 @@
     "localnet",
     "METAPOOL",
     "Metaverse",
+    "Mintbase",
     "Mochi",
     "mpdao",
     "mpdaovoting",
@@ -90,6 +92,7 @@
     "NADABOT",
     "narwallets",
     "naxios",
+    "ndctools",
     "nearblocks",
     "nearfi",
     "openapi",
@@ -111,6 +114,7 @@
     "socialdb",
     "Solana",
     "SOURCECODE",
+    "sputnikdao",
     "stnear",
     "svgr",
     "TGAS",
@@ -124,11 +128,20 @@
     "usehooks",
     "viem",
     "wagmi",
+    "weigthed",
     "welldone",
     "wpdas",
     "xdefi",
     "yearofchef",
     "yocto",
     "zustand"
-  ]
+  ],
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/.hg/store/**": true,
+    "**/.git/**": true,
+    "**/node_modules/**": true,
+    "**/.vscode/**": true
+  }
 }

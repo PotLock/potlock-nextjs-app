@@ -2,8 +2,8 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
-import { NoResultsPlaceholder, PageError, SplashScreen } from "@/common/ui/layout/components";
+import { Campaign, indexer } from "@/common/api/indexer";
+import { NoResultsPlaceholder, PageError, Spinner } from "@/common/ui/layout/components";
 import { CampaignCard } from "@/entities/campaign";
 import { ProfileLayout } from "@/layout/profile/components/layout";
 
@@ -12,12 +12,11 @@ export default function ProfileCampaignsTab() {
   const { accountId } = router.query as { accountId: string };
 
   const {
-    isLoading: isCampaignsListLoading,
     data: campaigns,
+    isLoading: isCampaignsListLoading,
     error: campaignsLoadingError,
-  } = campaignsContractHooks.useOwnedCampaigns({ accountId });
+  } = indexer.useCampaigns({ owner: accountId });
 
-  // TODO: Use skeletons instead of the splash screen
   return (
     <div className="w-full">
       {campaignsLoadingError !== undefined && (
@@ -28,15 +27,17 @@ export default function ProfileCampaignsTab() {
       )}
 
       {campaignsLoadingError === undefined && campaigns === undefined && isCampaignsListLoading && (
-        <SplashScreen className="h-100" />
+        <div className="flex h-40 items-center justify-center">
+          <Spinner className="h-7 w-7" />
+        </div>
       )}
 
       {campaignsLoadingError === undefined && campaigns !== undefined && (
         <>
-          {campaigns.length > 0 ? (
+          {campaigns?.results?.length > 0 ? (
             <div className="my-10 grid gap-2 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-              {campaigns.map((campaign) => (
-                <CampaignCard data={campaign} key={campaign.id} />
+              {campaigns?.results?.map((campaign: Campaign) => (
+                <CampaignCard data={campaign} key={campaign.on_chain_id} />
               ))}
             </div>
           ) : (

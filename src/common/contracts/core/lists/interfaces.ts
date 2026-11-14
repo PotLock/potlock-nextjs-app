@@ -1,10 +1,9 @@
 export enum RegistrationStatus {
+  Pending = "Pending",
   Approved = "Approved",
   Rejected = "Rejected",
-  Pending = "Pending",
   Graylisted = "Graylisted",
   Blacklisted = "Blacklisted",
-  Unregistered = "Unregistered",
 }
 
 export type ListId = number;
@@ -40,20 +39,20 @@ export type GetListArgs = {
   list_id: ListId;
 };
 
-export interface ApplyToList {
-  list_id: string;
+export type ApplyToList = {
+  list_id: ListId;
   notes?: null | string;
-  registrations: Array<{
+  registrations: {
     registrant_id: string;
     status: string;
     submitted_ms: number;
     updated_ms: number;
     notes: string;
-  }>;
-}
+  }[];
+} & Record<string, unknown>;
 
-export interface UpdateRegistration {
+export type UpdateRegistration = {
   registration_id: number;
   status: RegistrationStatus;
   notes?: string;
-}
+} & Record<string, unknown>;

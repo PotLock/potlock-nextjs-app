@@ -1,25 +1,23 @@
-import { MemoryCache } from "@wpdas/naxios";
 import { Big } from "big.js";
 
 import { POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/_config";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS } from "@/common/constants";
 import { assertPotWritesAvailable } from "@/common/contracts/core/pot/safety";
 
 import { PotArgs, PotDeploymentResult, PotFactoryConfig } from "./interfaces";
 
-const contractApi = naxiosInstance.contractApi({
+const potFactoryContractApi = contractApi({
   contractId: POT_FACTORY_CONTRACT_ACCOUNT_ID,
-  cache: new MemoryCache({ expirationTime: 5 }), // 10 seg
 });
 
-export const get_config = () => contractApi.view<{}, PotFactoryConfig>("get_config");
+export const get_config = () => potFactoryContractApi.view<{}, PotFactoryConfig>("get_config");
 
 export const calculate_min_deployment_deposit = async (args: {
   args: PotArgs;
 }): Promise<undefined | string> => {
   assertPotWritesAvailable(POT_FACTORY_CONTRACT_ACCOUNT_ID);
-  return contractApi
+  return potFactoryContractApi
     .view<typeof args, string>("calculate_min_deployment_deposit", { args })
     .then((amount) => Big(amount).plus(Big("20000000000000000000000")).toFixed())
     .catch((error) => {
@@ -33,7 +31,7 @@ export const deploy_pot = async (args: {
   pot_handle?: null | string;
 }): Promise<PotDeploymentResult> => {
   assertPotWritesAvailable(POT_FACTORY_CONTRACT_ACCOUNT_ID);
-  return contractApi.call<typeof args, PotDeploymentResult>("deploy_pot", {
+  return potFactoryContractApi.call<typeof args, PotDeploymentResult>("deploy_pot", {
     args,
     deposit: await calculate_min_deployment_deposit({ args: args.pot_args }),
     gas: FULL_TGAS,

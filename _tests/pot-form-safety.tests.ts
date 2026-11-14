@@ -28,10 +28,13 @@ vi.mock("@/common/constants", () => ({
 }));
 
 vi.mock("@/common/blockchains/near-protocol/client", () => ({
-  naxiosInstance: { contractApi: mocks.contractApi },
+  contractApi: mocks.contractApi,
 }));
 
-vi.mock("@/common/contracts/sputnik-dao", () => ({ getDaoPolicy: mocks.getDaoPolicy }));
+vi.mock("@/common/contracts/sputnikdao2", () => ({
+  sputnikDaoClient: { get_policy: mocks.getDaoPolicy },
+}));
+
 vi.mock("@/common/contracts/core/pot", () => ({ potContractClient: {} }));
 vi.mock("@/common/wallet", () => ({ useWalletUserSession: () => mocks.viewer }));
 

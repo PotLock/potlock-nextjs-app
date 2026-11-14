@@ -32,7 +32,7 @@ export const directFtDonationMulticall = async ({
   const { protocol_fee_recipient_account: protocolFeeRecipientAccountId } =
     await donationContractClient.get_config();
 
-  const tokenClient = nearProtocolClient.naxiosInstance.contractApi({ contractId: tokenId });
+  const tokenClient = nearProtocolClient.contractApi({ contractId: tokenId });
 
   const donationContractStorageDeposit = Big(DONATION_BASE_STORAGE_DEPOSIT_FLOAT).plus(
     /* Additional 0.0001 NEAR per message character */
@@ -204,7 +204,7 @@ export const directFtDonationMulticall = async ({
             ]),
           ),
     )
-    .then((finalExecutionOutcomes = undefined) => {
+    .then((finalExecutionOutcomes) => {
       const receipt: DirectDonation | undefined = finalExecutionOutcomes
         ?.at(-1)
         ?.receipts_outcome.filter(

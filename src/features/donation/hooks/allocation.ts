@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { Big } from "big.js";
 
 import { Pot } from "@/common/api/indexer";
-import type { Campaign } from "@/common/contracts/core/campaigns";
+import { type Campaign, campaignsContractHooks } from "@/common/contracts/core/campaigns";
 import { TOTAL_FEE_BASIS_POINTS } from "@/common/contracts/core/constants";
 import { donationContractHooks } from "@/common/contracts/core/donation";
 import {
@@ -52,8 +52,16 @@ export const useDonationAllocationBreakdown = ({
   referralFeeReceiptAmount = null,
   curatorFeeReceiptAmount = null,
 }: DonationAllocationParams): DonationAllocationBreakdown => {
-  const { data: donationConfig } = donationContractHooks.useConfig();
+  const { data: globalConfig } = donationContractHooks.useConfig();
   const totalAmountBig = useMemo(() => Big(totalAmountFloat), [totalAmountFloat]);
+
+  const { data: campaignConfig } = campaignsContractHooks.useConfig();
+
+  const donationConfig = campaign ? campaignConfig : globalConfig;
+
+  const referralFeeBasisPoints = campaign
+    ? campaignConfig?.default_referral_fee_basis_points
+    : globalConfig?.referral_fee_basis_points;
 
   /**
    * Fee received by the donation protocol maintainers.
@@ -90,7 +98,7 @@ export const useDonationAllocationBreakdown = ({
         basisPoints:
           campaign?.referral_fee_basis_points ??
           potCache?.referral_fee_public_round_basis_points ??
-          donationConfig?.referral_fee_basis_points,
+          referralFeeBasisPoints,
 
         fixedValue: referralFeeReceiptAmount,
         isApplied: !bypassReferralFee,
@@ -98,8 +106,8 @@ export const useDonationAllocationBreakdown = ({
       }),
     [
       bypassReferralFee,
+      referralFeeBasisPoints,
       campaign?.referral_fee_basis_points,
-      donationConfig?.referral_fee_basis_points,
       isFinal,
       potCache?.referral_fee_public_round_basis_points,
       referralFeeReceiptAmount,

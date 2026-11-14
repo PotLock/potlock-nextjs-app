@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
 
-import { FEATURE_REGISTRY, NETWORK } from "@/common/_config";
-import { indexer } from "@/common/api/indexer";
+import { ENV_TAG, FEATURE_REGISTRY, NETWORK } from "@/common/_config";
+import { Pot, indexer } from "@/common/api/indexer";
 import { APP_BOS_COUNTERPART_URL, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import {
   Button,
@@ -12,24 +12,37 @@ import {
   CarouselApi,
   CarouselContent,
   PageWithBanner,
+  Skeleton,
 } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import { AccountCard } from "@/entities/_shared/account";
+import { PotCard } from "@/entities/pot";
+import { useFilteredPots } from "@/entities/pot/hooks/useFilteredPots";
 import { DonateRandomly, DonateToAccountButton } from "@/features/donation";
 import { ProjectDiscovery } from "@/layout/components/project-discovery";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
+
+import { FeaturedCampaigns } from "./campaigns";
 
 export const FEATURED_PROJECT_ACCOUNT_IDS =
   NETWORK === "mainnet"
     ? [
-        "v1.foodbank.near",
         "potlock.near",
-        "yearofchef.near",
+        "replycash.near",
+        "nearcatalog.near",
+        "meteor-wallet.near",
         "indexers.intear.near",
         "nearblocks.near",
+        "fastnear.tg",
       ]
-    : ["amichaeltest.testnet", "root.akaia.testnet", "yearofchef.testnet"];
+    : ["amichaeltest.testnet", "root.akaia.testnet"];
+
+export const PAST_FUNDING_ROUNDS_POT_IDS = [
+  "ai.v1.potfactory.potlock.near",
+  "build.v1.potfactory.potlock.near",
+  "oss.v1.potfactory.potlock.near",
+];
 
 export const GeneralStats = () => {
   const { data: stats } = indexer.useStats();
@@ -38,12 +51,22 @@ export const GeneralStats = () => {
     <div className="flex w-full flex-col gap-4">
       <div className="mt-4 flex flex-row flex-wrap items-center gap-4 px-2 py-0 md:gap-6 md:px-10">
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
-          {`$${stats?.total_donations_usd.toString()}`}
+          {stats?.total_donations_usd === undefined ? (
+            <Skeleton className="h-5.5 w-29" />
+          ) : (
+            <span>{`$${stats?.total_donations_usd?.toLocaleString()}`}</span>
+          )}
+
           <div className="text-sm font-normal text-[#656565]">Donated</div>
         </div>
 
         <div className="flex flex-row items-baseline gap-2 text-xl font-semibold text-[#dd3345]">
-          {stats?.total_donations_count.toString()}
+          {stats?.total_donations_count === undefined ? (
+            <Skeleton className="h-5.5 w-29" />
+          ) : (
+            <span>{`${stats?.total_donations_count?.toLocaleString()}`}</span>
+          )}
+
           <div className="text-sm font-normal text-[#656565]">Donations</div>
         </div>
       </div>
@@ -69,7 +92,7 @@ const WelcomeBanner = () => {
           {"Opening funding up for anything"}
         </h3>
 
-        <h1 className="lett font-lora m-0 text-4xl font-medium leading-none tracking-tight md:text-[40px]">
+        <h1 className="lett font-lora m-0 text-4xl font-medium leading-[1.1] tracking-tight md:text-[40px]">
           Discover ideas, projects, people, opportunities,
           <br className="hidden md:block" /> and grant pools to fund.
         </h1>
@@ -122,6 +145,14 @@ export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
+  const { data: campaigns } = indexer.useCampaigns({ page: 1, page_size: 200 });
+  const { isLoading: isPotsLoading, completedPots } = useFilteredPots();
+
+  const pastFundingRoundPots = useMemo(() => {
+    if (!completedPots) return [];
+    return completedPots.filter((pot) => PAST_FUNDING_ROUNDS_POT_IDS.includes(pot.account));
+  }, [completedPots]);
+
   useEffect(() => {
     if (!api) return;
 
@@ -142,8 +173,35 @@ export default function Home() {
     <PageWithBanner>
       <WelcomeBanner />
       <GeneralStats />
-
-      <div className="flex w-full flex-col gap-4 px-2 pt-10 md:gap-10 md:px-10 md:pt-12">
+      <div className="mt-8 w-full p-0">
+        <FeaturedCampaigns data={campaigns?.results ?? []} showViewAll={true} />
+      </div>
+      <div className="mt-12 w-full p-0">
+        <div className="mb-4 flex w-full flex-row items-center justify-between p-2 md:p-0">
+          <h1 className="text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
+            {"Past Funding Rounds"}
+          </h1>
+          <Button asChild variant="brand-tonal" className="h-8 bg-transparent text-xs">
+            <Link href={rootPathnames.POTS} className="text-brand-primary">
+              VIEW ALL
+            </Link>
+          </Button>
+        </div>
+        {isPotsLoading ? (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {PAST_FUNDING_ROUNDS_POT_IDS.map((potId) => (
+              <div key={potId} className="h-[300px] animate-pulse rounded-lg bg-gray-200" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {pastFundingRoundPots.map((pot: Pot) => (
+              <PotCard key={pot.account} potId={pot.account} />
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="flex w-full flex-col gap-4 px-2 pt-10 md:gap-10 md:pt-12">
         <div className="flex w-full flex-col gap-5">
           <div className="flex flex-row items-center justify-between text-sm font-medium uppercase leading-6 tracking-[1.12px] text-[#292929]">
             {"Featured projects"}

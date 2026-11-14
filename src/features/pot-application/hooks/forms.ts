@@ -5,12 +5,12 @@ import { calculateDepositByDataSize } from "@wpdas/naxios";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { FormSubmitHandler, useForm } from "react-hook-form";
 
-import { Pot } from "@/common/api/indexer";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { Pot, syncApi } from "@/common/api/indexer";
+import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
 import { assertPotWritesAvailable } from "@/common/contracts/core/pot/safety";
-import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
+import { sputnikDaoClient } from "@/common/contracts/sputnikdao2";
 
 import {
   PotApplicationInputs,
@@ -79,10 +79,9 @@ export const usePotApplicationForm = ({
 
         if (asDao) {
           // If Dao, get dao policy
-          const daoPolicy = await getDaoPolicy(accountId);
+          const daoPolicy = await sputnikDaoClient.get_policy({ accountId });
 
-          await naxiosInstance
-            .contractApi({ contractId: accountId }) // INFO: In this case, the accountId has daoAddress value
+          await contractApi({ contractId: accountId }) // INFO: In this case, the accountId has daoAddress value
             .call("add_proposal", {
               args: daoTransactionArgs,
               deposit: daoPolicy?.proposal_bond || MIN_PROPOSAL_DEPOSIT_FALLBACK,
@@ -90,8 +89,7 @@ export const usePotApplicationForm = ({
               callbackUrl,
             });
         } else {
-          await naxiosInstance
-            .contractApi({ contractId: potDetail.account }) // INFO: In this case, the accountId is a regular pot account
+          await contractApi({ contractId: potDetail.account }) // INFO: In this case, the accountId is a regular pot account
             .call("apply", {
               args,
               deposit,
@@ -101,7 +99,7 @@ export const usePotApplicationForm = ({
         }
       } catch (e) {
         form.setError("root", {
-          message: e instanceof Error ? e.message : "Unable to submit application.",
+          message: e instanceof Error ? e.message : "Unable to submit this transaction.",
         });
       } finally {
         setInProgress(false);
@@ -152,7 +150,9 @@ export const usePotApplicationReviewForm = ({
           ...args,
           potId: potDetail.account,
         })
-        .then(() => {
+        .then(async () => {
+          // Sync pot applications to indexer after review
+          await syncApi.potApplications(potDetail.account).catch(() => {});
           onSuccess();
         })
         .catch((error) => {

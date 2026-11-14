@@ -8,11 +8,10 @@ import {
   DeprecatedPagination,
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/common/ui/layout/components";
 import { AccountProfilePicture } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 import { CustomDonationType } from "../models/types";
 
@@ -166,21 +165,18 @@ export const PotSponsorsTable = ({ sponsors }: { sponsors: CustomDonationType[] 
               >
                 <AccountProfilePicture accountId={donorId} className="mr-4 h-[24px] w-[24px]" />
 
-                {/* Tooltip */}
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Link
-                        className="address"
-                        href={`${rootPathnames.PROFILE}/${donorId}`}
-                        target="_blank"
-                      >
-                        {truncate(donorId, 25)}
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent>{donorId}</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Link
+                      className="address"
+                      href={`${rootPathnames.PROFILE}/${donorId}`}
+                      target="_blank"
+                    >
+                      {truncate(donorId, 25)}
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>{donorId}</TooltipContent>
+                </Tooltip>
               </Link>
               <div className="sponsors-amount">
                 {amount.toFixed(2)}N{" "}

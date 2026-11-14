@@ -11,7 +11,7 @@ import {
 } from "@/common/ui/layout/components";
 import { useWalletUserSession } from "@/common/wallet";
 import { useAccountPower } from "@/entities/_shared/account";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 export const PotDeploymentButton: React.FC = () => {
   const viewer = useWalletUserSession();

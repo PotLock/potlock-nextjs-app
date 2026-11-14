@@ -4,7 +4,7 @@ import { useModal } from "@ebay/nice-modal-react";
 
 import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
 import { useRouteQuery } from "@/common/lib";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import { useDonationSuccessWalletRedirect } from "./redirects";
 import { DonationModal, type DonationModalProps } from "../components/modal";
@@ -14,6 +14,7 @@ export type DonationUserFlowProps = DonationAllocationKey &
   Pick<DonationModalProps, "cachedTokenId"> & {};
 
 export const useDonationUserFlow = (props: DonationUserFlowProps) => {
+  const dispatch = useDispatch();
   const modal = useModal(DonationModal);
   const { setSearchParams } = useRouteQuery();
 
@@ -42,7 +43,7 @@ export const useDonationUserFlow = (props: DonationUserFlowProps) => {
       modal.show(props);
     },
 
-    [modal, props, setSearchParams],
+    [dispatch.donation, modal, props, setSearchParams],
   );
 
   useDonationSuccessWalletRedirect();

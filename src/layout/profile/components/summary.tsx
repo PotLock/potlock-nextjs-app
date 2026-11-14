@@ -1,17 +1,17 @@
-import { useState } from "react";
-
 import Link from "next/link";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 
-import { FEATURE_REGISTRY } from "@/common/_config";
+import { FEATURE_REGISTRY, PLATFORM_NAME } from "@/common/_config";
 import { indexer } from "@/common/api/indexer";
-import { APP_BOS_COUNTERPART_URL, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
+import {
+  APP_BOS_COUNTERPART_URL,
+  PLATFORM_TWITTER_ACCOUNT_ID,
+  PUBLIC_GOODS_REGISTRY_LIST_ID,
+} from "@/common/constants";
 import { listsContractHooks } from "@/common/contracts/core/lists";
 import { truncate } from "@/common/lib";
 import type { ByAccountId } from "@/common/types";
-import { Button, ClipboardCopyButton } from "@/common/ui/layout/components";
-import CheckIcon from "@/common/ui/layout/svg/CheckIcon";
-import ReferrerIcon from "@/common/ui/layout/svg/ReferrerIcon";
+import { Button, ClipboardCopyButton, Spinner } from "@/common/ui/layout/components";
+import { SocialsShare } from "@/common/ui/layout/components/molecules/social-share";
 import { cn } from "@/common/ui/layout/utils";
 import { useWalletUserSession } from "@/common/wallet";
 import {
@@ -21,46 +21,29 @@ import {
   useAccountSocialProfile,
 } from "@/entities/_shared/account";
 import { DonateToAccountButton } from "@/features/donation";
-import { rootPathnames, routeSelectors } from "@/pathnames";
+import { FastDonateToProjectButton } from "@/features/pingpay";
+import { rootPathnames, routeSelectors } from "@/navigation";
 
 const Linktree: React.FC<ByAccountId> = ({ accountId }) => {
   const walletUser = useWalletUserSession();
-  const [copied, setCopied] = useState(false);
+
+  const shareContent = walletUser.isSignedIn
+    ? window.location.origin +
+      `${rootPathnames.PROFILE}/${accountId}?referrerAccountId=${walletUser.accountId}`
+    : undefined;
 
   return (
     <div className="mt-4 flex flex-wrap gap-8">
       <AccountProfileLinktree {...{ accountId }} />
 
       {walletUser.isSignedIn && (
-        <CopyToClipboard
-          text={
-            window.location.origin +
-            `${rootPathnames.PROFILE}/${accountId}?referrerAccountId=${walletUser.accountId}`
-          }
-          onCopy={() => {
-            setCopied(true);
-
-            setTimeout(() => {
-              setCopied(false);
-            }, 2000);
-          }}
-        >
-          {/* ReferralButton container */}
-          <div className="group flex cursor-pointer items-center gap-2 group-hover:bg-green-300">
-            {copied ? (
-              <CheckIcon className="w-[18px]" />
-            ) : (
-              <ReferrerIcon
-                className="group-hover:[accent-dark] w-[18px]"
-                pathClassName="group-hover:fill-[#292929] transition-all ease-in-out"
-              />
-            )}
-
-            <p className="font-500 text-sm" style={{ fontWeight: 500 }}>
-              {"Earn referral fees"}
-            </p>
-          </div>
-        </CopyToClipboard>
+        <div className="flex items-center gap-2">
+          <SocialsShare
+            shareContent={shareContent}
+            shareText={`Check out this project on ${PLATFORM_NAME}! ${PLATFORM_TWITTER_ACCOUNT_ID}`}
+            variant="button"
+          />
+        </div>
       )}
     </div>
   );
@@ -86,6 +69,14 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
     accountId,
   });
 
+  if (isProfileDataLoading) {
+    return (
+      <div className="flex h-40 items-center justify-center">
+        <Spinner className="h-7 w-7" />
+      </div>
+    );
+  }
+
   // TODO: Handle errors and loading state
   return (
     <div
@@ -99,9 +90,7 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
           <div className="flex w-full flex-wrap gap-4">
             <div className="flex flex-col gap-4">
               <h2 className="font-500 line-height-none font-lora mb-1 text-[40px] text-[#2e2e2e]">
-                {isProfileDataLoading
-                  ? "Loading account data..."
-                  : truncate(profile?.name ?? accountId, 36)}
+                {truncate(profile?.name ?? accountId, 36)}
               </h2>
 
               <div className="flex flex-row content-start items-center gap-2">
@@ -128,7 +117,7 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
                       }
                     >
                       {FEATURE_REGISTRY.ProfileConfiguration.isEnabled
-                        ? "Edit Profile"
+                        ? "Edit Project"
                         : "Edit Profile on BOS"}
                     </Link>
                   ) : (
@@ -171,6 +160,8 @@ export const ProfileLayoutSummary: React.FC<ProfileLayoutSummaryProps> = ({ acco
             <DonateToAccountButton accountId={accountId} variant="brand-filled" className="w-40" />
             <AccountFollowButton accountId={accountId} className="w-40" />
           </div>
+
+          <FastDonateToProjectButton recipientAccountId={accountId} recipientName={profile?.name} />
         </div>
       </div>
     </div>

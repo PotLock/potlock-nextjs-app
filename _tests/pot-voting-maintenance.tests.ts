@@ -10,7 +10,7 @@ const api = vi.hoisted(() => ({
 }));
 
 vi.mock("@/common/blockchains/near-protocol/client", () => ({
-  naxiosInstance: { contractApi: () => api },
+  contractApi: () => api,
 }));
 
 vi.mock("@wpdas/naxios", () => ({ MemoryCache: class {} }));

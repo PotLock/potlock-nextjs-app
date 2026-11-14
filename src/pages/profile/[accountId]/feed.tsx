@@ -86,7 +86,9 @@ export default function ProfileFeedTab() {
           )
         }
       >
-        {posts?.map((post) => <PostCard key={post?.blockHeight} post={post} />)}
+        {posts?.map((post) => (
+          <PostCard key={post?.blockHeight} post={post} />
+        ))}
       </InfiniteScrollWrapper>
 
       {posts.length === 0 && !isLoading && <NoResults />}

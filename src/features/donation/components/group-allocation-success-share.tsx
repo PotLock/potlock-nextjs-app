@@ -12,7 +12,7 @@ import type { AccountId } from "@/common/types";
 import { Button, Skeleton } from "@/common/ui/layout/components";
 import TwitterSvg from "@/common/ui/layout/svg/twitter";
 import { useWalletUserSession } from "@/common/wallet";
-import { rootPathnames } from "@/pathnames";
+import { rootPathnames } from "@/navigation";
 
 export type DonationGroupAllocationSuccessXShareButtonProps = {
   recipientAccountIds: AccountId[];

@@ -1,5 +1,3 @@
-import { Temporal } from "temporal-polyfill";
-
 import { Pot } from "@/common/api/indexer";
 import { timestamp } from "@/common/lib";
 import { FromSchema } from "@/common/types";
@@ -41,54 +39,22 @@ export const potDeploymentDependentFields: (keyof PotDeploymentInputs)[] = [
   "public_round_start_ms",
 ];
 
-export const getPotSettingsSchema = (potIndexedData?: Pot) => {
-  const schema =
-    potIndexedData === undefined
-      ? potSchema
-      : potSchema.extend({
-          application_start_ms: timestamp.describe("Application period start timestamp.").refine(
-            (value) =>
-              value >= Temporal.Instant.from(potIndexedData.application_start).epochMilliseconds,
+/**
+ * Schema for updating pot settings.
+ * Uses regular timestamp validation (no "must be in future" requirement).
+ * Past dates are filtered out when submitting, not in the form.
+ * Cross-field validation (end after start) is still enforced.
+ */
+export const getPotSettingsSchema = (_potIndexedData?: Pot) => {
+  // For updates, use timestamp (not futureTimestamp) - no "must be in future" validation
+  const schema = potSchema.extend({
+    application_start_ms: timestamp.describe("Application period start timestamp."),
+    application_end_ms: timestamp.describe("Application period end timestamp."),
+    public_round_start_ms: timestamp.describe("Matching round start timestamp."),
+    public_round_end_ms: timestamp.describe("Matching round end timestamp."),
+  });
 
-            {
-              message: "Cannot be earlier than the date set upon deployment.",
-            },
-          ),
-
-          application_end_ms: timestamp.describe("Application period end timestamp.").refine(
-            (value) =>
-              value >= Temporal.Instant.from(potIndexedData.application_end).epochMilliseconds,
-
-            {
-              message: "Cannot be earlier than the date set upon deployment.",
-            },
-          ),
-
-          public_round_start_ms: timestamp.describe("Matching round start timestamp.").refine(
-            (value) =>
-              value >= Temporal.Instant.from(potIndexedData.matching_round_start).epochMilliseconds,
-
-            {
-              message: "Cannot be earlier than the date set upon deployment.",
-            },
-          ),
-
-          public_round_end_ms: timestamp.describe("Matching round end timestamp.").refine(
-            (value) =>
-              value >= Temporal.Instant.from(potIndexedData.matching_round_end).epochMilliseconds,
-
-            {
-              message: "Cannot be earlier than the date set upon deployment.",
-            },
-          ),
-        });
-
-  /**
-   *! Heads up!
-   *!  Make sure that any fields targeted here are listed in
-   *!  `potSettingsDependentFields`
-   *!  and have their corresponding error paths specified correctly.
-   */
+  // Keep cross-field validation (end cannot be before start)
   return schema
     .refine(isPotApplicationStartBeforeEnd, {
       message: "Application cannot end before it starts.",

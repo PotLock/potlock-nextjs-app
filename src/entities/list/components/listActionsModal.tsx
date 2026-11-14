@@ -11,7 +11,7 @@ import {
   DialogContent,
 } from "@/common/ui/layout/components";
 import SuccessRedIcon from "@/common/ui/layout/svg/success-red-icon";
-import { dispatch } from "@/store";
+import { useDispatch } from "@/store/hooks";
 
 import DonationSuccess from "./DonationSuccess";
 import { SuccessModalCreateList } from "./ListConfirmationModals";
@@ -21,6 +21,7 @@ import { ListFormModalType } from "../types";
 type ListActionsModal = {};
 
 export const ListActionsModal = create((_: ListActionsModal) => {
+  const dispatch = useDispatch();
   const self = useModal();
   const { push } = useRouter();
 
@@ -28,7 +29,7 @@ export const ListActionsModal = create((_: ListActionsModal) => {
     self.hide();
     self.remove();
     dispatch.listEditor.reset();
-  }, [self]);
+  }, [dispatch.listEditor, self]);
 
   const {
     type,

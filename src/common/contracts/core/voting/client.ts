@@ -1,7 +1,5 @@
-import naxios, { MemoryCache } from "@wpdas/naxios";
-
 import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
-import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { assertPotWritesAvailable } from "@/common/contracts/core/pot/safety";
 
 import type {
@@ -23,18 +21,14 @@ import type {
  * Provides methods to create and manage elections, cast votes, and query election data
  */
 class VotingClient implements Omit<VotingContract, "new"> {
-  private contract: ReturnType<typeof naxios.prototype.contractApi>;
+  private contract: ReturnType<typeof contractApi>;
 
   /**
    * Creates a new VotingClient instance
    * @param contractId The NEAR account ID of the deployed voting contract
-   * @param network The NEAR network to connect to (mainnet, testnet, etc.)
    */
-  constructor(naxiosInstance: naxios, contractId: string) {
-    this.contract = naxiosInstance.contractApi({
-      contractId,
-      cache: new MemoryCache({ expirationTime: 60 }),
-    });
+  constructor(contractId: string) {
+    this.contract = contractApi({ contractId });
   }
 
   // View Methods
@@ -294,4 +288,4 @@ class VotingClient implements Omit<VotingContract, "new"> {
  * @param network The NEAR network to connect to
  */
 export const createVotingClient = (contractId: string): VotingClient =>
-  new VotingClient(naxiosInstance, contractId);
+  new VotingClient(contractId);

@@ -1,13 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-
+  experimental: {
+    esmExternals: "loose",
+  },
   async redirects() {
     return [
       {
         source: "/((?!_next).*)js",
         destination: "/404",
         permanent: false,
+      },
+      // Redirect old campaign subroutes to new tab-based routes
+      {
+        source: "/campaign/:campaignId/leaderboard",
+        destination: "/campaign/:campaignId?tab=leaderboard",
+        permanent: true,
+      },
+      {
+        source: "/campaign/:campaignId/settings",
+        destination: "/campaign/:campaignId?tab=settings",
+        permanent: true,
       },
     ];
   },
@@ -20,6 +33,9 @@ const nextConfig = {
         hostname: "**",
       },
     ],
+    // Cache each optimized image variant for 7 days (default is 60s, which
+    // causes constant re-optimization invocations on Vercel).
+    minimumCacheTTL: 60 * 60 * 24 * 7,
   },
 
   webpack(config) {

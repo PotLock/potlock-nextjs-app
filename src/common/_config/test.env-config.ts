@@ -14,6 +14,10 @@ export const envConfig: EnvConfig = {
   },
 
   core: {
+    namespaceRoot: {
+      contract: { accountId: "potlock.testnet" },
+    },
+
     donation: {
       contract: { accountId: "donate.potlock.testnet" },
     },
@@ -41,6 +45,7 @@ export const envConfig: EnvConfig = {
   },
 
   social: {
+    platformName: "NEAR Social (testnet)",
     app: { url: "https://test.near.social" },
     contract: { accountId: "v1.social08.testnet" },
   },
