@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
 
+import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
 import { useRouteQuery } from "@/common/lib";
 import { useDispatch } from "@/store/hooks";
 
@@ -28,7 +29,9 @@ export const useDonationSuccessWalletRedirect = () => {
       : undefined);
 
   const isTransactionOutcomeDetected =
-    transactionHash && Boolean(recipientAccountId ?? potAccountId ?? listId);
+    transactionHash &&
+    Boolean(recipientAccountId ?? potAccountId ?? listId) &&
+    !(POTS_IN_MAINTENANCE && potAccountId);
 
   useEffect(() => {
     if (isTransactionOutcomeDetected && !donationModal.visible) {

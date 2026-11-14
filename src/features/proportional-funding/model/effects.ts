@@ -4,6 +4,7 @@ import { values } from "remeda";
 import { type ByPotId, syncApi } from "@/common/api/indexer";
 import { FULL_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
+import { assertPotWritesAvailable } from "@/common/contracts/core/pot/safety";
 import { parseNearAmount } from "@/common/lib";
 import { pinataClient } from "@/common/services/pinata";
 import type { VotingRoundParticipants } from "@/entities/voting-round";
@@ -42,8 +43,9 @@ export const publishPayoutJustification = async ({
   potId,
   votingRoundResult,
   challengerAccountId,
-}: PFPayoutJustificationInputs) =>
-  pinataClient
+}: PFPayoutJustificationInputs) => {
+  assertPotWritesAvailable(potId);
+  return pinataClient
     .upload({
       file: new File(
         [new Blob([JSON.stringify(votingRoundResult)], { type: "application/json" })],
@@ -86,3 +88,4 @@ export const publishPayoutJustification = async ({
         ] as Transaction<object>[]);
       }),
     );
+};

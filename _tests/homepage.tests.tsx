@@ -6,6 +6,22 @@ import { expect, test, vi } from "vitest";
 import { renderWithStore } from "./test-env";
 import Homepage from "../src/pages";
 
+// The donation entry point should not depend on a live indexer response in a unit test.
+vi.mock("@/common/api/indexer", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/common/api/indexer")>();
+  return {
+    ...actual,
+    indexer: {
+      ...actual.indexer,
+      useRandomListRegistration: () => ({
+        isLoading: false,
+        data: { registrant: { id: "project.near" } },
+        mutate: vi.fn(),
+      }),
+    },
+  };
+});
+
 // JSDOM does not implement browser APIs used by embla-carousel
 Object.defineProperty(window, "matchMedia", {
   writable: true,
@@ -62,11 +78,7 @@ test("Homepage", async () => {
   renderWithStore(<Homepage />);
 
   await waitFor(
-    () =>
-      expect(
-        screen.getByText("Donate Randomly"),
-        "random donation button",
-      ).toBeDefined(),
+    () => expect(screen.getByText("Donate Randomly"), "random donation button").toBeDefined(),
 
     { timeout: 5000 },
   );

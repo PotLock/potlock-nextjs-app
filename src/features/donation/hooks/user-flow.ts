@@ -2,6 +2,7 @@ import { useCallback } from "react";
 
 import { useModal } from "@ebay/nice-modal-react";
 
+import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
 import { useRouteQuery } from "@/common/lib";
 import { useDispatch } from "@/store/hooks";
 
@@ -21,6 +22,12 @@ export const useDonationUserFlow = (props: DonationUserFlowProps) => {
     (event: React.MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
+
+      if (POTS_IN_MAINTENANCE && "potId" in props) {
+        window.location.assign(`/pot/${encodeURIComponent(props.potId)}`);
+        return;
+      }
+
       dispatch.donation.reset();
 
       if ("accountId" in props) {

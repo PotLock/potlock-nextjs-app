@@ -18,11 +18,15 @@ import {
   PotDonationArgs,
   UpdatePotArgs,
 } from "./interfaces";
+import { withPotWriteGuard } from "./safety";
 
 export const contractApi = (potId: string) =>
-  nearProtocolClient.contractApi({
-    contractId: potId,
-  });
+  withPotWriteGuard(
+    nearProtocolClient.contractApi({
+      contractId: potId,
+    }),
+    potId,
+  );
 
 // READ METHODS
 /**

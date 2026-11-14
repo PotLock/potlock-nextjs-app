@@ -7,6 +7,7 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { Pot } from "@/common/api/indexer";
 import { contractApi } from "@/common/blockchains/near-protocol/client";
 import { FIFTY_TGAS, FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
+import { assertPotWritesAvailable } from "@/common/contracts/core/pot/safety";
 import { sputnikDaoClient } from "@/common/contracts/sputnikdao2";
 import { useWalletUserSession } from "@/common/wallet";
 
@@ -62,6 +63,7 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
       const callbackUrl = `${location.origin}${location.pathname}?done=true`;
 
       try {
+        assertPotWritesAvailable(potDetail.account);
         setInProgress(true);
 
         if (viewer.isDaoRepresentative) {
@@ -82,7 +84,9 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
           });
         }
       } catch (e) {
-        console.error(e);
+        form.setError("root", {
+          message: e instanceof Error ? e.message : "Unable to submit this transaction.",
+        });
       } finally {
         setInProgress(false);
       }
@@ -94,6 +98,7 @@ export const useMatchingPoolContributionForm = ({ potDetail }: { potDetail: Pot 
       viewer.accountId,
       viewer.isDaoRepresentative,
       viewer.referrerAccountId,
+      form,
     ],
   );
 

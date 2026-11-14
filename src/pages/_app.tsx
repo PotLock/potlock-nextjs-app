@@ -13,6 +13,7 @@ import { NextPage } from "next";
 import { AppProps } from "next/app";
 import { Lora } from "next/font/google";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { Provider as ReduxProvider } from "react-redux";
 import { useSWRConfig } from "swr";
 
@@ -22,6 +23,7 @@ import { Toaster } from "@/common/ui/layout/components/molecules/toaster";
 import { useToast } from "@/common/ui/layout/hooks";
 import { cn } from "@/common/ui/layout/utils";
 import { WalletUserSessionProvider } from "@/common/wallet";
+import { PotServiceBoundary } from "@/features/pot-maintenance/boundary";
 import { AppBar } from "@/layout/components/app-bar";
 import { CampaignRouteLoading } from "@/layout/components/campaign-route-loading";
 import { FloatingDocsButton } from "@/layout/components/floating-docs-button";
@@ -76,6 +78,7 @@ function PingPayBroadcastListener() {
 }
 
 export default function RootLayout({ Component, pageProps }: AppPropsWithLayout) {
+  const router = useRouter();
   useEffect(() => void store.dispatch.core.init(), []);
 
   const getLayout = Component.getLayout ?? ((page) => page);
@@ -98,7 +101,13 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
               )}
             >
               <AppBar />
-              <CampaignRouteLoading>{getLayout(<Component {...pageProps} />)}</CampaignRouteLoading>
+              <CampaignRouteLoading>
+                <PotServiceBoundary
+                  pathname={router.pathname}
+                  potId={typeof router.query.potId === "string" ? router.query.potId : undefined}
+                  renderActivePage={() => getLayout(<Component {...pageProps} />)}
+                />
+              </CampaignRouteLoading>
               <FloatingDocsButton />
             </div>
           </TooltipProvider>

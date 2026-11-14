@@ -1,3 +1,6 @@
+import Link from "next/link";
+
+import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
 import { ByPotId, indexer } from "@/common/api/indexer";
 import { NOOP_STRING, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import { type ByAccountId, ByCampaignId, ByListId } from "@/common/types";
@@ -64,7 +67,13 @@ export type DonateToPotProjectsProps = ByPotId & {};
 export const DonateToPotProjects: React.FC<DonateToPotProjectsProps> = ({ potId }) => {
   const { openDonationModal } = useDonationUserFlow({ potId });
 
-  return <Button onClick={openDonationModal}>{"Donate to Projects"}</Button>;
+  return POTS_IN_MAINTENANCE ? (
+    <Button asChild>
+      <Link href={`/pot/${potId}`}>Pots under maintenance</Link>
+    </Button>
+  ) : (
+    <Button onClick={openDonationModal}>{"Donate to Projects"}</Button>
+  );
 };
 
 export type DonateToListProjectsProps = ByListId & {};
