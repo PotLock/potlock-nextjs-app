@@ -5,9 +5,18 @@ Pot service mode is set to `indefinite-maintenance` in
 
 The application boundary renders the maintenance screen for `/pots`, `/deploy`,
 and every `/pot/*` route before mounting page layouts, transaction modals or
-callback handlers. `/pots/history` provides read-only round records. Old Pot URLs
+callback handlers. `/pots` and `/pots/history` provide historical Pot cards.
+Selecting any Pot card (including homepage/profile cards) opens a maintenance
+dialog with a link to that account on NearBlocks in a new tab. Direct Pot URLs
 remain valid and display read-only round details when the indexer is available.
 Public source links remain available when the indexer is unavailable.
+
+The mainnet catalog falls back to public metadata read from `get_pots` on the
+factory and `get_config` on each of its ten Pot accounts on 2026-11-14. Capture
+time and per-account block heights are recorded in
+`src/features/pot-maintenance/historical-pots.snapshot.json`. This snapshot
+contains names/descriptions and historical round dates, not current balances.
+It is not shown on testnet. Indexed records take precedence when available.
 
 All Pot client writes and deployment quotes are guarded. Direct-wallet and DAO
 application/contribution handlers are guarded before submission. Pot election

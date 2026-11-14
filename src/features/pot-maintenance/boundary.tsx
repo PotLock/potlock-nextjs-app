@@ -14,7 +14,7 @@ export const PotServiceBoundary = ({
   renderActivePage: () => ReactNode;
 }) =>
   POTS_IN_MAINTENANCE && isPotServiceRoute(pathname) ? (
-    <PotMaintenancePage potId={potId} />
+    <PotMaintenancePage potId={potId} history={pathname.replace(/\/+$/, "") === "/pots"} />
   ) : (
     <>{renderActivePage()}</>
   );

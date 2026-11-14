@@ -50,7 +50,10 @@ describe("Pot maintenance boundary", () => {
       <PotServiceBoundary pathname={pathname} renderActivePage={renderActivePage} />,
     );
 
-    expect(html).toContain("Pots are out of service");
+    expect(html).toContain(
+      pathname.replace(/\/+$/, "") === "/pots" ? "Explore past Pots" : "Pots are out of service",
+    );
+
     expect(html).toContain(POT_MAINTENANCE_MESSAGE);
     expect(html).not.toContain("Submit transaction");
     expect(html).not.toContain("Transaction sent successfully");
