@@ -1,49 +1,65 @@
-# Pot maintenance
+# Historical Pots during maintenance
 
-Pot service mode is set to `indefinite-maintenance` in
-`src/common/_config/pot-service.ts`. It has no expiry or browser-side override.
+Pot service mode remains `indefinite-maintenance` in
+`src/common/_config/pot-service.ts`, with no expiry or browser override.
 
-The application boundary renders the maintenance screen for `/pots`, `/deploy`,
-and every `/pot/*` route before mounting page layouts, transaction modals or
-callback handlers. `/pots` and `/pots/history` provide historical Pot cards.
-Selecting any Pot card (including homepage/profile cards) opens a maintenance
-dialog with a link to that account on NearBlocks in a new tab. Direct Pot URLs
-remain valid and display read-only round details when the indexer is available.
-Public source links remain available when the indexer is unavailable.
+## Visitor flow
 
-The mainnet catalog falls back to public metadata read from `get_pots` on the
-factory and `get_config` on each of its ten Pot accounts on 2026-11-14. Capture
-time and per-account block heights are recorded in
-`src/features/pot-maintenance/historical-pots.snapshot.json`. This snapshot
-contains names/descriptions and historical round dates, not current balances.
-It is not shown on testnet. Indexed records take precedence when available.
+`/pots`, `/pots/history` and the homepage expose historical Pot cards in a
+swipeable carousel with arrow controls. Cards link to `/pot/<account>` inside
+the app. The route boundary renders a dedicated read-only dashboard, never the
+original transaction page, callback handlers or admin layout. On arrival, a
+historical/maintenance dialog explains the status. “View historical data”
+dismisses it and focuses the page heading. A permanent notice remains visible,
+and the dialog can be reopened. NearBlocks opens the exact account in a new tab.
 
-All Pot client writes and deployment quotes are guarded. Direct-wallet and DAO
-application/contribution handlers are guarded before submission. Pot election
-voting is blocked after a read-only election-type lookup; non-Pot elections are
-unchanged. Payout justification publication is blocked before upload. Donation
-matching selectors exclude Pots, and stale Pot allocations are rejected instead
-of being rerouted. Pot wallet-return parameters do not show success dialogs.
+The dashboard displays public and matching donations, gross/net NEAR amounts,
+unique donor/sponsor counts, application status counts,
+matching payout allocations and recorded payment status, round dates, roles and
+fees. Monthly totals and status tables paginate locally. Individual wallet/transaction
+records remain on NearBlocks; donor, applicant and payout-recipient identities
+are not republished in this repository or the app snapshots.
 
-This changes application behavior only. It does not stop deployed contracts,
-third-party applications or previously created DAO proposals.
+## Data provenance
 
-## Validation
+The snapshot at finalized mainnet block 224508089 contains 4,130 recorded
+donations and 241 applications across all ten factory-listed Pots. Summary
+metrics are included in `historical-pots.snapshot.json`. Each Pot's aggregate historical
+metrics are loaded separately from `public/pot-history/<account>.json` to keep
+the catalog bundle small. Capture time and block height are visible in the UI.
+These are historical contract ledger records, not current spendable balances or
+independent confirmation of transfers/refunds. No historical USD estimates use
+today's exchange rate. The mainnet snapshot is not displayed on testnet.
 
-```sh
-yarn typecheck
-yarn test:unit _tests/pot-safety.tests.ts _tests/pot-form-safety.tests.ts \
-  _tests/pot-maintenance.tests.tsx _tests/pot-voting-maintenance.tests.ts
-yarn build
-```
+Reproduce the capture with `python3 scripts/capture-pot-history.py`. The script
+uses only public RPC view calls, pins every read to one finalized block,
+paginates all donations/applications, checks record counts and duplicate IDs,
+and writes only after all captures succeed. Only aggregate amounts, counts and period/status summaries are published.
+Individual donor, applicant and recipient identities and free-text messages are
+omitted. The client validates the account and block before
+using a detail file. If it fails, saved summary metrics and explorer/source
+links remain usable. Unknown accounts show an unavailable-record message.
 
-Check `/pots`, `/deploy`, `/pot/example.near/settings?done=true`, a historical Pot
-URL and `/pots/history` on desktop and mobile. Check that no transaction controls
-appear, source links work without signing in, and an unavailable indexer leaves
-the notice usable. Check unrelated direct-donation and campaign/list navigation.
+## Transaction containment
 
-Reopening is an intentional reviewed code/configuration release after replacement
-contracts and their app integration are verified. The legacy factory namespace
-block in `src/common/contracts/core/pot/safety.ts` remains independent of service
-mode; changing the mode alone does not unblock those contracts. Rollback should
-use a maintenance-enabled release, rather than enabling Pot transactions again.
+All Pot client writes and deployment quotes remain guarded. Direct-wallet and
+DAO application/contribution handlers reject before submission. Pot election
+voting is blocked after a read-only type lookup; non-Pot elections are unchanged.
+Payout justification publication is blocked before upload. Donation matching
+selectors exclude Pots, and stale Pot allocations are rejected. Wallet-return
+parameters cannot mount a success dialog through an original Pot page.
+`/deploy` continues to show maintenance. This frontend change does not pause
+deployed contracts or third-party applications.
+
+Reopening requires a reviewed release after replacement contracts and integration
+are verified. The legacy factory namespace block in `pot/safety.ts` is independent
+of service mode and remains blocked if service mode changes.
+
+## Verification
+
+Run `NEXT_PUBLIC_ENV=test yarn test:unit`, `yarn typecheck` and
+`NEXT_PUBLIC_ENV=production yarn build`. Reconciliation tests check all captured
+records against the summary counts and exact integer amounts. Browser checks
+cover carousel arrows, swipe-sized mobile layout, card navigation, automatic
+notice, dismiss/reopen, metrics and table pagination, direct Pot/admin URLs,
+unknown accounts, and the retained deployment/write guards.

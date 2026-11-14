@@ -1,6 +1,6 @@
 {
   "network": "mainnet",
-  "capturedAt": "2026-11-14T09:26:33.664264+00:00",
+  "capturedAt": "2026-11-14T11:33:04.631728+00:00",
   "factoryAccount": "v1.potfactory.potlock.near",
   "records": [
     {
@@ -8,70 +8,230 @@
       "name": "Creatives",
       "description": "Round for funding creative public goods. More info can be found at https://potlock.org/creatives",
       "matching_round_end": "2024-03-09T04:59:00+00:00",
-      "blockHeight": 224494676
+      "blockHeight": 224508089,
+      "metrics": {
+        "matchingPoolBalance": "3038783460000000000000000000",
+        "publicDonationsNet": "507482760000000000000000000",
+        "donationsGross": "3559385000000000000000000000",
+        "donationCount": 357,
+        "publicDonationCount": 338,
+        "matchingDonationCount": 19,
+        "uniqueDonors": 152,
+        "uniqueSponsors": 17,
+        "applicants": 32,
+        "approvedProjects": 25,
+        "payoutsAllocated": "3038783460000000000000000000",
+        "payoutsPaid": "3038783460000000000000000000",
+        "payoutCount": 25,
+        "paidPayoutCount": 25
+      }
     },
     {
       "account": "africa-public-goods.v1.potfactory.potlock.near",
       "name": "Africa Public Goods",
       "description": "For communities and public goods projects building in Africa https://potlock.org/africa",
       "matching_round_end": "2024-03-25T03:59:00+00:00",
-      "blockHeight": 224494675
+      "blockHeight": 224508089,
+      "metrics": {
+        "matchingPoolBalance": "766753040000000000000000000",
+        "publicDonationsNet": "47012780000000000000000000",
+        "donationsGross": "820080000000000000000000000",
+        "donationCount": 151,
+        "publicDonationCount": 143,
+        "matchingDonationCount": 8,
+        "uniqueDonors": 67,
+        "uniqueSponsors": 8,
+        "applicants": 14,
+        "approvedProjects": 14,
+        "payoutsAllocated": "766753040000000000000000000",
+        "payoutsPaid": "766753040000000000000000000",
+        "payoutCount": 14,
+        "paidPayoutCount": 14
+      }
     },
     {
       "account": "ai.v1.potfactory.potlock.near",
       "name": "AI Public Goods",
       "description": "Supporting public goods in the artificial intelligence space. AI Research, open source projects, governance, ethics. AI x Web3. Learn more at https://potlock.org/ai",
       "matching_round_end": "2024-06-24T03:59:00+00:00",
-      "blockHeight": 224494676
+      "blockHeight": 224508089,
+      "metrics": {
+        "matchingPoolBalance": "11149114680000000000000000000",
+        "publicDonationsNet": "415834294999999999878970000",
+        "donationsGross": "11591173999999999999870000000",
+        "donationCount": 530,
+        "publicDonationCount": 512,
+        "matchingDonationCount": 18,
+        "uniqueDonors": 428,
+        "uniqueSponsors": 16,
+        "applicants": 34,
+        "approvedProjects": 22,
+        "payoutsAllocated": "11149114680000000000000000000",
+        "payoutsPaid": "11149114680000000000000000000",
+        "payoutCount": 20,
+        "paidPayoutCount": 20
+      }
     },
     {
       "account": "build.v1.potfactory.potlock.near",
       "name": "NEAR Retroactive Builders",
       "description": "For open source projects in the NEAR ecosystem that have not been previously/properly compensated. Projects & not individuals. For more info go to https://potlock.org/retroactive-builders",
       "matching_round_end": "2024-04-08T03:59:00+00:00",
-      "blockHeight": 224494676
+      "blockHeight": 224508089,
+      "metrics": {
+        "matchingPoolBalance": "7397659410000000000000000000",
+        "publicDonationsNet": "656771587999999999990000000",
+        "donationsGross": "8099482999999999999990000000",
+        "donationCount": 733,
+        "publicDonationCount": 715,
+        "matchingDonationCount": 18,
+        "uniqueDonors": 269,
+        "uniqueSponsors": 15,
+        "applicants": 34,
+        "approvedProjects": 32,
+        "payoutsAllocated": "7397659410000000000000000000",
+        "payoutsPaid": "7397659410000000000000000000",
+        "payoutCount": 32,
+        "paidPayoutCount": 32
+      }
     },
     {
       "account": "oss.v1.potfactory.potlock.near",
       "name": "Open Source Software",
       "description": "To support impactful open source software projects on NEAR. More info at https://potlock.org/oss",
       "matching_round_end": "2024-05-21T03:59:00+00:00",
-      "blockHeight": 224494676
+      "blockHeight": 224508089,
+      "metrics": {
+        "matchingPoolBalance": "5380344070000000000000000000",
+        "publicDonationsNet": "944714189999999999960800000",
+        "donationsGross": "6339417999999999999960000000",
+        "donationCount": 710,
+        "publicDonationCount": 700,
+        "matchingDonationCount": 10,
+        "uniqueDonors": 386,
+        "uniqueSponsors": 7,
+        "applicants": 25,
+        "approvedProjects": 24,
+        "payoutsAllocated": "5380344070000000000000000000",
+        "payoutsPaid": "5380344070000000000000000000",
+        "payoutCount": 21,
+        "paidPayoutCount": 21
+      }
     },
     {
       "account": "nearian.v1.potfactory.potlock.near",
       "name": "CREATE./DEV",
       "description": "Rewarding at the intersection of technology & art. \ud83d\udd17 https://createdev.near.page/",
       "matching_round_end": "2024-11-16T22:59:00+00:00",
-      "blockHeight": 224494678
+      "blockHeight": 224508089,
+      "metrics": {
+        "matchingPoolBalance": "2012401830000000000000000000",
+        "publicDonationsNet": "112078208530050504923093200",
+        "donationsGross": "2135454720057720057576000000",
+        "donationCount": 515,
+        "publicDonationCount": 507,
+        "matchingDonationCount": 8,
+        "uniqueDonors": 237,
+        "uniqueSponsors": 8,
+        "applicants": 28,
+        "approvedProjects": 12,
+        "payoutsAllocated": "2012401830000000000000000000",
+        "payoutsPaid": "2012401830000000000000000000",
+        "payoutCount": 12,
+        "paidPayoutCount": 12
+      }
     },
     {
       "account": "college.v1.potfactory.potlock.near",
       "name": "Blockchain Clubs - Summer Funding",
       "description": "A round by Blockchain Acceleration Foundation to fund blockchain clubs in the summer. https://potlock.org/baf",
       "matching_round_end": "2024-07-02T03:59:00+00:00",
-      "blockHeight": 224494678
+      "blockHeight": 224508089,
+      "metrics": {
+        "matchingPoolBalance": "680018130000000000000000000",
+        "publicDonationsNet": "5208309999999999962760000",
+        "donationsGross": "689839999999999999960000000",
+        "donationCount": 45,
+        "publicDonationCount": 38,
+        "matchingDonationCount": 7,
+        "uniqueDonors": 18,
+        "uniqueSponsors": 6,
+        "applicants": 17,
+        "approvedProjects": 10,
+        "payoutsAllocated": "680018130000000000000000000",
+        "payoutsPaid": "680018130000000000000000000",
+        "payoutCount": 10,
+        "paidPayoutCount": 10
+      }
     },
     {
       "account": "infra.v1.potfactory.potlock.near",
       "name": "NEAR Intents Yappers",
       "description": "Best NEAR intents Yappers",
       "matching_round_end": "2025-12-27T04:59:00+00:00",
-      "blockHeight": 224494679
+      "blockHeight": 224508089,
+      "metrics": {
+        "matchingPoolBalance": "8411330000000000000000000",
+        "publicDonationsNet": "0",
+        "donationsGross": "8610000000000000000000000",
+        "donationCount": 7,
+        "publicDonationCount": 0,
+        "matchingDonationCount": 7,
+        "uniqueDonors": 5,
+        "uniqueSponsors": 5,
+        "applicants": 2,
+        "approvedProjects": 0,
+        "payoutsAllocated": "0",
+        "payoutsPaid": "0",
+        "payoutCount": 0,
+        "paidPayoutCount": 0
+      }
     },
     {
       "account": "marketing.v1.potfactory.potlock.near",
       "name": "NEAR Marketing DAO",
       "description": "Supporting marketing initiatives on NEAR. Learn more at potlock.org/mdao",
       "matching_round_end": "2024-06-08T03:59:00+00:00",
-      "blockHeight": 224494679
+      "blockHeight": 224508089,
+      "metrics": {
+        "matchingPoolBalance": "4089482820000000000000000000",
+        "publicDonationsNet": "243418487364957264160080000",
+        "donationsGross": "4355299647008547007690000000",
+        "donationCount": 1064,
+        "publicDonationCount": 1051,
+        "matchingDonationCount": 13,
+        "uniqueDonors": 506,
+        "uniqueSponsors": 10,
+        "applicants": 38,
+        "approvedProjects": 38,
+        "payoutsAllocated": "4089482820000000000000000000",
+        "payoutsPaid": "4089482820000000000000000000",
+        "payoutCount": 38,
+        "paidPayoutCount": 38
+      }
     },
     {
       "account": "mpdao.v1.potfactory.potlock.near",
       "name": "mpDAO RetroPGF",
       "description": "Retroactive round for Meta Pool ecosystem projects. Voting mechanism a mix of stake to vote + mpDAO core team judging. More info potlock.org/mp-rpgf",
       "matching_round_end": "2024-12-28T07:59:00+00:00",
-      "blockHeight": 224494679
+      "blockHeight": 224508089,
+      "metrics": {
+        "matchingPoolBalance": "418396647600000000000000000",
+        "publicDonationsNet": "3431581080000000000000000",
+        "donationsGross": "430540000000000000000000000",
+        "donationCount": 18,
+        "publicDonationCount": 6,
+        "matchingDonationCount": 12,
+        "uniqueDonors": 14,
+        "uniqueSponsors": 12,
+        "applicants": 17,
+        "approvedProjects": 11,
+        "payoutsAllocated": "418396647600000000000000000",
+        "payoutsPaid": "418396647600000000000000000",
+        "payoutCount": 11,
+        "paidPayoutCount": 11
+      }
     }
   ]
 }

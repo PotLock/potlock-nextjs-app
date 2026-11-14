@@ -1,0 +1,99 @@
+{
+  "account": "creatives.v1.potfactory.potlock.near",
+  "capturedAt": "2026-11-14T11:33:04.631728+00:00",
+  "blockHeight": 224508089,
+  "config": {
+    "pot_name": "Creatives",
+    "pot_description": "Round for funding creative public goods. More info can be found at https://potlock.org/creatives\n",
+    "base_currency": "near",
+    "application_start_ms": 1707761520000,
+    "application_end_ms": 1708533540000,
+    "public_round_start_ms": 1708533600000,
+    "public_round_end_ms": 1709960340000,
+    "cooldown_end_ms": 1710617483073,
+    "max_projects": 25,
+    "all_paid_out": true,
+    "chef_fee_basis_points": 0,
+    "referral_fee_matching_pool_basis_points": 500,
+    "referral_fee_public_round_basis_points": 500,
+    "admin_count": 0,
+    "chef_assigned": true
+  },
+  "metrics": {
+    "matchingPoolBalance": "3038783460000000000000000000",
+    "publicDonationsNet": "507482760000000000000000000",
+    "donationsGross": "3559385000000000000000000000",
+    "donationCount": 357,
+    "publicDonationCount": 338,
+    "matchingDonationCount": 19,
+    "uniqueDonors": 152,
+    "uniqueSponsors": 17,
+    "applicants": 32,
+    "approvedProjects": 25,
+    "payoutsAllocated": "3038783460000000000000000000",
+    "payoutsPaid": "3038783460000000000000000000",
+    "payoutCount": 25,
+    "paidPayoutCount": 25
+  },
+  "donationMonths": [
+    {
+      "month": "2024-03",
+      "count": 227,
+      "uniqueDonors": 128,
+      "gross": "269395000000000000000000000",
+      "net": "263183940000000000000000000"
+    },
+    {
+      "month": "2024-02",
+      "count": 111,
+      "uniqueDonors": 27,
+      "gross": "249940000000000000000000000",
+      "net": "244298820000000000000000000"
+    }
+  ],
+  "sponsorshipMonths": [
+    {
+      "month": "2024-03",
+      "count": 10,
+      "uniqueDonors": 8,
+      "gross": "58630000000000000000000000",
+      "net": "57442330000000000000000000"
+    },
+    {
+      "month": "2024-02",
+      "count": 9,
+      "uniqueDonors": 9,
+      "gross": "2981420000000000000000000000",
+      "net": "2981341130000000000000000000"
+    }
+  ],
+  "applicationStatuses": [
+    {
+      "status": "Approved",
+      "count": 25
+    },
+    {
+      "status": "Rejected",
+      "count": 7
+    }
+  ],
+  "applicationMonths": [
+    {
+      "month": "2024-02",
+      "status": "Rejected",
+      "count": 7
+    },
+    {
+      "month": "2024-02",
+      "status": "Approved",
+      "count": 25
+    }
+  ],
+  "payoutMonths": [
+    {
+      "month": "2024-03",
+      "count": 25,
+      "amount": "3038783460000000000000000000"
+    }
+  ]
+}

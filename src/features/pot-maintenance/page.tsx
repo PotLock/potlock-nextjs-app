@@ -2,7 +2,8 @@ import Head from "next/head";
 
 import { POT_MAINTENANCE_MESSAGE } from "@/common/_config/pot-service";
 
-import { PotArchiveDetails, PotArchiveList } from "./archive";
+import { PotArchiveList } from "./archive";
+import { PotHistoryDashboard } from "./dashboard";
 import styles from "./maintenance.module.css";
 import { PotContractSources, PotMaintenanceNotice } from "./notice";
 
@@ -17,7 +18,9 @@ export const PotMaintenancePage = ({
     <Head>
       <title>Pots under maintenance | POTLOCK</title>
     </Head>
-    {history ? (
+    {potId ? (
+      <PotHistoryDashboard key={potId} potId={potId} />
+    ) : history ? (
       <header className={styles.catalogHeader}>
         <span className={styles.status}>Indefinite maintenance</span>
         <h1>Explore past Pots</h1>
@@ -27,7 +30,6 @@ export const PotMaintenancePage = ({
       <PotMaintenanceNotice />
     )}
     {history && <PotArchiveList />}
-    {potId && <PotArchiveDetails key={potId} potId={potId} />}
     <PotContractSources />
   </main>
 );

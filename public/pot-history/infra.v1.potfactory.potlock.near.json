@@ -1,0 +1,102 @@
+{
+  "account": "infra.v1.potfactory.potlock.near",
+  "capturedAt": "2026-11-14T11:33:04.631728+00:00",
+  "blockHeight": 224508089,
+  "config": {
+    "pot_name": "NEAR Intents Yappers",
+    "pot_description": "Best NEAR intents Yappers",
+    "base_currency": "near",
+    "application_start_ms": 1712905200000,
+    "application_end_ms": 1766293140000,
+    "public_round_start_ms": 1766379600000,
+    "public_round_end_ms": 1766811540000,
+    "cooldown_end_ms": null,
+    "max_projects": 35,
+    "all_paid_out": false,
+    "chef_fee_basis_points": 1,
+    "referral_fee_matching_pool_basis_points": 5,
+    "referral_fee_public_round_basis_points": 5,
+    "admin_count": 4,
+    "chef_assigned": true
+  },
+  "metrics": {
+    "matchingPoolBalance": "8411330000000000000000000",
+    "publicDonationsNet": "0",
+    "donationsGross": "8610000000000000000000000",
+    "donationCount": 7,
+    "publicDonationCount": 0,
+    "matchingDonationCount": 7,
+    "uniqueDonors": 5,
+    "uniqueSponsors": 5,
+    "applicants": 2,
+    "approvedProjects": 0,
+    "payoutsAllocated": "0",
+    "payoutsPaid": "0",
+    "payoutCount": 0,
+    "paidPayoutCount": 0
+  },
+  "donationMonths": [],
+  "sponsorshipMonths": [
+    {
+      "month": "2025-01",
+      "count": 1,
+      "uniqueDonors": 1,
+      "gross": "3000000000000000000000000",
+      "net": "2934690000000000000000000"
+    },
+    {
+      "month": "2024-11",
+      "count": 2,
+      "uniqueDonors": 1,
+      "gross": "2500000000000000000000000",
+      "net": "2438110000000000000000000"
+    },
+    {
+      "month": "2024-09",
+      "count": 1,
+      "uniqueDonors": 1,
+      "gross": "100000000000000000000000",
+      "net": "88700000000000000000000"
+    },
+    {
+      "month": "2024-08",
+      "count": 1,
+      "uniqueDonors": 1,
+      "gross": "10000000000000000000000",
+      "net": "2750000000000000000000"
+    },
+    {
+      "month": "2024-05",
+      "count": 1,
+      "uniqueDonors": 1,
+      "gross": "2000000000000000000000000",
+      "net": "1954020000000000000000000"
+    },
+    {
+      "month": "2024-04",
+      "count": 1,
+      "uniqueDonors": 1,
+      "gross": "1000000000000000000000000",
+      "net": "993060000000000000000000"
+    }
+  ],
+  "applicationStatuses": [
+    {
+      "status": "Pending",
+      "count": 2
+    }
+  ],
+  "applicationMonths": [
+    {
+      "month": "2024-05",
+      "status": "Pending",
+      "count": 1
+    },
+    {
+      "month": "2024-04",
+      "status": "Pending",
+      "count": 1
+    }
+  ],
+  "payoutMonths": []
+}

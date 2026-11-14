@@ -80,7 +80,7 @@ describe("Pot maintenance boundary", () => {
     const html = renderToStaticMarkup(<PotMaintenancePage potId="unknown.near" />);
     expect(html).toContain("This round record is unavailable");
     expect(html).toContain("There is no scheduled reopening date");
-    expect(html).toContain('href="/pots/history"');
+    expect(html).toContain('href="/pots"');
     for (const source of POT_CONTRACT_SOURCES) expect(html).toContain(source.href);
     expect(html).not.toContain("private-security");
     expect(html).not.toContain("Sign In");

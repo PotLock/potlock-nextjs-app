@@ -1,0 +1,88 @@
+{
+  "account": "africa-public-goods.v1.potfactory.potlock.near",
+  "capturedAt": "2026-11-14T11:33:04.631728+00:00",
+  "blockHeight": 224508089,
+  "config": {
+    "pot_name": "Africa Public Goods",
+    "pot_description": "For communities and public goods projects building in Africa https://potlock.org/africa",
+    "base_currency": "near",
+    "application_start_ms": 1708924020000,
+    "application_end_ms": 1709683140000,
+    "public_round_start_ms": 1709683200000,
+    "public_round_end_ms": 1711339140000,
+    "cooldown_end_ms": 1711947444203,
+    "max_projects": 30,
+    "all_paid_out": true,
+    "chef_fee_basis_points": 500,
+    "referral_fee_matching_pool_basis_points": 500,
+    "referral_fee_public_round_basis_points": 500,
+    "admin_count": 0,
+    "chef_assigned": true
+  },
+  "metrics": {
+    "matchingPoolBalance": "766753040000000000000000000",
+    "publicDonationsNet": "47012780000000000000000000",
+    "donationsGross": "820080000000000000000000000",
+    "donationCount": 151,
+    "publicDonationCount": 143,
+    "matchingDonationCount": 8,
+    "uniqueDonors": 67,
+    "uniqueSponsors": 8,
+    "applicants": 14,
+    "approvedProjects": 14,
+    "payoutsAllocated": "766753040000000000000000000",
+    "payoutsPaid": "766753040000000000000000000",
+    "payoutCount": 14,
+    "paidPayoutCount": 14
+  },
+  "donationMonths": [
+    {
+      "month": "2024-03",
+      "count": 143,
+      "uniqueDonors": 61,
+      "gross": "50930000000000000000000000",
+      "net": "47012780000000000000000000"
+    }
+  ],
+  "sponsorshipMonths": [
+    {
+      "month": "2024-03",
+      "count": 5,
+      "uniqueDonors": 5,
+      "gross": "22100000000000000000000000",
+      "net": "20567770000000000000000000"
+    },
+    {
+      "month": "2024-02",
+      "count": 3,
+      "uniqueDonors": 3,
+      "gross": "747050000000000000000000000",
+      "net": "746185270000000000000000000"
+    }
+  ],
+  "applicationStatuses": [
+    {
+      "status": "Approved",
+      "count": 14
+    }
+  ],
+  "applicationMonths": [
+    {
+      "month": "2024-03",
+      "status": "Approved",
+      "count": 8
+    },
+    {
+      "month": "2024-02",
+      "status": "Approved",
+      "count": 6
+    }
+  ],
+  "payoutMonths": [
+    {
+      "month": "2024-04",
+      "count": 14,
+      "amount": "766753040000000000000000000"
+    }
+  ]
+}

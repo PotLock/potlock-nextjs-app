@@ -3,7 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { ENV_TAG, FEATURE_REGISTRY, NETWORK } from "@/common/_config";
+import { FEATURE_REGISTRY, NETWORK } from "@/common/_config";
+import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
 import { Pot, indexer } from "@/common/api/indexer";
 import { APP_BOS_COUNTERPART_URL, PUBLIC_GOODS_REGISTRY_LIST_ID } from "@/common/constants";
 import {
@@ -20,6 +21,8 @@ import { AccountCard } from "@/entities/_shared/account";
 import { PotCard } from "@/entities/pot";
 import { useFilteredPots } from "@/entities/pot/hooks/useFilteredPots";
 import { DonateRandomly, DonateToAccountButton } from "@/features/donation";
+import { PotHistoryCarousel } from "@/features/pot-maintenance/carousel";
+import { HISTORICAL_POTS } from "@/features/pot-maintenance/data";
 import { ProjectDiscovery } from "@/layout/components/project-discovery";
 import { rootPathnames } from "@/navigation";
 
@@ -187,7 +190,9 @@ export default function Home() {
             </Link>
           </Button>
         </div>
-        {isPotsLoading ? (
+        {POTS_IN_MAINTENANCE ? (
+          <PotHistoryCarousel records={HISTORICAL_POTS} />
+        ) : isPotsLoading ? (
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {PAST_FUNDING_ROUNDS_POT_IDS.map((potId) => (
               <div key={potId} className="h-[300px] animate-pulse rounded-lg bg-gray-200" />
