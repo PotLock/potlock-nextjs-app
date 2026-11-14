@@ -220,6 +220,8 @@
 }
 .potCard:hover {
   box-shadow: 0 4px 16px #00000014;
+  color: #292929;
+  text-decoration: none;
 }
 .potCard:focus-visible,
 .popup a:focus-visible,
@@ -316,12 +318,153 @@
   font-size: 12px;
   color: #656565;
 }
+.carouselControls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+.carouselControls > span {
+  margin-right: auto;
+  font-size: 13px;
+  color: #656565;
+}
+.carouselControls button:disabled,
+.tablePages button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.carouselTrack {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 48px) / 3);
+  gap: 24px;
+  list-style: none;
+  margin: 20px 0;
+  padding: 4px 4px 16px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 4px;
+  scrollbar-width: thin;
+}
+.carouselTrack > li {
+  min-width: 0;
+  scroll-snap-align: start;
+}
+.cardMetrics {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #656565;
+}
+.cardMetrics strong {
+  color: #292929;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.metric {
+  border: 1px solid #dfdedb;
+  border-radius: 8px;
+  padding: 24px;
+  background: #f9f8f6;
+}
+.metric dt {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #656565;
+  margin-bottom: 12px;
+}
+.metric dd {
+  margin: 0;
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+.historyBadge {
+  display: block;
+  color: #9c2431;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 24px 0 16px;
+}
+.historyNotice {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  margin: 24px 0;
+  background: #fef6ee;
+  border: 1px solid #ebd7c6;
+  border-radius: 8px;
+}
+.historyNotice p {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.provenance {
+  color: #656565;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.historyNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 32px;
+  padding: 20px 0;
+  border-bottom: 1px solid #dbdbdb;
+}
+.historyNav a {
+  color: #292929;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.tablePages {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.table a {
+  color: #292929;
+  text-decoration: underline;
+}
 @media (max-width: 960px) {
+  .carouselTrack {
+    grid-auto-columns: calc((100% - 24px) / 2);
+  }
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .cardGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 640px) {
+  .carouselTrack {
+    grid-auto-columns: 90%;
+    gap: 16px;
+  }
+  .historyNotice {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .metric {
+    padding: 16px;
+  }
   .cardGrid {
     grid-template-columns: 1fr;
   }

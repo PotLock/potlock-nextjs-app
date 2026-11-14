@@ -1,0 +1,128 @@
+{
+  "account": "mpdao.v1.potfactory.potlock.near",
+  "capturedAt": "2026-11-14T11:33:04.631728+00:00",
+  "blockHeight": 224508089,
+  "config": {
+    "pot_name": "mpDAO RetroPGF",
+    "pot_description": "Retroactive round for Meta Pool ecosystem projects. Voting mechanism a mix of stake to vote + mpDAO core team judging. More info potlock.org/mp-rpgf",
+    "base_currency": "near",
+    "application_start_ms": 1727976120000,
+    "application_end_ms": 1733817540000,
+    "public_round_start_ms": 1733817600000,
+    "public_round_end_ms": 1735372740000,
+    "cooldown_end_ms": 1739809314837,
+    "max_projects": 25,
+    "all_paid_out": true,
+    "chef_fee_basis_points": 1,
+    "referral_fee_matching_pool_basis_points": 500,
+    "referral_fee_public_round_basis_points": 1,
+    "admin_count": 0,
+    "chef_assigned": true
+  },
+  "metrics": {
+    "matchingPoolBalance": "418396647600000000000000000",
+    "publicDonationsNet": "3431581080000000000000000",
+    "donationsGross": "430540000000000000000000000",
+    "donationCount": 18,
+    "publicDonationCount": 6,
+    "matchingDonationCount": 12,
+    "uniqueDonors": 14,
+    "uniqueSponsors": 12,
+    "applicants": 17,
+    "approvedProjects": 11,
+    "payoutsAllocated": "418396647600000000000000000",
+    "payoutsPaid": "418396647600000000000000000",
+    "payoutCount": 11,
+    "paidPayoutCount": 11
+  },
+  "donationMonths": [
+    {
+      "month": "2024-12",
+      "count": 6,
+      "uniqueDonors": 3,
+      "gross": "3540000000000000000000000",
+      "net": "3431581080000000000000000"
+    }
+  ],
+  "sponsorshipMonths": [
+    {
+      "month": "2024-12",
+      "count": 6,
+      "uniqueDonors": 6,
+      "gross": "423700000000000000000000000",
+      "net": "415158505400000000000000000"
+    },
+    {
+      "month": "2024-11",
+      "count": 4,
+      "uniqueDonors": 4,
+      "gross": "2200000000000000000000000",
+      "net": "2172110200000000000000000"
+    },
+    {
+      "month": "2024-10",
+      "count": 2,
+      "uniqueDonors": 2,
+      "gross": "1100000000000000000000000",
+      "net": "1066032000000000000000000"
+    }
+  ],
+  "applicationStatuses": [
+    {
+      "status": "Approved",
+      "count": 11
+    },
+    {
+      "status": "Pending",
+      "count": 2
+    },
+    {
+      "status": "Rejected",
+      "count": 4
+    }
+  ],
+  "applicationMonths": [
+    {
+      "month": "2024-12",
+      "status": "Rejected",
+      "count": 1
+    },
+    {
+      "month": "2024-12",
+      "status": "Pending",
+      "count": 1
+    },
+    {
+      "month": "2024-12",
+      "status": "Approved",
+      "count": 2
+    },
+    {
+      "month": "2024-11",
+      "status": "Rejected",
+      "count": 2
+    },
+    {
+      "month": "2024-11",
+      "status": "Pending",
+      "count": 1
+    },
+    {
+      "month": "2024-11",
+      "status": "Approved",
+      "count": 9
+    },
+    {
+      "month": "2024-10",
+      "status": "Rejected",
+      "count": 1
+    }
+  ],
+  "payoutMonths": [
+    {
+      "month": "2025-03",
+      "count": 11,
+      "amount": "418396647600000000000000000"
+    }
+  ]
+}

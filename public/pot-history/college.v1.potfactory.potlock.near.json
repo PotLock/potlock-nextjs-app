@@ -1,0 +1,118 @@
+{
+  "account": "college.v1.potfactory.potlock.near",
+  "capturedAt": "2026-11-14T11:33:04.631728+00:00",
+  "blockHeight": 224508089,
+  "config": {
+    "pot_name": "Blockchain Clubs - Summer Funding",
+    "pot_description": "A round by Blockchain Acceleration Foundation to fund blockchain clubs in the summer. https://potlock.org/baf",
+    "base_currency": "near",
+    "application_start_ms": 1713153600000,
+    "application_end_ms": 1717991940000,
+    "public_round_start_ms": 1717992000000,
+    "public_round_end_ms": 1719892740000,
+    "cooldown_end_ms": 1720623968279,
+    "max_projects": 30,
+    "all_paid_out": true,
+    "chef_fee_basis_points": 500,
+    "referral_fee_matching_pool_basis_points": 500,
+    "referral_fee_public_round_basis_points": 500,
+    "admin_count": 2,
+    "chef_assigned": true
+  },
+  "metrics": {
+    "matchingPoolBalance": "680018130000000000000000000",
+    "publicDonationsNet": "5208309999999999962760000",
+    "donationsGross": "689839999999999999960000000",
+    "donationCount": 45,
+    "publicDonationCount": 38,
+    "matchingDonationCount": 7,
+    "uniqueDonors": 18,
+    "uniqueSponsors": 6,
+    "applicants": 17,
+    "approvedProjects": 10,
+    "payoutsAllocated": "680018130000000000000000000",
+    "payoutsPaid": "680018130000000000000000000",
+    "payoutCount": 10,
+    "paidPayoutCount": 10
+  },
+  "donationMonths": [
+    {
+      "month": "2024-07",
+      "count": 10,
+      "uniqueDonors": 5,
+      "gross": "2500000000000000000000000",
+      "net": "2367810000000000000000000"
+    },
+    {
+      "month": "2024-06",
+      "count": 28,
+      "uniqueDonors": 8,
+      "gross": "3299999999999999960000000",
+      "net": "2840499999999999962760000"
+    }
+  ],
+  "sponsorshipMonths": [
+    {
+      "month": "2024-05",
+      "count": 5,
+      "uniqueDonors": 4,
+      "gross": "682040000000000000000000000",
+      "net": "678030750000000000000000000"
+    },
+    {
+      "month": "2024-04",
+      "count": 2,
+      "uniqueDonors": 2,
+      "gross": "2000000000000000000000000",
+      "net": "1987380000000000000000000"
+    }
+  ],
+  "applicationStatuses": [
+    {
+      "status": "Approved",
+      "count": 10
+    },
+    {
+      "status": "Pending",
+      "count": 6
+    },
+    {
+      "status": "Rejected",
+      "count": 1
+    }
+  ],
+  "applicationMonths": [
+    {
+      "month": "2024-06",
+      "status": "Rejected",
+      "count": 1
+    },
+    {
+      "month": "2024-06",
+      "status": "Pending",
+      "count": 5
+    },
+    {
+      "month": "2024-06",
+      "status": "Approved",
+      "count": 4
+    },
+    {
+      "month": "2024-05",
+      "status": "Pending",
+      "count": 1
+    },
+    {
+      "month": "2024-05",
+      "status": "Approved",
+      "count": 6
+    }
+  ],
+  "payoutMonths": [
+    {
+      "month": "2024-07",
+      "count": 10,
+      "amount": "680018130000000000000000000"
+    }
+  ]
+}

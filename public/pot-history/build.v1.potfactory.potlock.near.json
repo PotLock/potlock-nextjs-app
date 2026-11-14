@@ -1,0 +1,111 @@
+{
+  "account": "build.v1.potfactory.potlock.near",
+  "capturedAt": "2026-11-14T11:33:04.631728+00:00",
+  "blockHeight": 224508089,
+  "config": {
+    "pot_name": "NEAR Retroactive Builders",
+    "pot_description": "For open source projects in the NEAR ecosystem that have not been previously/properly compensated. Projects & not individuals. For more info go to https://potlock.org/retroactive-builders",
+    "base_currency": "near",
+    "application_start_ms": 1708105020000,
+    "application_end_ms": 1710777600000,
+    "public_round_start_ms": 1710777660000,
+    "public_round_end_ms": 1712548740000,
+    "cooldown_end_ms": 1714932731198,
+    "max_projects": 45,
+    "all_paid_out": true,
+    "chef_fee_basis_points": 500,
+    "referral_fee_matching_pool_basis_points": 500,
+    "referral_fee_public_round_basis_points": 500,
+    "admin_count": 3,
+    "chef_assigned": true
+  },
+  "metrics": {
+    "matchingPoolBalance": "7397659410000000000000000000",
+    "publicDonationsNet": "656771587999999999990000000",
+    "donationsGross": "8099482999999999999990000000",
+    "donationCount": 733,
+    "publicDonationCount": 715,
+    "matchingDonationCount": 18,
+    "uniqueDonors": 269,
+    "uniqueSponsors": 15,
+    "applicants": 34,
+    "approvedProjects": 32,
+    "payoutsAllocated": "7397659410000000000000000000",
+    "payoutsPaid": "7397659410000000000000000000",
+    "payoutCount": 32,
+    "paidPayoutCount": 32
+  },
+  "donationMonths": [
+    {
+      "month": "2024-04",
+      "count": 344,
+      "uniqueDonors": 150,
+      "gross": "251568999999999999990000000",
+      "net": "237780339999999999990000000"
+    },
+    {
+      "month": "2024-03",
+      "count": 371,
+      "uniqueDonors": 133,
+      "gross": "449347000000000000000000000",
+      "net": "418991248000000000000000000"
+    }
+  ],
+  "sponsorshipMonths": [
+    {
+      "month": "2024-04",
+      "count": 8,
+      "uniqueDonors": 6,
+      "gross": "21807000000000000000000000",
+      "net": "21730390000000000000000000"
+    },
+    {
+      "month": "2024-03",
+      "count": 7,
+      "uniqueDonors": 6,
+      "gross": "36290000000000000000000000",
+      "net": "36168090000000000000000000"
+    },
+    {
+      "month": "2024-02",
+      "count": 3,
+      "uniqueDonors": 3,
+      "gross": "7340470000000000000000000000",
+      "net": "7339760930000000000000000000"
+    }
+  ],
+  "applicationStatuses": [
+    {
+      "status": "Approved",
+      "count": 32
+    },
+    {
+      "status": "Rejected",
+      "count": 2
+    }
+  ],
+  "applicationMonths": [
+    {
+      "month": "2024-03",
+      "status": "Rejected",
+      "count": 2
+    },
+    {
+      "month": "2024-03",
+      "status": "Approved",
+      "count": 26
+    },
+    {
+      "month": "2024-02",
+      "status": "Approved",
+      "count": 6
+    }
+  ],
+  "payoutMonths": [
+    {
+      "month": "2024-05",
+      "count": 32,
+      "amount": "7397659410000000000000000000"
+    }
+  ]
+}
