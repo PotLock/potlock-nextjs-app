@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { values } from "remeda";
 
 import { FEATURE_REGISTRY } from "@/common/_config";
+import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
 import { Pot } from "@/common/api/indexer";
 import { NOOP_STRING } from "@/common/constants";
 import { campaignsContractHooks } from "@/common/contracts/core/campaigns";
@@ -61,7 +62,7 @@ export const DonationSingleRecipientAllocation: React.FC<
     accountId: accountId ?? NOOP_STRING,
   });
 
-  const hasMatchingPots = (matchingPots?.length ?? 0) > 0;
+  const hasMatchingPots = !POTS_IN_MAINTENANCE && (matchingPots?.length ?? 0) > 0;
   const isCampaignDonation = campaignId !== undefined;
 
   const { isLoading: isCampaignDataLoading, data: campaign } = campaignsContractHooks.useCampaign({
@@ -109,7 +110,13 @@ export const DonationSingleRecipientAllocation: React.FC<
                             id={`donation-options-${value}`}
                             isLoading={isRecipientProfileLoading}
                             checked={field.value === DonationAllocationStrategyEnum[value]}
-                            hint={disabled ? hintIfDisabled : hint}
+                            hint={
+                              disabled
+                                ? POTS_IN_MAINTENANCE
+                                  ? "Pots are under indefinite maintenance"
+                                  : hintIfDisabled
+                                : hint
+                            }
                             {...{ disabled, label, value }}
                           />
                         </FormItem>

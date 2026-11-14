@@ -2,6 +2,7 @@ import { useCallback } from "react";
 
 import { create, useModal } from "@ebay/nice-modal-react";
 
+import { POTS_IN_MAINTENANCE, POT_MAINTENANCE_MESSAGE } from "@/common/_config/pot-service";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { useRouteQuery } from "@/common/lib";
 import { Button, Dialog, DialogContent, ModalErrorBody } from "@/common/ui/layout/components";
@@ -63,7 +64,9 @@ export const DonationModal = create((props: DonationModalProps) => {
         }
         onCloseClick={close}
       >
-        {!viewer.isSignedIn ? (
+        {POTS_IN_MAINTENANCE && isPotDonation ? (
+          <ModalErrorBody heading="Pots are out of service" title={POT_MAINTENANCE_MESSAGE} />
+        ) : !viewer.isSignedIn ? (
           <ModalErrorBody
             heading="Donation"
             title="Authentication required"

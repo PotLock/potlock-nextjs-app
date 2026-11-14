@@ -14,6 +14,7 @@ import { NextPage } from "next";
 import { AppProps } from "next/app";
 import { Lora } from "next/font/google";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { APP_METADATA } from "@/common/constants";
@@ -21,6 +22,7 @@ import { TooltipProvider } from "@/common/ui/layout/components";
 import { Toaster } from "@/common/ui/layout/components/molecules/toaster";
 import { cn } from "@/common/ui/layout/utils";
 import { WalletUserSessionProvider } from "@/common/wallet";
+import { PotServiceBoundary } from "@/features/pot-maintenance/boundary";
 import { AppBar } from "@/layout/components/app-bar";
 import { dispatch, store } from "@/store";
 
@@ -39,6 +41,7 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function RootLayout({ Component, pageProps }: AppPropsWithLayout) {
+  const router = useRouter();
   useEffect(() => void dispatch.core.init(), []);
 
   const getLayout = Component.getLayout ?? ((page) => page);
@@ -60,7 +63,11 @@ export default function RootLayout({ Component, pageProps }: AppPropsWithLayout)
               )}
             >
               <AppBar />
-              {getLayout(<Component {...pageProps} />)}
+              <PotServiceBoundary
+                pathname={router.pathname}
+                potId={typeof router.query.potId === "string" ? router.query.potId : undefined}
+                renderActivePage={() => getLayout(<Component {...pageProps} />)}
+              />
             </div>
           </TooltipProvider>
         </NiceModalProvider>

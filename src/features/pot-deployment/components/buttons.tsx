@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-import { PLATFORM_NAME } from "@/common/_config";
+import { PLATFORM_NAME, POT_FACTORY_CONTRACT_ACCOUNT_ID } from "@/common/_config";
+import { POT_WRITES_PAUSED_MESSAGE, arePotWritesPaused } from "@/common/contracts/core/pot/safety";
 import {
   Button,
   Skeleton,
@@ -14,6 +15,7 @@ import { rootPathnames } from "@/pathnames";
 
 export const PotDeploymentButton: React.FC = () => {
   const viewer = useWalletUserSession();
+  const writesPaused = arePotWritesPaused(POT_FACTORY_CONTRACT_ACCOUNT_ID);
 
   const { isLoading: isViewerPowerLoading, data: viewerPower } = useAccountPower({
     accountId: viewer.accountId,
@@ -23,7 +25,7 @@ export const PotDeploymentButton: React.FC = () => {
     <Skeleton className="w-26 h-10" />
   ) : (
     <>
-      {viewerPower.canDeployPots ? (
+      {!writesPaused && viewerPower.canDeployPots ? (
         <Button asChild>
           <Link href={rootPathnames.DEPLOY_POT}>{"Deploy Pot"}</Link>
         </Button>
@@ -34,7 +36,9 @@ export const PotDeploymentButton: React.FC = () => {
           </TooltipTrigger>
 
           <TooltipContent>
-            {viewer.isSignedIn ? (
+            {writesPaused ? (
+              <span>{POT_WRITES_PAUSED_MESSAGE}</span>
+            ) : viewer.isSignedIn ? (
               <span className="flex flex-col gap-2">
                 <span>{"You don't have permission to deploy pots."}</span>
                 <span>{`Contact ${PLATFORM_NAME} team for details.`}</span>

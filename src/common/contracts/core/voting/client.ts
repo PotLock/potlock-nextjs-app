@@ -1,6 +1,8 @@
 import naxios, { MemoryCache } from "@wpdas/naxios";
 
+import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
+import { assertPotWritesAvailable } from "@/common/contracts/core/pot/safety";
 
 import type {
   AccountId,
@@ -205,6 +207,15 @@ class VotingClient implements Omit<VotingContract, "new"> {
   }
 
   // Change Methods
+  private async assertVotingAvailable(electionId: ElectionId) {
+    if (!POTS_IN_MAINTENANCE) return;
+    const election = await this.get_election({ election_id: electionId });
+    if (!election) throw new Error("Unable to verify the election type. Please try again later.");
+
+    if (typeof election.election_type === "object" && "Pot" in election.election_type) {
+      assertPotWritesAvailable(election.election_type.Pot);
+    }
+  }
 
   /**
    * Creates a new election
@@ -230,6 +241,10 @@ class VotingClient implements Omit<VotingContract, "new"> {
     election_type: ElectionType;
     candidates: AccountId[];
   }): Promise<number> {
+    if (typeof args.election_type === "object" && "Pot" in args.election_type) {
+      assertPotWritesAvailable(args.election_type.Pot);
+    }
+
     return this.contract.call("create_election", { args });
   }
 
@@ -240,6 +255,7 @@ class VotingClient implements Omit<VotingContract, "new"> {
    * @returns Success status of the vote
    */
   async vote(args: { election_id: ElectionId; vote: VoteInputs }) {
+    await this.assertVotingAvailable(args.election_id);
     return this.contract.call<typeof args, boolean>("vote", { args });
   }
 
@@ -247,6 +263,7 @@ class VotingClient implements Omit<VotingContract, "new"> {
    * Batch vote cast wrapper around {@link vote}
    */
   async voteBatch({ election_id, votes }: { election_id: ElectionId; votes: VoteInputs[] }) {
+    await this.assertVotingAvailable(election_id);
     return this.contract.callMultiple<{ election_id: ElectionId; vote: VoteInputs }>(
       votes.map((voteInputs) => ({ method: "vote", args: { election_id, vote: voteInputs } })),
     );

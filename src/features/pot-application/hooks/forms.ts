@@ -9,6 +9,7 @@ import { Pot } from "@/common/api/indexer";
 import { naxiosInstance } from "@/common/blockchains/near-protocol/client";
 import { FULL_TGAS, MIN_PROPOSAL_DEPOSIT_FALLBACK, ONE_TGAS } from "@/common/constants";
 import { potContractClient } from "@/common/contracts/core/pot";
+import { assertPotWritesAvailable } from "@/common/contracts/core/pot/safety";
 import { getDaoPolicy } from "@/common/contracts/sputnik-dao";
 
 import {
@@ -73,6 +74,7 @@ export const usePotApplicationForm = ({
       const callbackUrl = `${location.origin}${location.pathname}?done=true`;
 
       try {
+        assertPotWritesAvailable(potDetail.account);
         setInProgress(true);
 
         if (asDao) {
@@ -98,12 +100,14 @@ export const usePotApplicationForm = ({
             });
         }
       } catch (e) {
-        console.error(e);
+        form.setError("root", {
+          message: e instanceof Error ? e.message : "Unable to submit application.",
+        });
       } finally {
         setInProgress(false);
       }
     },
-    [accountId, asDao, potDetail.account, potDetail.name],
+    [accountId, asDao, potDetail.account, potDetail.name, form],
   );
 
   return {
