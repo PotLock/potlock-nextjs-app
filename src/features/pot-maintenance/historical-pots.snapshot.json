@@ -1,0 +1,77 @@
+{
+  "network": "mainnet",
+  "capturedAt": "2026-11-14T09:26:33.664264+00:00",
+  "factoryAccount": "v1.potfactory.potlock.near",
+  "records": [
+    {
+      "account": "creatives.v1.potfactory.potlock.near",
+      "name": "Creatives",
+      "description": "Round for funding creative public goods. More info can be found at https://potlock.org/creatives",
+      "matching_round_end": "2024-03-09T04:59:00+00:00",
+      "blockHeight": 224494676
+    },
+    {
+      "account": "africa-public-goods.v1.potfactory.potlock.near",
+      "name": "Africa Public Goods",
+      "description": "For communities and public goods projects building in Africa https://potlock.org/africa",
+      "matching_round_end": "2024-03-25T03:59:00+00:00",
+      "blockHeight": 224494675
+    },
+    {
+      "account": "ai.v1.potfactory.potlock.near",
+      "name": "AI Public Goods",
+      "description": "Supporting public goods in the artificial intelligence space. AI Research, open source projects, governance, ethics. AI x Web3. Learn more at https://potlock.org/ai",
+      "matching_round_end": "2024-06-24T03:59:00+00:00",
+      "blockHeight": 224494676
+    },
+    {
+      "account": "build.v1.potfactory.potlock.near",
+      "name": "NEAR Retroactive Builders",
+      "description": "For open source projects in the NEAR ecosystem that have not been previously/properly compensated. Projects & not individuals. For more info go to https://potlock.org/retroactive-builders",
+      "matching_round_end": "2024-04-08T03:59:00+00:00",
+      "blockHeight": 224494676
+    },
+    {
+      "account": "oss.v1.potfactory.potlock.near",
+      "name": "Open Source Software",
+      "description": "To support impactful open source software projects on NEAR. More info at https://potlock.org/oss",
+      "matching_round_end": "2024-05-21T03:59:00+00:00",
+      "blockHeight": 224494676
+    },
+    {
+      "account": "nearian.v1.potfactory.potlock.near",
+      "name": "CREATE./DEV",
+      "description": "Rewarding at the intersection of technology & art. \ud83d\udd17 https://createdev.near.page/",
+      "matching_round_end": "2024-11-16T22:59:00+00:00",
+      "blockHeight": 224494678
+    },
+    {
+      "account": "college.v1.potfactory.potlock.near",
+      "name": "Blockchain Clubs - Summer Funding",
+      "description": "A round by Blockchain Acceleration Foundation to fund blockchain clubs in the summer. https://potlock.org/baf",
+      "matching_round_end": "2024-07-02T03:59:00+00:00",
+      "blockHeight": 224494678
+    },
+    {
+      "account": "infra.v1.potfactory.potlock.near",
+      "name": "NEAR Intents Yappers",
+      "description": "Best NEAR intents Yappers",
+      "matching_round_end": "2025-12-27T04:59:00+00:00",
+      "blockHeight": 224494679
+    },
+    {
+      "account": "marketing.v1.potfactory.potlock.near",
+      "name": "NEAR Marketing DAO",
+      "description": "Supporting marketing initiatives on NEAR. Learn more at potlock.org/mdao",
+      "matching_round_end": "2024-06-08T03:59:00+00:00",
+      "blockHeight": 224494679
+    },
+    {
+      "account": "mpdao.v1.potfactory.potlock.near",
+      "name": "mpDAO RetroPGF",
+      "description": "Retroactive round for Meta Pool ecosystem projects. Voting mechanism a mix of stake to vote + mpDAO core team judging. More info potlock.org/mp-rpgf",
+      "matching_round_end": "2024-12-28T07:59:00+00:00",
+      "blockHeight": 224494679
+    }
+  ]
+}

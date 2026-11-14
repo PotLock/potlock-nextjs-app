@@ -3,10 +3,12 @@ import { useMemo } from "react";
 import { Big } from "big.js";
 import Link from "next/link";
 
+import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
 import { ByPotId, Pot, indexer } from "@/common/api/indexer";
 import { NATIVE_TOKEN_ID } from "@/common/constants";
 import { formatWithCommas } from "@/common/lib";
 import { useFungibleToken } from "@/entities/_shared/token";
+import { HISTORICAL_POTS, PotMaintenanceCard } from "@/features/pot-maintenance/card";
 import { rootPathnames } from "@/navigation";
 
 import { Indicator } from "./Indicator";
@@ -45,6 +47,27 @@ export const useMatchingPoolBalance = ({ pot }: { pot?: Pot }) => {
 export type PotCardProps = ByPotId & {};
 
 export const PotCard: React.FC<PotCardProps> = ({ potId }) => {
+  return POTS_IN_MAINTENANCE ? (
+    <HistoricalPotCard potId={potId} />
+  ) : (
+    <ActivePotCard potId={potId} />
+  );
+};
+
+const HistoricalPotCard: React.FC<PotCardProps> = ({ potId }) => {
+  const { data: pot } = indexer.usePot({ potId });
+
+  const record = pot ??
+    HISTORICAL_POTS.find(({ account }) => account === potId) ?? {
+      account: potId,
+      name: potId,
+      description: "Explore this Pot’s historical contract activity on NearBlocks.",
+    };
+
+  return <PotMaintenanceCard pot={record} />;
+};
+
+const ActivePotCard: React.FC<PotCardProps> = ({ potId }) => {
   const { data: pot, isLoading: isPotLoading } = indexer.usePot({ potId });
   const { amountNear, amountUsd } = useMatchingPoolBalance({ pot });
   const tags = usePotTags({ potId });

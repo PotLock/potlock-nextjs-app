@@ -1,9 +1,8 @@
 import { useState } from "react";
 
-import Link from "next/link";
-
 import { indexer } from "@/common/api/indexer";
 
+import { HISTORICAL_POTS, POT_SNAPSHOT_DATE, PotMaintenanceCard } from "./card";
 import styles from "./maintenance.module.css";
 
 const displayDate = (value: string) => {
@@ -14,24 +13,29 @@ const displayDate = (value: string) => {
 export const PotArchiveList = () => {
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = indexer.usePots({ page, page_size: 20 });
+  const records = data?.results ?? (page === 1 ? HISTORICAL_POTS : []);
+  const showingSnapshot = !data && records.length > 0;
   return (
     <section className={styles.archive} aria-labelledby="pot-archive-title">
       <h2 id="pot-archive-title">Past rounds</h2>
-      <p>Read-only round records. Pot transactions are unavailable in this app.</p>
-      {isLoading && <p role="status">Loading round records…</p>}
-      {error && (
+      <p>Read-only round records. Select a card to explore its contract history.</p>
+      {showingSnapshot && (
+        <p role="status">
+          Showing public contract metadata saved on {POT_SNAPSHOT_DATE} while indexed records are
+          unavailable. Contract activity is available through NearBlocks.
+        </p>
+      )}
+      {isLoading && !showingSnapshot && <p role="status">Loading round records…</p>}
+      {error && !showingSnapshot && (
         <p role="status">
           Round records are unavailable right now. You can still view the contract code below.
         </p>
       )}
       {!isLoading && !error && data?.results?.length === 0 && <p>No round records found.</p>}
-      <ul className={styles.rounds}>
-        {data?.results?.map((pot) => (
+      <ul className={styles.cardGrid}>
+        {records.map((pot) => (
           <li key={pot.account}>
-            <Link href={`/pot/${pot.account}`}>{pot.name}</Link>
-            <p>
-              {pot.account} · Round end: {displayDate(pot.matching_round_end)} · Read-only
-            </p>
+            <PotMaintenanceCard pot={pot} />
           </li>
         ))}
       </ul>
