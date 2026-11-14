@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { ENV_TAG } from "@/common/_config";
+import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
 import { nearProtocolClient } from "@/common/blockchains/near-protocol";
 import { Button, Skeleton } from "@/common/ui/layout/components";
 import { cn } from "@/common/ui/layout/utils";
@@ -103,6 +104,9 @@ const MobileNav = () => {
             )}
           >
             {label}
+            {label === "Pots" && POTS_IN_MAINTENANCE && (
+              <span className="ml-1 text-xs"> (Maintenance)</span>
+            )}
           </Link>
         );
       })}
@@ -161,6 +165,9 @@ export const AppBar = () => {
                     )}
                   >
                     {label}
+                    {label === "Pots" && POTS_IN_MAINTENANCE && (
+                      <span className="ml-1 text-xs"> (Maintenance)</span>
+                    )}
                   </Link>
                 );
               })}

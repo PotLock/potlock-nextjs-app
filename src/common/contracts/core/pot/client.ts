@@ -18,11 +18,15 @@ import {
   PotDonationArgs,
   UpdatePotArgs,
 } from "./interfaces";
+import { assertPotWritesAvailable, withPotWriteGuard } from "./safety";
 
 export const contractApi = (potId: string) =>
-  nearProtocolClient.naxiosInstance.contractApi({
-    contractId: potId,
-  });
+  withPotWriteGuard(
+    nearProtocolClient.naxiosInstance.contractApi({
+      contractId: potId,
+    }),
+    potId,
+  );
 
 // READ METHODS
 /**
@@ -187,15 +191,22 @@ export const admin_process_payouts = (args: { potId: string }) =>
     gas: FULL_TGAS,
   });
 
-export const donate = (potAccountId: PotId, args: PotDonationArgs, depositAmountYocto: string) =>
-  contractApi(potAccountId).call<typeof args, PotDonation>("donate", {
+export const donate = async (
+  potAccountId: PotId,
+  args: PotDonationArgs,
+  depositAmountYocto: string,
+) => {
+  assertPotWritesAvailable(potAccountId);
+  return contractApi(potAccountId).call<typeof args, PotDonation>("donate", {
     args,
     deposit: depositAmountYocto,
     callbackUrl: window.location.href,
   });
+};
 
-export const donateBatch = (potAccountId: PotId, txDrafts: PotBatchDonationItem[]) =>
-  contractApi(potAccountId).callMultiple<PotDonationArgs>(
+export const donateBatch = async (potAccountId: PotId, txDrafts: PotBatchDonationItem[]) => {
+  assertPotWritesAvailable(potAccountId);
+  return contractApi(potAccountId).callMultiple<PotDonationArgs>(
     txDrafts.map(({ amountYoctoNear, ...txDraft }) => ({
       method: "donate",
       deposit: amountYoctoNear,
@@ -205,6 +216,7 @@ export const donateBatch = (potAccountId: PotId, txDrafts: PotBatchDonationItem[
 
     window.location.href,
   );
+};
 
 export const admin_dangerously_set_pot_config = (
   potAccountId: PotId,

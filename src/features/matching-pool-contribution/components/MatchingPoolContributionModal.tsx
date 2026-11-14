@@ -1,6 +1,7 @@
 import { isNullish } from "remeda";
 
 import { Pot } from "@/common/api/indexer";
+import { POT_WRITES_PAUSED_MESSAGE, arePotWritesPaused } from "@/common/contracts/core/pot/safety";
 import { feeBasisPointsToPercents } from "@/common/contracts/core/utils";
 import { useProtocolConfig, yoctoNearToFloat } from "@/common/lib";
 import { CheckboxField } from "@/common/ui/form/components";
@@ -36,6 +37,7 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
   potDetail,
 }) => {
   const viewer = useWalletUserSession();
+  const writesPaused = arePotWritesPaused(potDetail.account);
 
   const { form, errors, onSubmit, inProgress } = useMatchingPoolContributionForm({
     potDetail,
@@ -219,8 +221,14 @@ export const MatchingPoolContributionModal: React.FC<MatchingPoolContributionMod
               {!isNaN(netDonationAmountNear) ? netDonationAmountNear.toFixed(2) : 0} NEAR
             </p>
 
+            {writesPaused ? (
+              <p role="alert">{POT_WRITES_PAUSED_MESSAGE}</p>
+            ) : (
+              errors.root?.message && <p role="alert">{errors.root.message}</p>
+            )}
+
             <Button
-              disabled={!form.formState.isValid || inProgress}
+              disabled={writesPaused || !form.formState.isValid || inProgress}
               className="mt-6 min-w-[200px] self-end"
               type="submit"
             >

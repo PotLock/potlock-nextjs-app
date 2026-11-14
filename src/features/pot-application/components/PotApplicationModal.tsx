@@ -1,6 +1,7 @@
 import { Form } from "react-hook-form";
 
 import { Pot } from "@/common/api/indexer";
+import { POT_WRITES_PAUSED_MESSAGE, arePotWritesPaused } from "@/common/contracts/core/pot/safety";
 import {
   Button,
   Dialog,
@@ -30,6 +31,7 @@ export const PotApplicationModal: React.FC<PotApplicationModalProps> = ({
 
   // AccountID (Address)
   const asDao = actAsDao.toggle && !!actAsDao.defaultAddress;
+  const writesPaused = arePotWritesPaused(potDetail.account);
 
   // Form settings
   const { form, errors, onSubmit, inProgress } = usePotApplicationForm({
@@ -67,8 +69,14 @@ export const PotApplicationModal: React.FC<PotApplicationModalProps> = ({
               )}
             />
 
+            {writesPaused ? (
+              <p role="alert">{POT_WRITES_PAUSED_MESSAGE}</p>
+            ) : (
+              errors.root?.message && <p role="alert">{errors.root.message}</p>
+            )}
+
             <Button
-              disabled={!form.formState.isValid || inProgress}
+              disabled={writesPaused || !form.formState.isValid || inProgress}
               className="mt-6 min-w-[200px] self-end"
               type="submit"
             >

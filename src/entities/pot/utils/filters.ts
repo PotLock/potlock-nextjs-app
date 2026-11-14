@@ -1,5 +1,6 @@
 import { Temporal } from "temporal-polyfill";
 
+import { POTS_IN_MAINTENANCE } from "@/common/_config/pot-service";
 import { Pot } from "@/common/api/indexer";
 import { oldToRecent } from "@/common/lib";
 
@@ -27,15 +28,17 @@ export const filters: Record<string, (round: Pot) => boolean> = {
 };
 
 export const extractMatchingPots = (pots: Pot[]) =>
-  oldToRecent(
-    "matching_round_end",
+  POTS_IN_MAINTENANCE
+    ? []
+    : oldToRecent(
+        "matching_round_end",
 
-    pots.filter(({ matching_round_start, matching_round_end }) => {
-      const now = Temporal.Now.instant();
+        pots.filter(({ matching_round_start, matching_round_end }) => {
+          const now = Temporal.Now.instant();
 
-      return (
-        now.since(Temporal.Instant.from(matching_round_start)).total("milliseconds") > 0 &&
-        now.until(Temporal.Instant.from(matching_round_end)).total("milliseconds") > 0
+          return (
+            now.since(Temporal.Instant.from(matching_round_start)).total("milliseconds") > 0 &&
+            now.until(Temporal.Instant.from(matching_round_end)).total("milliseconds") > 0
+          );
+        }),
       );
-    }),
-  );
